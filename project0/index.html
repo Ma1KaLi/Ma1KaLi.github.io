@@ -1,11 +1,152 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Project 0</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Project 0 — Perspective & Zoom</title>
+  <style>
+    :root {
+      --maxw: 980px;
+    }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0;
+      line-height: 1.6;
+      color: #222;
+      background: #fafafa;
+    }
+    header, main, footer {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header h1 { margin: 0 0 6px; }
+    header a { color: #0b5fff; text-decoration: none; }
+    section {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 14px;
+      padding: 18px;
+      margin: 18px 0 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    h2 { margin: 0 0 12px; font-size: 1.25rem; }
+    p { margin: 8px 0; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    @media (max-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    figure {
+      margin: 0;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+    figure img, figure video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    figcaption {
+      font-size: .9rem;
+      padding: 10px 12px;
+      background: #f6f7fb;
+      border-top: 1px solid #eee;
+    }
+    .answer {
+      background: #f4fbf6;
+      border: 1px solid #d8f1df;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+    .note {
+      font-size: .92rem;
+      color: #555;
+      background: #fff7e6;
+      border: 1px solid #ffe2a8;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 10px;
+    }
+    footer { font-size: .9rem; color: #666; }
+    .back { display: inline-block; margin-top: 6px; }
+  </style>
 </head>
 <body>
-    <h1>Project 0: My First Assignment</h1>
-    <p>This is the page for Project 0. I’ll add writeup, images, and results here.</p>
-    <a href="../index.html">Back to main page</a>
+  <header>
+    <h1>Project 0: Perspective, Focal Length & the Dolly Zoom</h1>
+    <a class="back" href="../index.html">← Back to main portfolio</a>
+  </header>
+
+  <main>
+    <!-- Part 1 -->
+    <section id="part1">
+      <h2>Part 1 — Selfie: The Wrong Way vs. The Right Way</h2>
+      <p>Two portraits taken with different shooting distances / focal lengths.</p>
+      <div class="grid-2">
+        <figure>
+          <img src="media/101.JPG" alt="Portrait shot 101.JPG" loading="lazy">
+          <figcaption>Photo 1 (file: <code>101.JPG</code>)</figcaption>
+        </figure>
+        <figure>
+          <img src="media/102.JPG" alt="Portrait shot 102.JPG" loading="lazy">
+          <figcaption>Photo 2 (file: <code>102.JPG</code>)</figcaption>
+        </figure>
+      </div>
+      <div class="answer">
+        <strong>Why does stepping back + zooming look better?</strong>
+        <br>
+        When you shoot very close with a wide field-of-view, perspective exaggeration makes near features (like the nose) appear larger and far features (ears, sides of face) smaller. Stepping back changes the <em>geometry</em> (rays become more parallel), so relative size differences across the face shrink. Zooming then restores framing without re-introducing that close-up distortion. In short: <em>position controls perspective; zoom controls framing</em>.
+      </div>
+    </section>
+
+    <!-- Part 2 -->
+    <section id="part2">
+      <h2>Part 2 — Architectural Perspective Compression</h2>
+      <p>Two urban/linear-perspective shots to compare “compressed” vs. “expanded” depth.</p>
+      <div class="grid-2">
+        <figure>
+          <img src="media/IMG_1047.HEIC" alt="Urban scene IMG_1047.HEIC (may require Safari to view HEIC)" loading="lazy">
+          <figcaption>Urban Shot 1 (file: <code>IMG_1047.HEIC</code>)</figcaption>
+        </figure>
+        <figure>
+          <img src="media/IMG_1052.HEIC" alt="Urban scene IMG_1052.HEIC (may require Safari to view HEIC)" loading="lazy">
+          <figcaption>Urban Shot 2 (file: <code>IMG_1052.HEIC</code>)</figcaption>
+        </figure>
+      </div>
+      <div class="answer">
+        <strong>Why does the telephoto view look “flattened”?</strong>
+        <br>
+        From far away with a longer focal length, scene points subtend more similar angles, so distances along the street appear compressed—parallel lines seem more parallel, and layers stack closer together. Walking forward with a wider view increases perspective spread: near objects grow faster in the frame than far ones, so depth feels more pronounced. Again: <em>moving changes perspective; zoom only crops</em>.
+      </div>
+      <div class="note">
+        Can’t see the HEIC images in your browser? Some browsers don’t render <code>.HEIC</code>. Try Safari, or download:
+        <a href="media/IMG_1047.HEIC">IMG_1047.HEIC</a>,
+        <a href="media/IMG_1052.HEIC">IMG_1052.HEIC</a>.
+        Converting to <code>.jpg</code> will improve cross-browser display.
+      </div>
+    </section>
+
+    <!-- Part 3 -->
+    <section id="part3">
+      <h2>Part 3 — The Dolly Zoom (“Vertigo Shot”)</h2>
+      <p>Move the camera back while zooming in (or vice versa) to keep the subject size roughly constant while the background perspective morphs.</p>
+      <figure>
+        <video controls playsinline preload="metadata" src="media/download.mp4"></video>
+        <figcaption>Dolly zoom result (file: <code>download.mp4</code>). Notice the subject framing stays similar, but the background stretches/compacts dramatically because the camera position (perspective) changes while focal length compensates framing.</figcaption>
+      </figure>
+    </section>
+  </main>
+
+  <footer>
+    © <script>document.write(new Date().getFullYear());</script> Project 0. All media courtesy of the author.
+  </footer>
 </body>
 </html>
+
