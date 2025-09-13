@@ -166,6 +166,13 @@
         <li><strong>Propagate & refine:</strong> double the shift per level and locally refine (±10).</li>
         <li><strong>Finalize:</strong> apply the full-resolution shift to the un-cropped channel and compose RGB.</li>
       </ol>
+      <p>
+        Notice that the second row of the results table, emir.tif, shows a clear misalignment, especially for red plate alignment.
+        According to Anonymous Elephant's responding to this question: "The problem is that at smaller resolutions, you're still searching 
+        over too small an area. My idea was to search over large areas under small resolutions and scale those down with each larger image. ..."
+        I partly revised my algorithm based on that just for this emir image alone. You can see my result in the next section. It takes
+        a bit of more time to run the algorithm, but the final result looks pretty nice.
+      </p>
 
       <!-- 11 × 4 table -->
       <table>
@@ -211,16 +218,6 @@
           <strong>Safer NCC with low-texture guard (<code>ncc_score_emir</code>)</strong> —
           zero-mean normalize both patches and <em>skip</em> comparisons whose std dev is below a threshold
           (returns −1.0). This prevents flat sky/wall regions from “winning” randomly.
-        </li>
-        <li>
-          <strong>Gradient magnitude matching (<code>grad_mag</code>)</strong> —
-          before intensities, align on edges (|∇I|). This is contrast-invariant and robust to brightness differences
-          across channels (typical for the Emir).
-        </li>
-        <li>
-          <strong>Edge-hit expansion in the search (<code>align_bruteforce_center_emir</code>)</strong> —
-          if the best shift lands on the search window boundary, re-run once with a larger window at the
-          <em>same level</em> (instead of immediately multiplying by 2). This stops “edge-saturation” drift.
         </li>
         <li>
           <strong>Coarse→fine two-pass per level (<code>align_pyramid_simple_emir</code>)</strong> —
