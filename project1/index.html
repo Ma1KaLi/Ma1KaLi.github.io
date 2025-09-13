@@ -40,6 +40,11 @@
 
     footer { font-size: .9rem; color: #666; }
   </style>
+
+  <script id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+
 </head>
 <body>
   <header>
@@ -78,24 +83,35 @@
         <li><strong>Apply:</strong> shift G and R by the winning displacements, then stack <code>[R, G, B]</code>.</li>
       </ol>
 
-      <!-- NEW: metric formulas -->
       <div class="answer">
         <strong>Metric formulas</strong>
-        <ul>
-          <li>
-            <em>Euclidean distance (L2):</em><br>
-            <code>L2(A, B) = sqrt( Σ<sub>y,x</sub> ( A<sub>y,x</sub> − B<sub>y,x</sub> )² )</code><br>
-            Often we minimize the squared version (SSD) without the square root as minimizing the value itself is the same as minimizing the sqrt of the value:<br>
-            <code>SSD(A, B) = Σ<sub>y,x</sub> ( A<sub>y,x</sub> − B<sub>y,x</sub> )²</code>
-          </li>
-          <li style="margin-top:6px;">
-            <em>Normalized Cross-Correlation (NCC):</em><br>
-            Vectorize the patches as <code>a</code>, <code>b</code> and normalize:<br>
-            <code>NCC = (a / ||a||) · (b / ||b||)</code><br>
-            Equivalently, as a zero-mean correlation (more robust to brightness):<br>
-            <code>NCC(A,B) = Σ (Ā · B̄) / ( ||Ā|| · ||B̄|| )</code>, where <code>Ā = A − mean(A)</code>, <code>B̄ = B − mean(B)</code>.
-          </li>
-        </ul>
+        <div class="grid-2">
+          <div>
+            <h3 style="margin:6px 0;">\(L_2\) Norm</h3>
+            \[
+              \left\lVert I_1 - I_2 \right\rVert_2
+              = \sqrt{ \sum_{x}\sum_{y} \big( I_1(x,y) - I_2(x,y) \big)^2 }
+            \]
+            <div class="note" style="margin-top:6px;">
+              Often we minimize the squared version (SSD) without the square root as minimizing the value itself is the same as minimizing the sqrt of the value:
+              \[
+                \mathrm{SSD}(I_1, I_2) = \sum_{x}\sum_{y} \big( I_1(x,y) - I_2(x,y) \big)^2 .
+              \]
+            </div>
+          </div>
+          <div>
+            <h3 style="margin:6px 0;">NCC Norm</h3>
+            \[
+              \mathrm{NCC}(I_1, I_2) =
+              \frac{ \langle \tilde I_1, \tilde I_2 \rangle }
+                   { \left\lVert \tilde I_1 \right\rVert_2 \, \left\lVert \tilde I_2 \right\rVert_2 },
+              \quad \tilde I = I - \overline{I}
+            \]
+            <div class="note" style="margin-top:6px;">
+              Vector form: \( \dfrac{I_1}{\lVert I_1\rVert_2} \cdot \dfrac{I_2}{\lVert I_2\rVert_2} \).
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- 3 × 4 table -->
