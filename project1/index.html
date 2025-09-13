@@ -85,6 +85,26 @@
         <li><strong>Apply:</strong> shift G and R by the winning displacements, then stack <code>[R, G, B]</code>.</li>
       </ol>
 
+      <!-- NEW: metric formulas -->
+      <div class="answer">
+        <strong>Metric formulas</strong>
+        <ul>
+          <li>
+            <em>Euclidean distance (L2):</em><br>
+            <code>L2(A, B) = sqrt( Σ<sub>y,x</sub> ( A<sub>y,x</sub> − B<sub>y,x</sub> )² )</code><br>
+            Often we minimize the squared version (SSD) without the square root:<br>
+            <code>SSD(A, B) = Σ<sub>y,x</sub> ( A<sub>y,x</sub> − B<sub>y,x</sub> )²</code>
+          </li>
+          <li style="margin-top:6px;">
+            <em>Normalized Cross-Correlation (NCC):</em><br>
+            Vectorize the patches as <code>a</code>, <code>b</code> and normalize:<br>
+            <code>NCC = (a / ||a||) · (b / ||b||)</code><br>
+            Equivalently, as a zero-mean correlation (more robust to brightness):<br>
+            <code>NCC(A,B) = Σ (Ā · B̄) / ( ||Ā|| · ||B̄|| )</code>, where <code>Ā = A − mean(A)</code>, <code>B̄ = B − mean(B)</code>.
+          </li>
+        </ul>
+      </div>
+
       <!-- 3 × 4 table -->
       <table>
         <thead>
