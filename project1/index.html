@@ -1,1 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS180 Project 1 · Prokudin–Gorskii Colorizing & Alignment</title>
+  <style>
+    :root {
+      --bg: #0b0c10;
+      --card: #121418;
+      --fg: #e6e6e6;
+      --muted: #aab0b6;
+      --accent: #55c1ff;
+      --border: #2a2f36;
+      --table-band: #161a20;
+    }
+    html, body { margin:0; padding:0; background:var(--bg); color:var(--fg); font:16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header { padding: 40px 20px; text-align: center; background: linear-gradient(180deg, #0b0c10 0%, #0d1117 100%); border-bottom: 1px solid var(--border);}
+    header h1 { margin: 0 0 10px; font-size: 2.2rem; letter-spacing: 0.5px; }
+    header p { margin: 0; color: var(--muted); }
+    main { max-width: 1100px; margin: 0 auto; padding: 28px 18px 64px; }
+    section { margin: 42px 0; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    h2 { margin-top: 0; font-size: 1.6rem; }
+    h3 { margin: 20px 0 6px; font-size: 1.1rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .lead { color: var(--muted); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .steps { margin: 0; padding-left: 1.2rem; }
+    .steps li { margin: .35rem 0; }
+    .note { color: var(--muted); font-size: .95rem; }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 12px; }
+    thead th { background: #0f141a; color: #cfe7ff; text-align: left; font-weight: 600; padding: 12px 12px; border-bottom: 1px solid var(--border); }
+    tbody td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tbody tr:nth-child(odd) { background: var(--table-band); }
+    .imgcell { width: 280px; }
+    .imgcell img { width: 260px; height: auto; border-radius: 8px; border: 1px solid var(--border); display: block; }
+    .number { white-space: nowrap; font-weight: 600; }
+    .time { font-variant-numeric: tabular-nums; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 860px) {
+      .imgcell { width: 160px; }
+      .imgcell img { width: 150px; }
+      thead { display: none; }
+      table, tbody, tr, td { display: block; width: 100%; }
+      tbody tr { margin: 0 0 14px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+      tbody td { border-bottom: 0; }
+      tbody td[data-label]::before { content: attr(data-label) ": "; color: var(--muted); font-weight: 600; }
+    }
+
+    /* Tiny legend pills */
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); font-size: 12px; margin-right: 6px; }
+    footer { text-align:center; color: var(--muted); margin: 40px 0 10px; }
+    code,kbd { background: #0f141a; padding: 0 6px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Prokudin–Gorskii Color Images — Automatic Alignment</h1>
+    <p>CS180 / Project 1 — by Allen Liu</p>
+  </header>
+
+  <main>
+    <!-- Introduction -->
+    <section id="intro">
+      <h2>Overview</h2>
+      <p class="lead">
+        This project reconstructs color photos from Prokudin–Gorskii glass plate scans. Each plate is a tall grayscale image
+        containing three vertically stacked exposures captured through blue, green, and red filters (top→bottom: <span class="mono">B/G/R</span>).
+        The pipeline: split the plate into B, G, R; align G and R to B using a pure 2-D translation; stack into an RGB image; and save results.
+      </p>
+      <div class="grid-2">
+        <div>
+          <h3>Key Ideas</h3>
+          <ul class="steps">
+            <li><b>Single-scale brute force:</b> search integer shifts within a small window (e.g., ±15 px) and score with SSD or NCC.</li>
+            <li><b>Robust scoring:</b> compute scores on the interior to reduce border effects; normalize values in <span class="mono">[0,1]</span>.</li>
+            <li><b>Pyramid speedup:</b> multi-scale (2× downsampling by 2×2 averaging), align coarse→fine, expanding the effective search range.</li>
+            <li><b>Reporting:</b> for each image, print the estimated displacements for G→B and R→B and the total processing time.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Implementation Notes</h3>
+          <ul class="steps">
+            <li>Built “from scratch” with <span class="mono">numpy</span> + <span class="mono">skimage</span> primitives only (I/O, resize, shift, display).</li>
+            <li>All computations use float32 in <span class="mono">[0,1]</span>; shifting uses <span class="mono">np.roll</span>.</li>
+            <li>Metrics are computed on valid overlaps (no wrap-around) and cropped interiors to avoid border bias.</li>
+            <li>Outputs are saved as JPG to keep the repo lightweight.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">
+        Legend: <span class="pill">G→B</span> Green aligned to Blue, displacement reported as <span class="mono">(dy, dx)</span>.
+        <span class="pill">R→B</span> Red aligned to Blue.
+      </p>
+    </section>
+
+    <!-- Single-scale Alignment -->
+    <section id="single">
+      <h2>Single-scale Alignment</h2>
+      <p>
+        Starting with a small search window (here ±15 px), I exhaustively evaluate integer translations for the moving channel
+        (first G, then R) relative to B. For each candidate shift:
+      </p>
+      <ol class="steps">
+        <li><b>Compute the valid overlap</b> under the candidate shift (no circular wrap).</li>
+        <li><b>Interior crop:</b> discard ~5% from each side of the overlap to suppress strong black/white borders.</li>
+        <li><b>Score:</b> use SSD (Euclidean squared) or NCC (zero-mean cosine similarity). NCC was more stable across channels.</li>
+        <li>Pick the best shift and <b>apply it</b> with <span class="mono">np.roll</span>; finally stack <span class="mono">[R, G, B]</span>.</li>
+      </ol>
+
+      <!-- 3 × 4 table -->
+      <table class="results">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Green Channel Displacement</th>
+            <th>Red Channel Displacement</th>
+            <th>Processing Time (s)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1 (example values; replace paths and numbers) -->
+          <tr>
+            <td class="imgcell" data-label="Image">
+              <!-- Put your single-scale output here -->
+              <img src="results/single/emir_single.jpg" alt="Emir (single-scale result)" />
+            </td>
+            <td class="number" data-label="Green Channel Displacement">(−57, −17)</td>
+            <td class="number" data-label="Red Channel Displacement">(−103, −44)</td>
+            <td class="time" data-label="Processing Time (s)">11.82</td>
+          </tr>
+          <!-- Row 2 -->
+          <tr>
+            <td class="imgcell" data-label="Image">
+              <img src="results/single/lady_single.jpg" alt="Lady (single-scale result)" />
+            </td>
+            <td class="number" data-label="Green Channel Displacement">(−39, −15)</td>
+            <td class="number" data-label="Red Channel Displacement">(−77, −35)</td>
+            <td class="time" data-label="Processing Time (s)">12.24</td>
+          </tr>
+          <!-- Row 3 -->
+          <tr>
+            <td class="imgcell" data-label="Image">
+              <img src="results/single/church_single.jpg" alt="Church (single-scale result)" />
+            </td>
+            <td class="number" data-label="Green Channel Displacement">(−33, 7)</td>
+            <td class="number" data-label="Red Channel Displacement">(−58, 4)</td>
+            <td class="time" data-label="Processing Time (s)">12.92</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">Replace the three example rows with your actual single-scale results and times.</p>
+    </section>
+
+    <!-- Pyramid Speedup -->
+    <section id="pyramid">
+      <h2>Pyramid-Speedup Alignment</h2>
+      <p>
+        To handle large <span class="mono">.tif</span> plates efficiently and robustly, I use a coarse-to-fine pyramid:
+      </p>
+      <ol class="steps">
+        <li><b>Downsampling:</b> build a Gaussian-like pyramid via 2×2 averaging (anti-alias) until the shortest side ≤ 100 px.</li>
+        <li><b>Coarse search:</b> at the coarsest level, search a larger window (e.g., ±10 at that scale) to capture big motions.</li>
+        <li><b>Refinement:</b> propagate the displacement upward (×2 per level) and refine within ±10 around the upsampled center.</li>
+        <li><b>Scoring:</b> NCC on cropped interiors (5% outer crop applied once for scoring images only).</li>
+      </ol>
+
+      <!-- 11 × 4 table -->
+      <table class="results">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Green Channel Displacement</th>
+            <th>Red Channel Displacement</th>
+            <th>Processing Time (s)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Add/replace 11 rows with your results; example placeholders below -->
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/emir.jpg" alt="Emir (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/lady.jpg" alt="Lady (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/monastery.jpg" alt="Monastery (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/cathedral.jpg" alt="Cathedral (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/harvesters.jpg" alt="Harvesters (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/icon.jpg" alt="Icon (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/three_generations.jpg" alt="Three Generations (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/train.jpg" alt="Train (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/workshop.jpg" alt="Workshop (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/melons.jpg" alt="Melons (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/pyramid/sculpture.jpg" alt="Sculpture (pyramid)" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">Update the 11 rows above with your pyramid outputs, displacements, and processing times.</p>
+    </section>
+
+    <!-- Bonus Images -->
+    <section id="bonus">
+      <h2>Bonus Images</h2>
+      <p>Additional plates I aligned with the same pipeline (fixed parameters across images).</p>
+
+      <!-- 4 × 4 table -->
+      <table class="results">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Green Channel Displacement</th>
+            <th>Red Channel Displacement</th>
+            <th>Processing Time (s)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/bonus/bonus1.jpg" alt="Bonus 1" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/bonus/bonus2.jpg" alt="Bonus 2" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/bonus/bonus3.jpg" alt="Bonus 3" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+          <tr>
+            <td class="imgcell" data-label="Image"><img src="results/bonus/bonus4.jpg" alt="Bonus 4" /></td>
+            <td class="number" data-label="Green Channel Displacement">TBD</td>
+            <td class="number" data-label="Red Channel Displacement">TBD</td>
+            <td class="time" data-label="Processing Time (s)">TBD</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      © <span id="y"></span> Allen Liu · Built with NumPy &amp; scikit-image
+    </footer>
+  </main>
+
+  <script>
+    // set year
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
 
