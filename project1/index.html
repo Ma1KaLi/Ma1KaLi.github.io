@@ -169,7 +169,74 @@
       </div>
     </section>
 
-    
+    <!-- Revised Emir.tif -->
+    <section id="emir-revised">
+      <h2>Revised <code>emir.tif</code> — Robust Red-Plate Alignment</h2>
+      <p>
+        The red plate of <em>emir.tif</em> was difficult to align using plain pyramid&nbsp;+&nbsp;NCC. At small scales, the best shift often sat at
+        the window’s edge and then exploded when multiplied by 2 across levels, and NCC on intensities was unstable on low-texture patches.
+        I implemented a targeted revision that fixes both issues while remaining simple and fast.
+      </p>
+      <ol>
+        <li>
+          <strong>Safer NCC with low-texture guard (<code>ncc_score_emir</code>)</strong> —
+          zero-mean normalize both patches and <em>skip</em> comparisons whose std dev is below a threshold
+          (returns −1.0). This prevents flat sky/wall regions from “winning” randomly.
+        </li>
+        <li>
+          <strong>Gradient magnitude matching (<code>grad_mag</code>)</strong> —
+          before intensities, align on edges (|∇I|). This is contrast-invariant and robust to brightness differences
+          across channels (typical for the Emir).
+        </li>
+        <li>
+          <strong>Edge-hit expansion in the search (<code>align_bruteforce_center_emir</code>)</strong> —
+          if the best shift lands on the search window boundary, re-run once with a larger window at the
+          <em>same level</em> (instead of immediately multiplying by 2). This stops “edge-saturation” drift.
+        </li>
+        <li>
+          <strong>Coarse→fine two-pass per level (<code>align_pyramid_simple_emir</code>)</strong> —
+          at the coarsest level use a <em>large</em> window (25% of min side, capped at 80). At each level:
+          (a) do a gradient-NCC search around the upscaled center; then
+          (b) refine with intensity-NCC in a smaller window. Double (dy, dx) between levels.
+        </li>
+        <li>
+          <strong>Interior crop on the overlap</strong> —
+          score on the overlap’s interior (≈5%) to suppress black/white scanner borders.
+        </li>
+      </ol>
+
+      <!-- Result image + metrics -->
+      <div class="grid-2">
+        <figure>
+          <!-- Update the src path to wherever you publish the revised emir output -->
+          <img src="Media/out_emir_revision_pyr_simple.jpg" alt="Revised emir.tif result" loading="lazy">
+          <figcaption>Revised emir.tif — gradient-first NCC + one-time edge expansion.</figcaption>
+        </figure>
+
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Replace TBD with your real numbers from the run -->
+              <tr><td>Green Channel Displacement (G→B)</td><td class="number">(49, 24)</td></tr>
+              <tr><td>Red Channel Displacement (R→B)</td><td class="number">(103, 45)</td></tr>
+              <tr><td>Processing Time (s)</td><td class="time">93.59</td></tr>
+            </tbody>
+          </table>
+
+          <div class="answer">
+            <strong>Why it works</strong><br>
+            Edges dominate at coarse scales and are invariant to exposure differences; the low-texture guard avoids random NCC maxima;
+            and the one-time window expansion prevents wrong coarse guesses from being amplified by the 2× step between levels.
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- Bonus -->
     <section id="bonus">
@@ -187,13 +254,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td><img src="Media/out_three_generations_pyr_simple.jpg" alt="Three_Generations — pyramid" loading="lazy"></td><td class="number">(53, 14)</td><td class="number">(112, 11)</td><td class="time">14.18</td></tr>
-          
-          <tr><td><img src="Media/out_three_generations_pyr_simple.jpg" alt="Three_Generations — pyramid" loading="lazy"></td><td class="number">(53, 14)</td><td class="number">(112, 11)</td><td class="time">14.18</td></tr>
-          
-          <tr><td><img src="Media/out_three_generations_pyr_simple.jpg" alt="Three_Generations — pyramid" loading="lazy"></td><td class="number">(53, 14)</td><td class="number">(112, 11)</td><td class="time">14.18</td></tr>
-          
-          <tr><td><img src="Media/out_three_generations_pyr_simple.jpg" alt="Three_Generations — pyramid" loading="lazy"></td><td class="number">(53, 14)</td><td class="number">(112, 11)</td><td class="time">14.18</td></tr>
+          <tr><td><img src="Media/out_railroad_pyr_simple.jpg" alt="Railroad — pyramid" loading="lazy"></td><td class="number">(48, -9)</td><td class="number">(147, -20)</td><td class="time">14.38</td></tr>
+          <tr><td><img src="Media/out_carving_pyr_simple.jpg" alt="Carving — pyramid" loading="lazy"></td><td class="number">(52, 0)</td><td class="number">(124, -13)</td><td class="time">14.20</td></tr>
+          <tr><td><img src="Media/out_Gift_pyr_simple.jpg" alt="Gift — pyramid" loading="lazy"></td><td class="number">(68, -7)</td><td class="number">(142, -19)</td><td class="time">14.64</td></tr>
+          <tr><td><img src="Media/out_Smolensk_pyr_simple.jpg" alt="Smolensk — pyramid" loading="lazy"></td><td class="number">(52, 18)</td><td class="number">(112, 23)</td><td class="time">14.22</td></tr>
         </tbody>
       </table>
     </section>
