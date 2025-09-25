@@ -105,7 +105,7 @@ def conv2d_2loops(img, kernel):
         </div>
         <div class="note">Padding: We use <em>zero padding</em> so the output height/width match the input (SAME). Different boundary modes (mirror/wrap) change border behavior slightly.</div>
 
-        <h3>Kernels used in 1.1</h3>
+        <h3>Kernels used</h3>
 <pre><code># 9×9 box (mean) filter
 box9 = np.ones((9, 9), dtype=np.float64) / 81.0
 
@@ -114,7 +114,7 @@ Dx = np.array([[ 1.0, 0.0, -1.0 ]], dtype=np.float64)   # horizontal derivative 
 Dy = Dx.T                                               # vertical derivative (horizontal edges)
 </code></pre>
 
-        <h3>Typeset (LaTeX) view of filters</h3>
+        <h3>Typeset view of filters</h3>
         <p>The same filters rendered as formulas for clarity:</p>
         <div class="answer">
           <p>Finite differences:</p>
@@ -133,19 +133,19 @@ Dy = Dx.T                                               # vertical derivative (h
         <p>Four views: original grayscale, box-filtered, and finite-difference responses along x/y. Replace the <code>src</code> paths with your exported images.</p>
         <div class="grid-2">
           <figure>
-            <img src="media/nolan_gray.png" alt="Christopher Nolan grayscale" loading="lazy">
-            <figcaption>Original (Grayscale)</figcaption>
+            <img src="media/nolan_processed_box.png" alt="Christopher Nolan Original" loading="lazy">
+            <figcaption>Original</figcaption>
           </figure>
           <figure>
-            <img src="media/nolan_box9.png" alt="Christopher Nolan convolved with 9x9 box filter" loading="lazy">
+            <img src="media/nolan_processed_box.png" alt="Christopher Nolan convolved with 9x9 box filter" loading="lazy">
             <figcaption>Box Filter (9×9) Convolved</figcaption>
           </figure>
           <figure>
-            <img src="media/nolan_dx.png" alt="Christopher Nolan convolved with Dx" loading="lazy">
+            <img src="media/nolan_processed_dx.png" alt="Christopher Nolan convolved with Dx" loading="lazy">
             <figcaption>Finite Difference — <code>Dx</code></figcaption>
           </figure>
           <figure>
-            <img src="media/nolan_dy.png" alt="Christopher Nolan convolved with Dy" loading="lazy">
+            <img src="media/nolan_processed_dy.png" alt="Christopher Nolan convolved with Dy" loading="lazy">
             <figcaption>Finite Difference — <code>Dy</code></figcaption>
           </figure>
         </div>
