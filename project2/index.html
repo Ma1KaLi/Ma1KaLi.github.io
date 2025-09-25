@@ -103,13 +103,13 @@ def conv2d_2loops(img, kernel):
             <li><strong>When to use:</strong> 4-loops for pedagogy; 2-loops for simple NumPy-only speedup; SciPy for production or large images.</li>
           </ul>
         </div>
-        <div class="note">Padding: We use <em>zero padding</em> so the output height/width match the input (SAME). Different boundary modes (mirror/wrap) change border behavior slightly.</div>
+        <div class="note">Padding: Using <em>zero padding</em> so the output height/width match the input (SAME). Different boundary modes (mirror/wrap) change border behavior slightly.</div>
 
         <h3>Kernels used</h3>
-<pre><code># 9×9 box (mean) filter
+<pre><code># 9×9 box filter
 box9 = np.ones((9, 9), dtype=np.float64) / 81.0
 
-# Finite-difference operators (first derivatives)
+# Finite-difference operators
 Dx = np.array([[ 1.0, 0.0, -1.0 ]], dtype=np.float64)   # horizontal derivative (vertical edges)
 Dy = Dx.T                                               # vertical derivative (horizontal edges)
 </code></pre>
@@ -134,23 +134,23 @@ Dy = Dx.T                                               # vertical derivative (h
           <div class="grid-auto">
           <figure>
           <img src="Media/Christopher_Nolan.png" alt="Christopher Nolan original (color)" loading="lazy">
-          <figcaption>Original (Color)</figcaption>
+          <figcaption>Christopher Nolan Original (Color)</figcaption>
           </figure>
           <figure>
-          <img src="Media/nolan_gray.png" alt="Christopher Nolan grayscale" loading="lazy">
-          <figcaption>Grayscale</figcaption>
+          <img src="Media/nolan_grayscale.png" alt="Christopher Nolan grayscale" loading="lazy">
+          <figcaption>Christopher Nolan Grayscaled</figcaption>
           </figure>
           <figure>
           <img src="Media/nolan_processed_box.png" alt="Christopher Nolan convolved with 9x9 box filter" loading="lazy">
-          <figcaption>Box Filter (9×9) Convolved</figcaption>
+          <figcaption>Christopher Nolan Box Filter (9×9) Convolved</figcaption>
           </figure>
           <figure>
           <img src="Media/nolan_processed_Dx.png" alt="Christopher Nolan convolved with Dx" loading="lazy">
-          <figcaption>Finite Difference — <code>Dx</code></figcaption>
+          <figcaption>Christopher Nolan Operator Dx Convolved</figcaption>
           </figure>
           <figure>
           <img src="Media/nolan_processed_Dy.png" alt="Christopher Nolan convolved with Dy" loading="lazy">
-          <figcaption>Finite Difference — <code>Dy</code></figcaption>
+          <figcaption>Christopher Nolan Operator Dy Convolved</figcaption>
           </figure>
           </div>
       </section>
