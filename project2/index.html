@@ -1,1 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Project 2 — Fun with Filters and Frequencies</title>
+  <style>
+    :root { --maxw: 980px; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0; line-height: 1.6; color: #222; background: #fafafa;
+    }
+    header, main, footer { max-width: var(--maxw); margin: 0 auto; padding: 20px; }
+    header h1 { margin: 0 0 6px; }
+    header a { color: #0b5fff; text-decoration: none; }
+    section {
+      background: #fff; border: 1px solid #eee; border-radius: 14px;
+      padding: 18px; margin: 18px 0 24px; box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    h2 { margin: 0 0 12px; font-size: 1.25rem; }
+    h3 { margin: 8px 0 8px; font-size: 1.1rem; }
+    p { margin: 8px 0; }
+    pre { background:#0f172a; color:#e5e7eb; padding:14px; border-radius:10px; overflow:auto; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .grid-2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .grid-4 { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; }
+    @media (max-width: 900px) { .grid-4 { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width: 720px) { .grid-2 { grid-template-columns:1fr; } }
+    figure { margin:0; border:1px solid #eee; border-radius:12px; overflow:hidden; background:#fff; }
+    figure img, figure video { display:block; width:100%; height:auto; }
+    figcaption { font-size:.9rem; padding:10px 12px; background:#f6f7fb; border-top:1px solid #eee; }
+    .answer { background:#f4fbf6; border:1px solid #d8f1df; border-radius:10px; padding:10px 12px; margin-top:10px; }
+    .note { font-size:.92rem; color:#555; background:#fff7e6; border:1px solid #ffe2a8; border-radius:10px; padding:10px 12px; margin-top:10px; }
+    footer { font-size:.9rem; color:#666; }
+    .back { display:inline-block; margin-top:6px; }
+    ul.tight { margin:8px 0; padding-left: 18px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Project 2 — Fun with Filters and Frequencies</h1>
+    <a class="back" href="../index.html">← Back to main portfolio</a>
+  </header>
+
+  <main>
+    <!-- Part 1 -->
+    <section id="part1">
+      <h2>Part 1 — Fun with Filters</h2>
+
+      <!-- Part 1.1 -->
+      <section id="part1-1">
+        <h3>Part 1.1 — Convolutions from Scratch</h3>
+        <p>The core operators are implemented from scratch with zero-padding (SAME output). A 4-loop version is kept for clarity; a 2-loop version vectorizes the kernel multiply-add for speed.</p>
+
+<pre><code># Zero-padding to keep SAME output size
+import numpy as np
+
+def zero_pad(img, ph, pw, value=0.0):
+    H, W = img.shape
+    out = np.full((H + 2*ph, W + 2*pw), value, dtype=img.dtype)
+    out[ph:ph+H, pw:pw+W] = img
+    return out
+
+# Convolution with four loops (reference, slowest)
+def conv2d_4loops(img, kernel):
+    H, W = img.shape
+    kh, kw = kernel.shape
+    ph, pw = kh//2, kw//2
+    kflip = kernel[::-1, ::-1]
+    pad = zero_pad(img, ph, pw)
+    out = np.empty_like(img, dtype=np.float64)
+    for i in range(H):
+        for j in range(W):
+            acc = 0.0
+            for u in range(kh):
+                for v in range(kw):
+                    acc += kflip[u, v] * pad[i+u, j+v]
+            out[i, j] = acc
+    return out
+
+# Convolution with two loops (kernel window multiply-add vectorized)
+def conv2d_2loops(img, kernel):
+    H, W = img.shape
+    kh, kw = kernel.shape
+    ph, pw = kh//2, kw//2
+    kflip = kernel[::-1, ::-1]
+    pad = zero_pad(img, ph, pw)
+    out = np.empty_like(img, dtype=np.float64)
+    for i in range(H):
+        for j in range(W):
+            window = pad[i:i+kh, j:j+kw]
+            out[i, j] = np.sum(window * kflip)
+    return out
+</code></pre>
+
+        <h3>Quick comparison (qualitative/quantitative)</h3>
+        <div class="answer">
+          <ul class="tight">
+            <li><strong>Correctness:</strong> 4-loops ≈ 2-loops ≈ SciPy <code>signal.convolve2d</code> (with same padding) up to tiny FP error.</li>
+            <li><strong>Runtime (typical):</strong> SciPy C-optimized &gt;&gt; 2-loops (vectorized inner product) &gt;&gt; 4-loops (pure Python). The gap widens for larger kernels.</li>
+            <li><strong>When to use:</strong> 4-loops for pedagogy; 2-loops for simple NumPy-only speedup; SciPy for production or large images.</li>
+          </ul>
+        </div>
+        <div class="note">Padding: We use <em>zero padding</em> so the output height/width match the input (SAME). Different boundary modes (mirror/wrap) change border behavior slightly.</div>
+
+        <h3>Kernels used in 1.1</h3>
+<pre><code># 9×9 box (mean) filter
+box9 = np.ones((9, 9), dtype=np.float64) / 81.0
+
+# Finite-difference operators (first derivatives)
+Dx = np.array([[ 1.0, 0.0, -1.0 ]], dtype=np.float64)   # horizontal derivative (vertical edges)
+Dy = Dx.T                                               # vertical derivative (horizontal edges)
+</code></pre>
+
+        <h3>Results (Christopher Nolan — grayscale)</h3>
+        <p>Four views: original grayscale, box-filtered, and finite-difference responses along x/y. Replace the <code>src</code> paths with your exported images.</p>
+        <div class="grid-2">
+          <figure>
+            <img src="media/nolan_gray.png" alt="Christopher Nolan grayscale" loading="lazy">
+            <figcaption>Original (Grayscale)</figcaption>
+          </figure>
+          <figure>
+            <img src="media/nolan_box9.png" alt="Christopher Nolan convolved with 9x9 box filter" loading="lazy">
+            <figcaption>Box Filter (9×9) Convolved</figcaption>
+          </figure>
+          <figure>
+            <img src="media/nolan_dx.png" alt="Christopher Nolan convolved with Dx" loading="lazy">
+            <figcaption>Finite Difference — <code>Dx</code></figcaption>
+          </figure>
+          <figure>
+            <img src="media/nolan_dy.png" alt="Christopher Nolan convolved with Dy" loading="lazy">
+            <figcaption>Finite Difference — <code>Dy</code></figcaption>
+          </figure>
+        </div>
+      </section>
+    </section>
+
+    <!-- Part 2 placeholder -->
+    <section id="part2">
+      <h2>Part 2 — Fun with Frequencies</h2>
+      <p class="note">This section will be populated in the next milestone (frequency-domain filtering, hybrid images, etc.).</p>
+    </section>
+  </main>
+
+  <footer>
+    © <script>document.write(new Date().getFullYear());</script> Project 2. All media courtesy of the author.
+  </footer>
+</body>
+</html>
 
