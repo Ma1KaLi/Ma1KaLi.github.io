@@ -35,6 +35,8 @@
     .back { display:inline-block; margin-top:6px; }
     ul.tight { margin:8px 0; padding-left: 18px; }
   </style>
+  <!-- MathJax for nicely typeset matrices/equations -->
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
 <body>
   <header>
@@ -112,6 +114,21 @@ Dx = np.array([[ 1.0, 0.0, -1.0 ]], dtype=np.float64)   # horizontal derivative 
 Dy = Dx.T                                               # vertical derivative (horizontal edges)
 </code></pre>
 
+        <h3>Typeset (LaTeX) view of filters</h3>
+        <p>The same filters rendered as formulas for clarity:</p>
+        <div class="answer">
+          <p>Finite differences:</p>
+          <p>\[ D_x = \begin{bmatrix} 1 & 0 & -1 \end{bmatrix},\qquad
+             D_y = \begin{bmatrix} 1 \\ 0 \\ -1 \end{bmatrix} \]</p>
+          <p>9×9 box (mean) filter:</p>
+          <p>\[ B = \frac{1}{81}\,\underbrace{\begin{bmatrix}
+                1 & 1 & \cdots & 1 \\
+                1 & 1 & \cdots & 1 \\
+                \vdots & \vdots & \ddots & \vdots \\
+                1 & 1 & \cdots & 1
+             \end{bmatrix}}_{9\times 9} \]</p>
+        </div>
+
         <h3>Results (Christopher Nolan — grayscale)</h3>
         <p>Four views: original grayscale, box-filtered, and finite-difference responses along x/y. Replace the <code>src</code> paths with your exported images.</p>
         <div class="grid-2">
@@ -147,4 +164,3 @@ Dy = Dx.T                                               # vertical derivative (h
   </footer>
 </body>
 </html>
-
