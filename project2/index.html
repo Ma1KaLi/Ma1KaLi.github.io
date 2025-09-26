@@ -222,11 +222,11 @@ Dy = Dx.T                                               # vertical derivative (h
           <h5>Original vs. Gaussian-blurred</h5>
           <div class="grid-2">
           <figure>
-          <img src="media/cameraman.png" alt="Cameraman original" loading="lazy">
+          <img src="Media/cameraman.png" alt="Cameraman original" loading="lazy">
           <figcaption>Original (Cameraman)</figcaption>
           </figure>
           <figure>
-          <img src="media/cameraman_blur.png" alt="Cameraman blurred with Gaussian" loading="lazy">
+          <img src="Media/A_smoothed.png" alt="Cameraman blurred with Gaussian" loading="lazy">
           <figcaption>Blurred with Gaussian <code>G</code></figcaption>
           </figure>
           </div>
@@ -235,11 +235,11 @@ Dy = Dx.T                                               # vertical derivative (h
           <h5>Derivatives on smoothed image</h5>
           <div class="grid-2">
           <figure>
-          <img src="media/cameraman_blur_grad_x.png" alt="dx on smoothed" loading="lazy">
+          <img src="Media/A_gradx.png" alt="dx on smoothed" loading="lazy">
           <figcaption>∂I/∂x on smoothed</figcaption>
           </figure>
           <figure>
-          <img src="media/cameraman_blur_grad_y.png" alt="dy on smoothed" loading="lazy">
+          <img src="Media/A_grady.png" alt="dy on smoothed" loading="lazy">
           <figcaption>∂I/∂y on smoothed</figcaption>
           </figure>
           </div>
@@ -249,19 +249,19 @@ Dy = Dx.T                                               # vertical derivative (h
           <p>Threshold rule: <code>Mag &gt; ratio × Mag.max()</code> with <code>ratio ∈ {0.1, 0.2, 0.3, 0.4}</code>.</p>
           <div class="grid-2">
           <figure>
-          <img src="media/cameraman_blur_edges_r10.png" alt="edges r=0.1 on smoothed" loading="lazy">
+          <img src="Media/Smoothing_edges_r10.png" alt="edges r=0.1 on smoothed" loading="lazy">
           <figcaption>Edges (ratio = 0.10)</figcaption>
           </figure>
           <figure>
-          <img src="media/cameraman_blur_edges_r20.png" alt="edges r=0.2 on smoothed" loading="lazy">
+          <img src="Media/Smoothing_edges_r20.png" alt="edges r=0.2 on smoothed" loading="lazy">
           <figcaption>Edges (ratio = 0.20)</figcaption>
           </figure>
           <figure>
-          <img src="media/cameraman_blur_edges_r30.png" alt="edges r=0.3 on smoothed" loading="lazy">
+          <img src="Media/Smoothing_edges_r30.png" alt="edges r=0.3 on smoothed" loading="lazy">
           <figcaption>Edges (ratio = 0.30)</figcaption>
           </figure>
           <figure>
-          <img src="media/cameraman_blur_edges_r40.png" alt="edges r=0.4 on smoothed" loading="lazy">
+          <img src="Media/Smoothing_edges_r40.png" alt="edges r=0.4 on smoothed" loading="lazy">
           <figcaption>Edges (ratio = 0.40)</figcaption>
           </figure>
           </div>
@@ -290,11 +290,11 @@ Dy = Dx.T                                               # vertical derivative (h
           <h5>DoG filters (visualized)</h5>
           <div class="grid-2">
           <figure>
-          <img src="media/dog_kernel_x.png" alt="Derivative of Gaussian (Dx * G)" loading="lazy">
+          <img src="Media/DoGx_kernel.png" alt="Derivative of Gaussian (Dx * G)" loading="lazy">
           <figcaption>DoG filter in x (G * D<sub>x</sub>)</figcaption>
           </figure>
           <figure>
-          <img src="media/dog_kernel_y.png" alt="Derivative of Gaussian (Dy * G)" loading="lazy">
+          <img src="Media/DoGy_kernel.png" alt="Derivative of Gaussian (Dy * G)" loading="lazy">
           <figcaption>DoG filter in y (G * D<sub>y</sub>)</figcaption>
           </figure>
           </div>
@@ -303,11 +303,11 @@ Dy = Dx.T                                               # vertical derivative (h
           <h5>Apply DoG to the image (single convolution)</h5>
           <div class="grid-2">
           <figure>
-          <img src="media/cameraman_dog_grad_x.png" alt="dx via DoG" loading="lazy">
+          <img src="Media/B_gradx.png" alt="dx via DoG" loading="lazy">
           <figcaption>∂I/∂x via DoG</figcaption>
           </figure>
           <figure>
-          <img src="media/cameraman_dog_grad_y.png" alt="dy via DoG" loading="lazy">
+          <img src="Media/B_grady.png" alt="dy via DoG" loading="lazy">
           <figcaption>∂I/∂y via DoG</figcaption>
           </figure>
           </div>
