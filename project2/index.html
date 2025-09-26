@@ -156,6 +156,53 @@ Dy = Dx.T                                               # vertical derivative (h
       </section>
     </section>
 
+    <section id="part1-2">
+      <h3>Part 1.2 — Finite Difference Operator</h3>
+        <p>Convolve the Cameraman image with <code>D_x</code> and <code>D_y</code> to obtain partial derivatives; compute the gradient magnitude; then binarize it with qualitative thresholds.</p>
+        
+        
+        <h4>Partial derivatives (Cameraman)</h4>
+        <div class="grid-2">
+        <figure>
+        <img src="Media/cameraman_convolved_Dx.png" alt="Cameraman convolved with Dx" loading="lazy">
+        <figcaption>∂I/∂x via <code>D_x</code></figcaption>
+        </figure>
+        <figure>
+        <img src="Media/cameraman_convolved_Dy.png" alt="Cameraman convolved with Dy" loading="lazy">
+        <figcaption>∂I/∂y via <code>D_y</code></figcaption>
+        </figure>
+        </div>
+        
+        
+        <h4>Gradient magnitude</h4>
+        <figure>
+        <img src="Media/cameraman_grad_mag.png" alt="Gradient magnitude |∇I| of Cameraman" loading="lazy">
+        <figcaption>Gradient magnitude image: |∇I| = √(Gx² + Gy²).</figcaption>
+        </figure>
+        
+        
+        <h4>Edge images by binarizing |∇I|</h4>
+        <p>Threshold rule: <code>Mag &gt; ratio × Mag.max()</code>, with <code>ratio ∈ {0.1, 0.2, 0.3, 0.4}</code>.</p>
+        <div class="grid-auto">
+        <figure>
+        <img src="Media/cameraman_edges_01.png" alt="Edges with ratio=0.1" loading="lazy">
+        <figcaption>Edges (ratio = 0.10)</figcaption>
+        </figure>
+        <figure>
+        <img src="Media/cameraman_edges_02.png" alt="Edges with ratio=0.2" loading="lazy">
+        <figcaption>Edges (ratio = 0.20)</figcaption>
+        </figure>
+        <figure>
+        <img src="Media/cameraman_edges_03.png" alt="Edges with ratio=0.3" loading="lazy">
+        <figcaption>Edges (ratio = 0.30)</figcaption>
+        </figure>
+        <figure>
+        <img src="Media/cameraman_edges_04.png" alt="Edges with ratio=0.4" loading="lazy">
+        <figcaption>Edges (ratio = 0.40)</figcaption>
+        </figure>
+        </div>
+        </section>
+
     <!-- Part 2 placeholder -->
     <section id="part2">
       <h2>Part 2 — Fun with Frequencies</h2>
