@@ -209,6 +209,56 @@ Dy = Dx.T                                               # vertical derivative (h
         </section>
 
         <!-- Part 1.3 -->
+          <section id="part1-3">
+          <h3>Part 1.3 — Derivative of Gaussian (DoG) Filter</h3>
+          
+          
+          <!-- Subpart A: Gaussian-smoothed version -->
+          <section id="part1-3a">
+          <h4>Gaussian-smoothed version</h4>
+          <p>First, blur the original image with a Gaussian filter <code>G</code>, then repeat the previous procedure: compute partial derivatives and binarize the gradient magnitude with qualitative thresholds.</p>
+          
+          
+          <h5>Original vs. Gaussian-blurred</h5>
+          <div class="grid-2">
+          <figure>
+          <img src="media/cameraman.png" alt="Cameraman original" loading="lazy">
+          <figcaption>Original (Cameraman)</figcaption>
+          </figure>
+          <figure>
+          <img src="media/cameraman_blur.png" alt="Cameraman blurred with Gaussian" loading="lazy">
+          <figcaption>Blurred with Gaussian <code>G</code></figcaption>
+          </figure>
+          </div>
+          
+          
+          <h5>Derivatives on smoothed image</h5>
+          <div class="grid-2">
+          <figure>
+          <img src="media/cameraman_blur_grad_x.png" alt="dx on smoothed" loading="lazy">
+          <figcaption>∂I/∂x on smoothed</figcaption>
+          </figure>
+          <figure>
+          <img src="media/cameraman_blur_grad_y.png" alt="dy on smoothed" loading="lazy">
+          <figcaption>∂I/∂y on smoothed</figcaption>
+          </figure>
+          </div>
+          
+          
+          <h5>Edge images by binarizing |∇I| (on smoothed)</h5>
+          <p>Threshold rule: <code>Mag &gt; ratio × Mag.max()</code> with <code>ratio ∈ {0.1, 0.2, 0.3, 0.4}</code>.</p>
+          <div class="grid-2">
+          <figure>
+          <img src="media/cameraman_blur_edges_r10.png" alt="edges r=0.1 on smoothed" loading="lazy">
+          <figcaption>Edges (ratio = 0.10)</figcaption>
+          </figure>
+          <figure>
+          <img src="media/cameraman_blur_edges_r20.png" alt="edges r=0.2 on smoothed" loading="lazy">
+          <figcaption>Edges (ratio = 0.20)</figcaption>
+          </figure>
+          <figure>
+          <img src="media/cameraman_blur_edges_r30.png" alt="edges r=0.3 on smoothed" loading="lazy">
+          <figcaption>Edges (ratio = 0.30)</figcaption>
           </figure>
           <figure>
           <img src="media/cameraman_blur_edges_r40.png" alt="edges r=0.4 on smoothed" loading="lazy">
@@ -222,8 +272,7 @@ Dy = Dx.T                                               # vertical derivative (h
           Smoothing suppresses high-frequency noise, so derivatives are cleaner and edges more continuous; tiny textures are attenuated. Compared with Part&nbsp;1.2 (no smoothing), weak and noisy responses are reduced while main object contours remain.
           </div>
           </section>
-          
-          
+
           <!-- Subpart B: Gaussian filters directly (DoG) -->
           <section id="part1-3b">
           <h4>Gaussian filters directly (DoG)</h4>
