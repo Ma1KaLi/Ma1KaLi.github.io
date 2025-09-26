@@ -332,6 +332,121 @@ Dy = Dx.T                                               # vertical derivative (h
       <h2>Part 2 — Fun with Frequencies</h2>
       <p class="note">This section will be populated in the next milestone (frequency-domain filtering, hybrid images, etc.).</p>
     </section>
+
+    <section id="part2-1">
+      <h3>Part 2.1 — Image “Sharpening” (Unsharp Mask)</h3>
+      <p>
+        We sharpen by adding back high-frequency details removed by a Gaussian blur.
+        Let <em>G<sub>σ</sub></em> be a Gaussian kernel and <em>δ</em> the impulse at the kernel center.
+        The classic two-step form is: <code>H = I − (G<sub>σ</sub> * I)</code>, then
+        <code>I<sub>sharp</sub> = I + αH</code>.
+        Equivalently, this can be performed as a single convolution:
+      </p>
+      <p class="equation">
+        <strong>I<sub>sharp</sub> = K * I, &nbsp;&nbsp; K = (1 + α) δ − α G<sub>σ</sub></strong>
+      </p>
+      <p>
+        Intuition: the effective kernel <em>K</em> boosts the center pixel by <em>(1+α)</em> and subtracts
+        a blurred neighborhood by <em>α G<sub>σ</sub></em>, amplifying local contrast around edges.
+        We implement this by building <em>G<sub>σ</sub></em> with <code>cv2.getGaussianKernel</code>,
+        forming <em>K</em>, then convolving each color channel (e.g., via <code>convolve2d</code>).
+      </p>
+    
+      <h4>Results on <code>taj.png</code> (five images in one row)</h4>
+      <div class="grid-5">
+        <figure>
+          <img src="Media/p2_1/taj_orig.png" alt="taj original" loading="lazy">
+          <figcaption>Original</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/taj_alpha1.png" alt="taj α=1" loading="lazy">
+          <figcaption>α = 1</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/taj_alpha2.png" alt="taj α=2" loading="lazy">
+          <figcaption>α = 2</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/taj_alpha5.png" alt="taj α=5" loading="lazy">
+          <figcaption>α = 5</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/taj_alpha10.png" alt="taj α=10" loading="lazy">
+          <figcaption>α = 10</figcaption>
+        </figure>
+      </div>
+    
+      <h4>Results on <code>view.png</code> (five images in one row)</h4>
+      <div class="grid-5">
+        <figure>
+          <img src="Media/p2_1/view_orig.png" alt="view original" loading="lazy">
+          <figcaption>Original</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/view_alpha1.png" alt="view α=1" loading="lazy">
+          <figcaption>α = 1</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/view_alpha2.png" alt="view α=2" loading="lazy">
+          <figcaption>α = 2</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/view_alpha5.png" alt="view α=5" loading="lazy">
+          <figcaption>α = 5</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/view_alpha10.png" alt="view α=10" loading="lazy">
+          <figcaption>α = 10</figcaption>
+        </figure>
+      </div>
+    
+      <h4>Evaluation: blur → unsharp</h4>
+      <p>
+        Procedure: choose a sharp color image, blur it with a Gaussian, then apply the single-convolution
+        unsharp mask to the blurred image. Compare the sharpened result to the original.
+      </p>
+    
+      <!-- Row 1 -->
+      <div class="grid-3">
+        <figure>
+          <img src="Media/p2_1/eval_row1_orig.png" alt="evaluation row 1 original" loading="lazy">
+          <figcaption>Original</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/eval_row1_blur.png" alt="evaluation row 1 blurred" loading="lazy">
+          <figcaption>Blurred</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/eval_row1_resharp.png" alt="evaluation row 1 sharpened from blurred" loading="lazy">
+          <figcaption>Sharpened (from blurred)</figcaption>
+        </figure>
+      </div>
+    
+      <!-- Row 2 -->
+      <div class="grid-3">
+        <figure>
+          <img src="Media/p2_1/eval_row2_orig.png" alt="evaluation row 2 original" loading="lazy">
+          <figcaption>Original</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/eval_row2_blur.png" alt="evaluation row 2 blurred" loading="lazy">
+          <figcaption>Blurred</figcaption>
+        </figure>
+        <figure>
+          <img src="Media/p2_1/eval_row2_resharp.png" alt="evaluation row 2 sharpened from blurred" loading="lazy">
+          <figcaption>Sharpened (from blurred)</figcaption>
+        </figure>
+      </div>
+    
+      <p class="answer">
+        <strong>Comparison &amp; observations:</strong>
+        Unsharp masking visibly increases local contrast and edge clarity in the blurred image,
+        but it does not fully restore the original fine details—those high frequencies were attenuated
+        or lost by the blur. Larger <em>α</em> can introduce halos near strong edges and amplify noise; using
+        a <em>σ</em> that roughly matches the blur scale and a moderate <em>α</em> yields more natural results.
+      </p>
+    </section>
+
   </main>
 
   <footer>
