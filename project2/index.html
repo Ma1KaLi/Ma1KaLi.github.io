@@ -181,26 +181,31 @@ Dy = Dx.T                                               # vertical derivative (h
         </figure>
         
         
-        <h4>Edge images by binarizing |∇I|</h4>
-        <p>Threshold rule: <code>Mag &gt; ratio × Mag.max()</code>, with <code>ratio ∈ {0.1, 0.2, 0.3, 0.4}</code>.</p>
-        <div class="grid-auto">
-        <figure>
-        <img src="Media/cameraman_edges_01.png" alt="Edges with ratio=0.1" loading="lazy">
-        <figcaption>Edges (ratio = 0.10)</figcaption>
-        </figure>
-        <figure>
-        <img src="Media/cameraman_edges_02.png" alt="Edges with ratio=0.2" loading="lazy">
-        <figcaption>Edges (ratio = 0.20)</figcaption>
-        </figure>
-        <figure>
-        <img src="Media/cameraman_edges_03.png" alt="Edges with ratio=0.3" loading="lazy">
-        <figcaption>Edges (ratio = 0.30)</figcaption>
-        </figure>
-        <figure>
-        <img src="Media/cameraman_edges_04.png" alt="Edges with ratio=0.4" loading="lazy">
-        <figcaption>Edges (ratio = 0.40)</figcaption>
-        </figure>
-        </div>
+            <h4>Edge images by binarizing |∇I|</h4>
+            <p>Threshold rule: <code>Mag &gt; ratio × Mag.max()</code>, with <code>ratio ∈ {0.1, 0.2, 0.3, 0.4}</code>.</p>
+            <div class="grid-2">
+              <figure>
+                <img src="Media/cameraman_edges_01.png" alt="Edges with ratio=0.1" loading="lazy">
+                <figcaption>Edges (ratio = 0.10)</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/cameraman_edges_02.png" alt="Edges with ratio=0.2" loading="lazy">
+                <figcaption>Edges (ratio = 0.20)</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/cameraman_edges_03.png" alt="Edges with ratio=0.3" loading="lazy">
+                <figcaption>Edges (ratio = 0.30)</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/cameraman_edges_04.png" alt="Edges with ratio=0.4" loading="lazy">
+                <figcaption>Edges (ratio = 0.40)</figcaption>
+              </figure>
+            </div>
+            
+            <p class="answer">
+              <strong>Best threshold:</strong> Based on qualitative assessment, the best result is at <code>ratio = 0.20</code>,
+              which suppresses most noise while preserving true edges.
+            </p>
         </section>
 
     <!-- Part 2 placeholder -->
