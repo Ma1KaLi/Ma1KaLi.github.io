@@ -335,7 +335,7 @@ Dy = Dx.T                                               # vertical derivative (h
           <!-- Part 2.1: Unsharp Mask (Image Sharpening) -->
     <section id="part2-1">
       <h3>Part 2.1 — Unsharp Mask (Image Sharpening)</h3>
-      <p>Unsharp masking sharpens an image by boosting its high frequencies. We first produce a blurred (low-pass) version using a Gaussian <code>\( \G_\sigma \)</code>, take the high-frequency residual, then add it back with a gain <code>\( \alpha \)</code>.</p>
+      <p> Unsharp masking sharpens an image by boosting its high frequencies. We first produce a blurred (low-pass) version using a Gaussian \( G_\sigma \), take the high-frequency residual, then add it back with a gain \( \alpha \).</p>
     
       <div class="answer">
         <p><strong>Mathematics (and intuition)</strong></p>
@@ -351,7 +351,7 @@ Dy = Dx.T                                               # vertical derivative (h
       </div>
     
       <h4>Sharpening examples — <code>taj.png</code></h4>
-      <p>Five images in one row: original and four <code>\alpha</code> settings.</p>
+      <p>Five images in one row: original and four \( \alpha \) settings.</p>
       <style>
         .grid-5 { display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:12px; }
         @media (max-width: 1100px){ .grid-5 { grid-template-columns:repeat(3, minmax(0,1fr)); } }
