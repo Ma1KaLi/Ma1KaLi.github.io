@@ -34,6 +34,7 @@
     footer { font-size:.9rem; color:#666; }
     .back { display:inline-block; margin-top:6px; }
     ul.tight { margin:8px 0; padding-left: 18px; }
+    .grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
   </style>
   <!-- MathJax for nicely typeset matrices/equations -->
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -330,9 +331,8 @@ Dy = Dx.T                                               # vertical derivative (h
     <!-- Part 2 placeholder -->
     <section id="part2">
       <h2>Part 2 — Fun with Frequencies</h2>
-    </section>
 
-    <!-- Part 2.1: Unsharp Mask (Image Sharpening) -->
+          <!-- Part 2.1: Unsharp Mask (Image Sharpening) -->
     <section id="part2-1">
       <h3>Part 2.1 — Unsharp Mask (Image Sharpening)</h3>
       <p>Unsharp masking sharpens an image by boosting its high frequencies. We first produce a blurred (low-pass) version using a Gaussian <code>G_\sigma</code>, take the high-frequency residual, then add it back with a gain <code>\alpha</code>.</p>
@@ -405,44 +405,54 @@ Dy = Dx.T                                               # vertical derivative (h
       </div>
     
       <h4>Evaluation</h4>
-      <p>Each row: original → blurred → sharpened (unsharp). Two examples shown.</p>
-      <div class="grid-2">
-        <figure>
-          <img src="media/eval1_original.png" alt="eval1 original" loading="lazy">
-          <figcaption>Original (Case 1)</figcaption>
-        </figure>
-        <figure>
-          <img src="media/eval1_blur.png" alt="eval1 blurred" loading="lazy">
-          <figcaption>Blurred</figcaption>
-        </figure>
-        <figure>
-          <img src="media/eval1_sharp.png" alt="eval1 sharpened" loading="lazy">
-          <figcaption>Sharpened</figcaption>
-        </figure>
-        <figure>
-          <img src="media/eval2_original.png" alt="eval2 original" loading="lazy">
-          <figcaption>Original (Case 2)</figcaption>
-        </figure>
-        <figure>
-          <img src="media/eval2_blur.png" alt="eval2 blurred" loading="lazy">
-          <figcaption>Blurred</figcaption>
-        </figure>
-        <figure>
-          <img src="media/eval2_sharp.png" alt="eval2 sharpened" loading="lazy">
-          <figcaption>Sharpened</figcaption>
-        </figure>
-      </div>
+        <p>Each row: original → blurred → sharpened (unsharp). Two examples shown.</p>
+        
+        <!-- Row 1 -->
+        <div class="grid-3">
+          <figure>
+            <img src="media/eval1_original.png" alt="eval1 original" loading="lazy">
+            <figcaption>Original (Case 1)</figcaption>
+          </figure>
+          <figure>
+            <img src="media/eval1_blur.png" alt="eval1 blurred" loading="lazy">
+            <figcaption>Blurred</figcaption>
+          </figure>
+          <figure>
+            <img src="media/eval1_sharp.png" alt="eval1 sharpened" loading="lazy">
+            <figcaption>Sharpened</figcaption>
+          </figure>
+        </div>
+        
+        <!-- Row 2 -->
+        <div class="grid-3">
+          <figure>
+            <img src="media/eval2_original.png" alt="eval2 original" loading="lazy">
+            <figcaption>Original (Case 2)</figcaption>
+          </figure>
+          <figure>
+            <img src="media/eval2_blur.png" alt="eval2 blurred" loading="lazy">
+            <figcaption>Blurred</figcaption>
+          </figure>
+          <figure>
+            <img src="media/eval2_sharp.png" alt="eval2 sharpened" loading="lazy">
+            <figcaption>Sharpened</figcaption>
+          </figure>
+        </div>
+
     
       <div class="answer">
         <strong>Compare &amp; observations.</strong>
         <ul>
           <li><em>Sharper but not the original:</em> Unsharp masking makes edges crisper and contrast stronger than the blurred input, but fine textures that were removed by blur cannot be fully restored (high frequencies already lost).</li>
-          <li><em>Possible halos:</em> Strong edges may show bright/dark rims; lowering <code>\alpha\</code> or increasing <code>\sigma\</code> alleviates this.</li>
-          <li><em>Noise amplification:</em> Any residual noise or JPEG artifacts in the blurred image will be amplified by unsharp; use a slightly larger <code>\sigma\</code> or a smaller <code>\alpha\</code>.</li>
-          <li><em>Parameter matching:</em> If the blur used <code>\sigma_b\</code>, choosing the unsharp Gaussian near <code>\sigma\ \approx\ \sigma_b\</code> often yields a more natural look.</li>
+          <li><em>Possible halos:</em> Strong edges may show bright/dark rims; lowering \( \alpha \) or increasing \( \sigma \) alleviates this.</li>
+          <li><em>Noise amplification:</em> Any residual noise or JPEG artifacts in the blurred image will be amplified by unsharp; use a slightly larger \( \sigma \) or a smaller \( \alpha \).</li>
+          <li><em>Parameter matching:</em> If the blur used \( \sigma_b \), choosing the unsharp Gaussian near \( \sigma \approx \sigma_b \) often yields a more natural look.</li>
         </ul>
       </div>
     </section>
+    </section>
+
+
 
   </main>
 
