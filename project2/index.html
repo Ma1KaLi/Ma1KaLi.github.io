@@ -269,7 +269,7 @@ Dy = Dx.T                                               # vertical derivative (h
           
           <div class="note">
           <strong>What differences do we see vs. Part&nbsp;1.2?</strong>
-          Smoothing suppresses high-frequency noise, so derivatives are cleaner and edges more continuous; tiny textures are attenuated. Compared with Part&nbsp;1.2 (no smoothing), weak and noisy responses are reduced while main object contours remain.
+          Smoothing suppresses high-frequency noise, so derivatives are cleaner and edges more continuous; tiny textures are attenuated. Compared with Part&nbsp;1.2 (no smoothing), weak and noisy responses are reduced while main object contours remain. And this is especially true for our chosen threshold 0.20!
           </div>
           </section>
 
@@ -282,8 +282,12 @@ Dy = Dx.T                                               # vertical derivative (h
           <h5>Example Gaussian filter</h5>
           <div class="answer">
           <p>One common 3×3 Gaussian approximation is</p>
-          <p>\[ G = \tfrac{1}{16}\begin{bmatrix} 1 & 2 & 1 \ 2 & 4 & 2 \ 1 & 2 & 1 \end{bmatrix}. \]</p>
-          <p>In our experiments we used a larger separable Gaussian (e.g., <code>ksize=7</code>, <code>σ=1.5</code>) generated via <code>cv2.getGaussianKernel</code>.</p>
+          <p>\[ G = \tfrac{1}{16}\begin{bmatrix}
+                1 & 2 & 1 \\
+                2 & 4 & 2 \\
+                1 & 2 & 1
+              \end{bmatrix} \]</p>
+          <p>In our experiments we used a larger separable Gaussian (e.g., <code>ksize=25</code>, <code>σ=1.5</code>) generated via <code>cv2.getGaussianKernel</code>.</p>
           </div>
           
           
