@@ -249,6 +249,10 @@ Dy = Dx.T                                               # vertical derivative (h
           <p>Threshold rule: <code>Mag &gt; ratio × Mag.max()</code> with <code>ratio ∈ {0.1, 0.2, 0.3, 0.4}</code>.</p>
           <div class="grid-2">
           <figure>
+          <img src="Media/A_grad_mag.png" alt="Gradient magnitude image" loading="lazy">
+          <figcaption>Edges (ratio = 0.40)</figcaption>
+          </figure>
+          <figure>
           <img src="Media/Smoothing_edges_r10.png" alt="edges r=0.1 on smoothed" loading="lazy">
           <figcaption>Edges (ratio = 0.10)</figcaption>
           </figure>
@@ -259,10 +263,6 @@ Dy = Dx.T                                               # vertical derivative (h
           <figure>
           <img src="Media/Smoothing_edges_r30.png" alt="edges r=0.3 on smoothed" loading="lazy">
           <figcaption>Edges (ratio = 0.30)</figcaption>
-          </figure>
-          <figure>
-          <img src="Media/Smoothing_edges_r40.png" alt="edges r=0.4 on smoothed" loading="lazy">
-          <figcaption>Edges (ratio = 0.40)</figcaption>
           </figure>
           </div>
           
@@ -322,7 +322,7 @@ Dy = Dx.T                                               # vertical derivative (h
           <div class="answer">
           <strong>Same result, one pass.</strong>
           The images <em>dx/dy on smoothed</em> (Subpart&nbsp;A) and <em>dx/dy via DoG</em> (this section) are numerically the same up to tiny floating‑point error, because convolution is associative: \[ (I \ast G) \ast D \equiv I \ast (G \ast D) \] 
-          We can also see that we are getting the same results from these 2 methods in this section through the 2 groups of images of ∂I/∂x and ∂I/∂y. Thus DoG collapses two convolutions into one without changing the result (given identical padding and true convolution on both paths).
+          We can also see that we are getting similar results from these 2 different approaches in part 1.3 through the 2 groups of similar images of ∂I/∂x and ∂I/∂y. Thus DoG collapses two convolutions into one without changing the result (given identical padding and true convolution on both paths).
           </div>
           </section>
           </section>
