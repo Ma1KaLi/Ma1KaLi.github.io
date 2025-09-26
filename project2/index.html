@@ -359,23 +359,23 @@ Dy = Dx.T                                               # vertical derivative (h
       </style>
       <div class="grid-5">
         <figure>
-          <img src="media/taj.png" alt="taj original" loading="lazy">
+          <img src="Media/taj.png" alt="taj original" loading="lazy">
           <figcaption>Original</figcaption>
         </figure>
         <figure>
-          <img src="media/taj_alpha1.png" alt="taj alpha=1" loading="lazy">
+          <img src="Media/taj_unsharp_1.png" alt="taj alpha=1" loading="lazy">
           <figcaption>\(\alpha=1\)</figcaption>
         </figure>
         <figure>
-          <img src="media/taj_alpha2.png" alt="taj alpha=2" loading="lazy">
+          <img src="Media/taj_unsharp_2.png" alt="taj alpha=2" loading="lazy">
           <figcaption>\(\alpha=2\)</figcaption>
         </figure>
         <figure>
-          <img src="media/taj_alpha5.png" alt="taj alpha=5" loading="lazy">
+          <img src="Media/taj_unsharp_5.png" alt="taj alpha=5" loading="lazy">
           <figcaption>\(\alpha=5\)</figcaption>
         </figure>
         <figure>
-          <img src="media/taj_alpha10.png" alt="taj alpha=10" loading="lazy">
+          <img src="Media/taj_unsharp_10.png" alt="taj alpha=10" loading="lazy">
           <figcaption>\(\alpha=10\)</figcaption>
         </figure>
       </div>
@@ -383,23 +383,23 @@ Dy = Dx.T                                               # vertical derivative (h
       <h4>Sharpening examples — <code>view.png</code></h4>
       <div class="grid-5">
         <figure>
-          <img src="media/view.png" alt="view original" loading="lazy">
+          <img src="Media/view.png" alt="view original" loading="lazy">
           <figcaption>Original</figcaption>
         </figure>
         <figure>
-          <img src="media/view_alpha1.png" alt="view alpha=1" loading="lazy">
+          <img src="Media/view_unsharp_1.png" alt="view alpha=1" loading="lazy">
           <figcaption>\(\alpha=1\)</figcaption>
         </figure>
         <figure>
-          <img src="media/view_alpha2.png" alt="view alpha=2" loading="lazy">
+          <img src="Media/view_unsharp_2.png" alt="view alpha=2" loading="lazy">
           <figcaption>\(\alpha=2\)</figcaption>
         </figure>
         <figure>
-          <img src="media/view_alpha5.png" alt="view alpha=5" loading="lazy">
+          <img src="Media/view_unsharp_5.png" alt="view alpha=5" loading="lazy">
           <figcaption>\(\alpha=5\)</figcaption>
         </figure>
         <figure>
-          <img src="media/view_alpha10.png" alt="view alpha=10" loading="lazy">
+          <img src="Media/view_unsharp_10.png" alt="view alpha=10" loading="lazy">
           <figcaption>\(\alpha=10\)</figcaption>
         </figure>
       </div>
@@ -437,9 +437,9 @@ Dy = Dx.T                                               # vertical derivative (h
         <strong>Compare &amp; observations.</strong>
         <ul>
           <li><em>Sharper but not the original:</em> Unsharp masking makes edges crisper and contrast stronger than the blurred input, but fine textures that were removed by blur cannot be fully restored (high frequencies already lost).</li>
-          <li><em>Possible halos:</em> Strong edges may show bright/dark rims; lowering <code>\alpha</code> or increasing <code>\sigma</code> alleviates this.</li>
-          <li><em>Noise amplification:</em> Any residual noise or JPEG artifacts in the blurred image will be amplified by unsharp; use a slightly larger <code>\sigma</code> or a smaller <code>\alpha</code>.</li>
-          <li><em>Parameter matching:</em> If the blur used <code>\sigma_b</code>, choosing the unsharp Gaussian near <code>\sigma \approx \sigma_b</code> often yields a more natural look.</li>
+          <li><em>Possible halos:</em> Strong edges may show bright/dark rims; lowering <code>\alpha\</code> or increasing <code>\sigma\</code> alleviates this.</li>
+          <li><em>Noise amplification:</em> Any residual noise or JPEG artifacts in the blurred image will be amplified by unsharp; use a slightly larger <code>\sigma\</code> or a smaller <code>\alpha\</code>.</li>
+          <li><em>Parameter matching:</em> If the blur used <code>\sigma_b\</code>, choosing the unsharp Gaussian near <code>\sigma\ \approx\ \sigma_b\</code> often yields a more natural look.</li>
         </ul>
       </div>
     </section>
