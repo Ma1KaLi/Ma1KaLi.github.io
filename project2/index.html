@@ -438,11 +438,12 @@ Dy = Dx.T                                               # vertical derivative (h
     
       <div class="answer">
         <strong>Compare &amp; observations.</strong>
+            <p>It may hard to see from the examples above, but if we take closer look, we can still observe that the original image and the 
+               resharpened image are actually not the same! And actually that makes sense right!</p>
         <ul>
           <li><em>Sharper but not the original:</em> Unsharp masking makes edges crisper and contrast stronger than the blurred input, but fine textures that were removed by blur cannot be fully restored (high frequencies already lost).</li>
-          <li><em>Possible halos:</em> Strong edges may show bright/dark rims; lowering \( \alpha \) or increasing \( \sigma \) alleviates this.</li>
-          <li><em>Noise amplification:</em> Any residual noise or JPEG artifacts in the blurred image will be amplified by unsharp; use a slightly larger \( \sigma \) or a smaller \( \alpha \).</li>
-          <li><em>Parameter matching:</em> If the blur used \( \sigma_b \), choosing the unsharp Gaussian near \( \sigma \approx \sigma_b \) often yields a more natural look.</li>
+          <li><em>Possible halos:</em> Strong edges may show bright/dark rims.</li>
+          <li><em>Noise amplification:</em> Any residual noise in the blurred image will be amplified by unsharp.</li>
         </ul>
       </div>
     </section>
