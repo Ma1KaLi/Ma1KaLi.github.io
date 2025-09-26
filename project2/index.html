@@ -321,7 +321,7 @@ Dy = Dx.T                                               # vertical derivative (h
           
           <div class="answer">
           <strong>Same result, one pass.</strong>
-          The images <em>dx/dy on smoothed</em> (Subpart&nbsp;A) and <em>dx/dy via DoG</em> (this section) are numerically the same up to tiny floating‑point error, because convolution is associative: \[ (I \ast G) \ast D \equiv I \ast (G \ast D) \]. 
+          The images <em>dx/dy on smoothed</em> (Subpart&nbsp;A) and <em>dx/dy via DoG</em> (this section) are numerically the same up to tiny floating‑point error, because convolution is associative: \[ (I \ast G) \ast D \equiv I \ast (G \ast D) \] 
           We can also see that we are getting the same results from these 2 methods through the 2 groups of images of ∂I/∂x and ∂I/∂y. Thus DoG collapses two convolutions into one without changing the result (given identical padding and true convolution on both paths).
           </div>
           </section>
