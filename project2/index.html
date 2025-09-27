@@ -447,6 +447,52 @@ Dy = Dx.T                                               # vertical derivative (h
         </ul>
       </div>
     </section>
+
+    <!-- Part 2.2 — Hybrid Images -->
+      <section id="part2-2">
+        <h3>Part 2.2 — Hybrid Images</h3>
+      
+        <!-- Subpart 1: code verification & cutoff-frequency tuning -->
+        <section id="part2-2a">
+          <h4>Code verification &amp; cutoff-frequency tuning</h4>
+          <p>
+            In our implementation, the effective cutoff-frequencies are controlled by the Gaussian
+            standard deviations \( \sigma_\ell \) (for the low-pass) and \( \sigma_h \) (for the high-pass).
+            We first verify the pipeline and tune these hyperparameters using the assignment’s example
+            images <code>Derek.png</code> and <code>Nutmeg.png</code>.
+          </p>
+      
+          <div class="grid-2">
+            <figure>
+              <img src="Media/hybrid_16.0_4.0_result.png" alt="hybrid result σ_l=8, σ_h=4" loading="lazy">
+              <figcaption>Hybrid result: \( \sigma_\ell = 8,\ \sigma_h = 4 \)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/hybrid_16.0_8.0_result.png" alt="hybrid result σ_l=16, σ_h=4" loading="lazy">
+              <figcaption>Hybrid result: \( \sigma_\ell = 16,\ \sigma_h = 4 \)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/hybrid_8.0_4.0_result.png" alt="hybrid result σ_l=8, σ_h=8" loading="lazy">
+              <figcaption>Hybrid result: \( \sigma_\ell = 8,\ \sigma_h = 8 \)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/hybrid_8.0_8.0_result.png" alt="hybrid result σ_l=16, σ_h=8" loading="lazy">
+              <figcaption>Hybrid result: \( \sigma_\ell = 16,\ \sigma_h = 8 \)</figcaption>
+            </figure>
+          </div>
+      
+          <div class="note">
+            <strong>Observations.</strong>
+            Increasing \( \sigma_\ell \) lowers the low-pass cutoff (more blur), so the hybrid’s
+            far-view appearance is dominated by coarse structure; decreasing \( \sigma_\ell \) keeps more
+            mid-frequency detail and can compete with the high-pass content. Increasing \( \sigma_h \)
+            removes more of the base shading from the high-pass image and emphasizes fine edges; too small
+            \( \sigma_h \) keeps low-frequency illumination, making the near-view look muddy. Proper
+            alignment of the two sources remains critical for a convincing hybrid.
+          </div>
+        </section>
+      </section>
+
     </section>
 
     <!-- Lessons Learned -->
