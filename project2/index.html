@@ -578,6 +578,66 @@ Dy = Dx.T                                               # vertical derivative (h
           </div>
         </section>
 
+    <!-- Subpart 3: Hybrid Images Gallery -->
+      <section id="part2-2c">
+        <h4>Hybrid Images Gallery</h4>
+        <p>Each row shows: input A (left), the hybrid image (center), and input B (right). The caption under the hybrid indicates the \(\sigma_\ell\) (low-pass) and \(\sigma_h\) (high-pass) used.</p>
+      
+        <style>
+          .grid-3 { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
+          @media (max-width: 900px){ .grid-3 { grid-template-columns:1fr; } }
+        </style>
+      
+        <!-- Row 1: Nolan ⊕ Cameron -->
+        <div class="grid-3">
+          <figure>
+            <img src="Media/Hybrid_B1.jpg" alt="Christopher Nolan original image" loading="lazy">
+            <figcaption>Christopher Nolan — Input (A)</figcaption>
+          </figure>
+          <figure>
+            <img src="Media/hybrid_B_10.0_5.0_result.png" alt="Hybrid (Nolan ⊕ Cameron)" loading="lazy">
+            <figcaption>Hybrid (A low-pass ⊕ B high-pass), \(\sigma_\ell = 10.0,\ \sigma_h = 5.0\)</figcaption>
+          </figure>
+          <figure>
+            <img src="Media/Hybrid_B2.jpg" alt="James Cameron original image" loading="lazy">
+            <figcaption>James Cameron — Input (B)</figcaption>
+          </figure>
+        </div>
+      
+        <!-- Row 2: Joaquin Phoenix ⊕ Napoleon Bonaparte -->
+        <div class="grid-3">
+          <figure>
+            <img src="media/gallery_phoenix_input.png" alt="Joaquin Phoenix original image" loading="lazy">
+            <figcaption>Napoleon Bonaparte — Input (A)</figcaption>
+          </figure>
+          <figure>
+            <img src="media/gallery_hybrid_pn.png" alt="Hybrid (Phoenix ⊕ Napoleon)" loading="lazy">
+            <figcaption>Hybrid (A low-pass ⊕ B high-pass), \(\sigma_\ell = 8.0,\ \sigma_h = 5.0\)</figcaption>
+          </figure>
+          <figure>
+            <img src="media/gallery_napoleon_input.png" alt="Napoleon Bonaparte original image" loading="lazy">
+            <figcaption>Joaquin Phoenix — Input (B)</figcaption>
+          </figure>
+        </div>
+      
+        <!-- Row 3: Cillian Murphy ⊕ J. Robert Oppenheimer -->
+        <div class="grid-3">
+          <figure>
+            <img src="media/gallery_murphy_input.png" alt="Cillian Murphy original image" loading="lazy">
+            <figcaption>Cillian Murphy — Input (A)</figcaption>
+          </figure>
+          <figure>
+            <img src="media/gallery_hybrid_mo.png" alt="Hybrid (Murphy ⊕ Oppenheimer)" loading="lazy">
+            <figcaption>Hybrid (A low-pass ⊕ B high-pass), \(\sigma_\ell = 4.0,\ \sigma_h = 2.5\)</figcaption>
+          </figure>
+          <figure>
+            <img src="media/gallery_oppenheimer_input.png" alt="J. Robert Oppenheimer original image" loading="lazy">
+            <figcaption>J. Robert Oppenheimer — Input (B)</figcaption>
+          </figure>
+        </div>
+      </section>
+
+
     </section>
 
     <!-- Lessons Learned -->
