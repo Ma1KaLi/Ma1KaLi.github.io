@@ -493,6 +493,85 @@ Dy = Dx.T                                               # vertical derivative (h
         </section>
       </section>
 
+      <!-- Subpart 2: Frequency analysis -->
+        <section id="part2-2b">
+          <h4>Frequency analysis of the hybrid pipeline</h4>
+        
+          <!-- local helpers for 3/5-column rows (keeps your page style) -->
+          <style>
+            .grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+            .grid-5 { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; }
+            @media (max-width: 1100px){ .grid-5 { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+            @media (max-width: 720px){ .grid-3, .grid-5 { grid-template-columns:1fr; } }
+          </style>
+        
+          <div class="answer">
+            <p><strong>Process (frequency view).</strong></p>
+            <p>
+              We build a hybrid image by mixing the low frequencies of image \(A\) with the high
+              frequencies of image \(B\).
+              A Gaussian low-pass keeps energy near DC and suppresses high spatial frequencies:
+              \(L = G_{\sigma_\ell} \ast A\).
+              A high-pass is formed as a residual that removes the low-pass of \(B\):
+              \(H = B - G_{\sigma_h}\ast B\).
+              Finally we blend:
+              \[
+                I_{\text{hyb}} = L + \lambda\,H
+                \quad\Longleftrightarrow\quad
+                \mathcal{F}\{I_{\text{hyb}}\}
+                = \underbrace{\mathcal{F}\{G_{\sigma_\ell}\}}_{\text{LP mask}}\!\cdot \mathcal{F}\{A\}
+                  \;+\; \lambda\Big(\mathcal{F}\{B\} - \underbrace{\mathcal{F}\{G_{\sigma_h}\}}_{\text{LP mask}}\!\cdot \mathcal{F}\{B\}\Big).
+              \]
+              Thus the spectrum of the hybrid contains (i) a bright concentration around the origin
+              from the low-pass of \(A\), and (ii) high-frequency rings/edges from the residual of \(B\).
+              The hyperparameters \( \sigma_\ell \) and \( \sigma_h \) set the effective cutoffs
+              (larger \( \sigma \Rightarrow \) lower cutoff), while \( \lambda \) balances the contrast.
+            </p>
+          </div>
+        
+          <!-- three images in one row: Nolan (left), Hybrid (middle), Cameron (right) -->
+          <h5>Inputs and hybrid (spatial domain)</h5>
+          <div class="grid-3">
+            <figure>
+              <img src="Media/Hybrid_B1.png" alt="Christopher Nolan input image" loading="lazy">
+              <figcaption>Christopher Nolan — Input Image (A)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/hybrid_B_8.0_4.0_result.png" alt="Hybrid image (Nolan ⊕ Cameron)" loading="lazy">
+              <figcaption>Hybrid Image (A low-pass ⊕ B high-pass)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/Hybrid_B1.png" alt="James Cameron input image" loading="lazy">
+              <figcaption>James Cameron — Input Image (B)</figcaption>
+            </figure>
+          </div>
+        
+          <!-- five FFT log-magnitude images in one row -->
+          <h5>Log magnitude of Fourier transforms</h5>
+          <div class="grid-5">
+            <figure>
+              <img src="Media/hybrid_B_8.0_4.0_fft_srcA.png" alt="Log |FFT| of Nolan input" loading="lazy">
+              <figcaption>Log |FFT| — Nolan (input A)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/hybrid_B_8.0_4.0_fft_srcB.png" alt="Log |FFT| of Cameron input" loading="lazy">
+              <figcaption>Log |FFT| — Cameron (input B)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/hybrid_B_8.0_4.0_fft_lowpass.png" alt="Log |FFT| of Low-Pass component" loading="lazy">
+              <figcaption>Log |FFT| — Low-Pass Component \(L\)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/hybrid_B_8.0_4.0_fft_highpass.png" alt="Log |FFT| of High-Pass component" loading="lazy">
+              <figcaption>Log |FFT| — High-Pass Component \(H\)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/hybrid_B_8.0_4.0_fft_hybrid.png" alt="Log |FFT| of Hybrid image" loading="lazy">
+              <figcaption>Log |FFT| — Hybrid Image \(I_{\text{hyb}}\)</figcaption>
+            </figure>
+          </div>
+        </section>
+
     </section>
 
     <!-- Lessons Learned -->
