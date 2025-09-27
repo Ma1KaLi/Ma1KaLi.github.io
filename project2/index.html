@@ -533,7 +533,7 @@ Dy = Dx.T                                               # vertical derivative (h
           <h5>Inputs and hybrid (spatial domain)</h5>
           <div class="grid-3">
             <figure>
-              <img src="Media/Hybrid_B1.png" alt="Christopher Nolan input image" loading="lazy">
+              <img src="Media/Hybrid_B1.jpg" alt="Christopher Nolan input image" loading="lazy">
               <figcaption>Christopher Nolan — Input Image (A)</figcaption>
             </figure>
             <figure>
@@ -541,7 +541,7 @@ Dy = Dx.T                                               # vertical derivative (h
               <figcaption>Hybrid Image (A low-pass ⊕ B high-pass)</figcaption>
             </figure>
             <figure>
-              <img src="Media/Hybrid_B1.png" alt="James Cameron input image" loading="lazy">
+              <img src="Media/Hybrid_B1.jpg" alt="James Cameron input image" loading="lazy">
               <figcaption>James Cameron — Input Image (B)</figcaption>
             </figure>
           </div>
@@ -569,6 +569,12 @@ Dy = Dx.T                                               # vertical derivative (h
               <img src="Media/hybrid_B_8.0_4.0_fft_hybrid.png" alt="Log |FFT| of Hybrid image" loading="lazy">
               <figcaption>Log |FFT| — Hybrid Image \(I_{\text{hyb}}\)</figcaption>
             </figure>
+          </div>
+          <div class="note">
+            <strong>Observation &amp; illustration.</strong>
+            The low-pass output concentrates energy near the DC point (center of the spectrum), which reflects its role of preserving broad, slowly varying structure while damping rapid changes. In contrast, the high-pass residual spreads energy away from the center into outer regions, consistent with emphasizing edges and fine detail by removing smooth trends.  
+            <br><br>
+            When we examine the hybrid’s Fourier magnitude, we see both behaviors superimposed: the central lobe inherited from the low-pass component, plus elevated outer bands contributed by the high-pass component. This matches the construction \(I_{\text{hyb}} = L + \lambda H\): <em>L</em> conveys the “overall shape,” <em>H</em> carries the “detail,” and their sum naturally yields a spectrum combining coarse content with sharp features.
           </div>
         </section>
 
