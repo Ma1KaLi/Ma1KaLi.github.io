@@ -456,27 +456,27 @@ Dy = Dx.T                                               # vertical derivative (h
         <section id="part2-2a">
           <h4>Code verification &amp; cutoff-frequency tuning</h4>
           <p>
-            In our implementation, the effective cutoff-frequencies are controlled by the Gaussian
+            In my implementation, the effective cutoff-frequencies are controlled by the Gaussian
             standard deviations \( \sigma_\ell \) (for the low-pass) and \( \sigma_h \) (for the high-pass).
-            We first verify the pipeline and tune these hyperparameters using the assignment’s example
+            We first verify the pipeline and tune these hyperparameters using the example
             images <code>Derek.png</code> and <code>Nutmeg.png</code>.
           </p>
       
           <div class="grid-2">
             <figure>
-              <img src="Media/hybrid_16.0_4.0_result.png" alt="hybrid result σ_l=8, σ_h=4" loading="lazy">
+              <img src="Media/hybrid_8.0_4.0_result.png" alt="hybrid result σ_l=8, σ_h=4" loading="lazy">
               <figcaption>Hybrid result: \( \sigma_\ell = 8,\ \sigma_h = 4 \)</figcaption>
             </figure>
             <figure>
-              <img src="Media/hybrid_16.0_8.0_result.png" alt="hybrid result σ_l=16, σ_h=4" loading="lazy">
+              <img src="Media/hybrid_16.0_4.0_result.png" alt="hybrid result σ_l=16, σ_h=4" loading="lazy">
               <figcaption>Hybrid result: \( \sigma_\ell = 16,\ \sigma_h = 4 \)</figcaption>
             </figure>
             <figure>
-              <img src="Media/hybrid_8.0_4.0_result.png" alt="hybrid result σ_l=8, σ_h=8" loading="lazy">
+              <img src="Media/hybrid_8.0_8.0_result.png" alt="hybrid result σ_l=8, σ_h=8" loading="lazy">
               <figcaption>Hybrid result: \( \sigma_\ell = 8,\ \sigma_h = 8 \)</figcaption>
             </figure>
             <figure>
-              <img src="Media/hybrid_8.0_8.0_result.png" alt="hybrid result σ_l=16, σ_h=8" loading="lazy">
+              <img src="Media/hybrid_16.0_8.0_result.png" alt="hybrid result σ_l=16, σ_h=8" loading="lazy">
               <figcaption>Hybrid result: \( \sigma_\ell = 16,\ \sigma_h = 8 \)</figcaption>
             </figure>
           </div>
