@@ -877,6 +877,121 @@ Dy = Dx.T                                               # vertical derivative (h
               This is our apple–orange multiresolution blending result (“Oraple”). Most of the process details and the masked input visualizations were presented in Part&nbsp;2.3. Below, I will apply the same blending pipeline to two additional image pairs of my own choice.
             </p>
           </section>
+
+          <!-- Subpart: Galaxy on Pizza -->
+          <section id="part2-4-galaxy-pizza">
+            <h3>Galaxy on Pizza</h3>
+            <p>
+              Same multiresolution pipeline as Part&nbsp;2.3 (Gaussian/Laplacian stacks with level-wise blending),
+              but using an <em>irregular, perspective-aware ellipse mask</em> that hugs the pizza surface. The mask is
+              feathered so that <code>M=1</code> selects the galaxy and <code>1−M</code> preserves the pizza, yielding a smooth transition along the crust.
+            </p>
+          
+            <!-- Laplacian stack — Galaxy × Mask (6-up) -->
+            <h4>Laplacian stack — Galaxy × Mask</h4>
+            <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;">
+              <figure>
+                <img src="Media/level_00_A_part.png.png" alt="Galaxy masked L0" loading="lazy">
+                <figcaption>Level 0</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_01_A_part.png.png" alt="Galaxy masked L1" loading="lazy">
+                <figcaption>Level 1</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_02_A_part.png.png" alt="Galaxy masked L2" loading="lazy">
+                <figcaption>Level 2</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_03_A_part.png.png" alt="Galaxy masked L3" loading="lazy">
+                <figcaption>Level 3</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_04_A_part.png.png" alt="Galaxy masked L4" loading="lazy">
+                <figcaption>Level 4</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_05_A_part.png.png" alt="Galaxy base (masked)" loading="lazy">
+                <figcaption>Base</figcaption>
+              </figure>
+            </div>
+          
+            <!-- Laplacian stack — Pizza × (1 − Mask) (6-up) -->
+            <h4>Laplacian stack — Pizza × (1 − Mask)</h4>
+            <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;">
+              <figure>
+                <img src="Media/level_00_B_part.png" alt="Pizza masked L0" loading="lazy">
+                <figcaption>Level 0</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_01_B_part.png" alt="Pizza masked L1" loading="lazy">
+                <figcaption>Level 1</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_02_B_part.png.png" alt="Pizza masked L2" loading="lazy">
+                <figcaption>Level 2</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_03_B_part.png.png" alt="Pizza masked L3" loading="lazy">
+                <figcaption>Level 3</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_04_B_part.png.png" alt="Pizza masked L4" loading="lazy">
+                <figcaption>Level 4</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_05_B_part.png.png" alt="Pizza base (masked)" loading="lazy">
+                <figcaption>Base</figcaption>
+              </figure>
+            </div>
+          
+            <!-- Combined Laplacian (6-up) -->
+            <h4>Laplacian stack — Combined (per level)</h4>
+            <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;">
+              <figure>
+                <img src="Media/level_00_Lout.png" alt="Combined L0" loading="lazy">
+                <figcaption>Level 0</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_01_Lout.png" alt="Combined L1" loading="lazy">
+                <figcaption>Level 1</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_02_Lout.png" alt="Combined L2" loading="lazy">
+                <figcaption>Level 2</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_03_Lout.png" alt="Combined L3" loading="lazy">
+                <figcaption>Level 3</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_04_Lout.png" alt="Combined L4" loading="lazy">
+                <figcaption>Level 4</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/level_05_Lout.png" alt="Combined base" loading="lazy">
+                <figcaption>Base</figcaption>
+              </figure>
+            </div>
+          
+            <!-- Inputs & final result (3-up, aligned with Oraple) -->
+            <div class="grid-3" style="margin-top:12px;">
+              <figure>
+                <img src="Media/galaxy.png" alt="Galaxy input" loading="lazy">
+                <figcaption>Galaxy — Original</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/galaxy_on_pizza.png" alt="Galaxy on Pizza result" loading="lazy">
+                <figcaption>Galaxy on Pizza — Multiresolution Blend</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/pizza.jpg" alt="Pizza input" loading="lazy">
+                <figcaption>Pizza — Original</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          
         </section>
 
       </section>
