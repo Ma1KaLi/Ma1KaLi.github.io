@@ -844,6 +844,41 @@ Dy = Dx.T                                               # vertical derivative (h
             </ul>
           </div>
         </section>
+
+        <!-- Part 2.4 — Multiresolution Blending -->
+        <section id="part2-4">
+          <h2>Part 2.4 — Multiresolution Blending</h2>
+        
+          <!-- local 3-col grid (keeps global CSS untouched) -->
+          <style>
+            .grid-3 { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; }
+            @media (max-width: 900px){ .grid-3 { grid-template-columns:1fr; } }
+          </style>
+        
+          <!-- Subpart: Oraple -->
+          <section id="part2-4-oraple">
+            <h3>Oraple</h3>
+            <div class="grid-3">
+              <figure>
+                <img src="Media/apple.jpeg" alt="Apple original" loading="lazy">
+                <figcaption>Apple — Original</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/oraple.png" alt="Oraple blended result" loading="lazy">
+                <figcaption>Oraple — Multiresolution Blend</figcaption>
+              </figure>
+              <figure>
+                <img src="Media/orange.jpeg" alt="Orange original" loading="lazy">
+                <figcaption>Orange — Original</figcaption>
+              </figure>
+            </div>
+        
+            <p class="note" style="margin-top:10px;">
+              This is our apple–orange multiresolution blending result (“Oraple”). Most of the process details and the masked input visualizations were presented in Part&nbsp;2.3. Below, we will apply the same blending pipeline to two additional image pairs of our choice.
+            </p>
+          </section>
+        </section>
+
       </section>
 
 
