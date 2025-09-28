@@ -641,6 +641,203 @@ Dy = Dx.T                                               # vertical derivative (h
         </p>
       </section>
 
+      <!-- Part 2.3 — Gaussian and Laplacian Stacks -->
+      <section id="part2-3">
+        <h2>Part 2.3 — Gaussian and Laplacian Stacks</h2>
+      
+        <div class="answer">
+          <p><strong>What we do.</strong> We decompose each image into a <em>Gaussian stack</em> (progressively smoother low-pass versions) and a <em>Laplacian stack</em> (band-pass details formed by adjacent Gaussian differences). Then, using a smooth mask stack, we blend the two images <em>per level</em> and finally reconstruct by summing all Laplacian bands plus the lowest-frequency base. This multi-resolution scheme gives a wide, gentle transition for low frequencies (color/illumination) and a narrow, crisp transition for high frequencies (edges/texture), yielding seamless composites.</p>
+        </div>
+      
+        <!-- Subpart A: Stacks gallery -->
+        <section id="part2-3a">
+          <h3>Gaussian and Laplacian Stacks of Apple and Orange</h3>
+          <p>Six levels (0–5). Columns: (1) Apple — Gaussian, (2) Apple — Laplacian, (3) Orange — Gaussian, (4) Orange — Laplacian.</p>
+      
+          <!-- 6×4 art gallery: place all 24 figures in a 4-column grid; captions标注 level -->
+          <div class="grid-4">
+            <!-- Level 0 -->
+            <figure>
+              <img src="Media/apple_gauss_0.png" alt="Apple Gaussian level 0" loading="lazy">
+              <figcaption>Apple — Gaussian (level 0)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/apple_lap_0.png" alt="Apple Laplacian level 0" loading="lazy">
+              <figcaption>Apple — Laplacian (level 0)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_gauss_0.png" alt="Orange Gaussian level 0" loading="lazy">
+              <figcaption>Orange — Gaussian (level 0)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_lap_0.png" alt="Orange Laplacian level 0" loading="lazy">
+              <figcaption>Orange — Laplacian (level 0)</figcaption>
+            </figure>
+      
+            <!-- Level 1 -->
+            <figure>
+              <img src="Media/apple_gauss_1.png" alt="Apple Gaussian level 1" loading="lazy">
+              <figcaption>Apple — Gaussian (level 1)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/apple_lap_1.png" alt="Apple Laplacian level 1" loading="lazy">
+              <figcaption>Apple — Laplacian (level 1)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_gauss_1.png" alt="Orange Gaussian level 1" loading="lazy">
+              <figcaption>Orange — Gaussian (level 1)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_lap_1.png" alt="Orange Laplacian level 1" loading="lazy">
+              <figcaption>Orange — Laplacian (level 1)</figcaption>
+            </figure>
+      
+            <!-- Level 2 -->
+            <figure>
+              <img src="Media/apple_gauss_2.png" alt="Apple Gaussian level 2" loading="lazy">
+              <figcaption>Apple — Gaussian (level 2)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/apple_lap_2.png" alt="Apple Laplacian level 2" loading="lazy">
+              <figcaption>Apple — Laplacian (level 2)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_gauss_2.png" alt="Orange Gaussian level 2" loading="lazy">
+              <figcaption>Orange — Gaussian (level 2)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_lap_2.png" alt="Orange Laplacian level 2" loading="lazy">
+              <figcaption>Orange — Laplacian (level 2)</figcaption>
+            </figure>
+      
+            <!-- Level 3 -->
+            <figure>
+              <img src="Media/apple_gauss_3.png" alt="Apple Gaussian level 3" loading="lazy">
+              <figcaption>Apple — Gaussian (level 3)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/apple_lap_3.png" alt="Apple Laplacian level 3" loading="lazy">
+              <figcaption>Apple — Laplacian (level 3)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_gauss_3.png" alt="Orange Gaussian level 3" loading="lazy">
+              <figcaption>Orange — Gaussian (level 3)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_lap_3.png" alt="Orange Laplacian level 3" loading="lazy">
+              <figcaption>Orange — Laplacian (level 3)</figcaption>
+            </figure>
+      
+            <!-- Level 4 -->
+            <figure>
+              <img src="Media/apple_gauss_4.png" alt="Apple Gaussian level 4" loading="lazy">
+              <figcaption>Apple — Gaussian (level 4)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/apple_lap_4.png" alt="Apple Laplacian level 4" loading="lazy">
+              <figcaption>Apple — Laplacian (level 4)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_gauss_4.png" alt="Orange Gaussian level 4" loading="lazy">
+              <figcaption>Orange — Gaussian (level 4)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_lap_4.png" alt="Orange Laplacian level 4" loading="lazy">
+              <figcaption>Orange — Laplacian (level 4)</figcaption>
+            </figure>
+      
+            <!-- Level 5 -->
+            <figure>
+              <img src="Media/apple_gauss_5.png" alt="Apple Gaussian level 5" loading="lazy">
+              <figcaption>Apple — Gaussian (level 5)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/apple_lap_5.png" alt="Apple Laplacian level 5" loading="lazy">
+              <figcaption>Apple — Laplacian (level 5)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_gauss_5.png" alt="Orange Gaussian level 5" loading="lazy">
+              <figcaption>Orange — Gaussian (level 5)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/orange_lap_5.png" alt="Orange Laplacian level 5" loading="lazy">
+              <figcaption>Orange — Laplacian (level 5)</figcaption>
+            </figure>
+          </div>
+        </section>
+      
+        <!-- Subpart B: Reproducing Szeliski Fig. 3.42 (Ed 2, p.167) -->
+        <section id="part2-3b">
+          <h3>Recreation of Figure 3.42 in <a href="https://www.dropbox.com/scl/fi/p33rod69w6tf61etn4ijr/SzeliskiBookDraft_20210828.pdf?rlkey=n4w0939o5s5jq09urfb1rl57i&e=1&dl=0" target="_blank" rel="noopener">Szeliski (Ed&nbsp;2)</a>, p.&nbsp;167</h3>
+          <p>The first three rows show high-, medium-, and low-frequency parts selected from levels 0, 2, and 4 of the Laplacian pyramid/stack. The left and middle columns display the contributions from the original apple and orange images (weighted by the smooth interpolation functions). The right column shows the averaged contributions.</p>
+      
+          <!-- 4×3 area: labels (a)–(l). Use grid-3; 12 figures wrap into 4 rows -->
+          <div class="grid-3">
+            <!-- Row 1: (a)(b)(c) -->
+            <figure>
+              <img src="Media/level_00_apple_part.png" alt="(a)" loading="lazy">
+              <figcaption>(a)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/level_00_orange_part.png" alt="(b)" loading="lazy">
+              <figcaption>(b)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/level_00_blended.png" alt="(c)" loading="lazy">
+              <figcaption>(c)</figcaption>
+            </figure>
+      
+            <!-- Row 2: (d)(e)(f) -->
+            <figure>
+              <img src="Media/level_02_apple_part.png" alt="(d)" loading="lazy">
+              <figcaption>(d)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/level_02_orange_part.png" alt="(e)" loading="lazy">
+              <figcaption>(e)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/level_02_blended.png" alt="(f)" loading="lazy">
+              <figcaption>(f)</figcaption>
+            </figure>
+      
+            <!-- Row 3: (g)(h)(i) -->
+            <figure>
+              <img src="Media/level_04_apple_part.png" alt="(g)" loading="lazy">
+              <figcaption>(g)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/level_04_orange_part.png" alt="(h)" loading="lazy">
+              <figcaption>(h)</figcaption>
+            </figure>
+            <figure>
+              <img src="Media/level_04_blended.png" alt="(i)" loading="lazy">
+              <figcaption>(i)</figcaption>
+            </figure>
+      
+            <!-- Row 4: (j)(k)(l) -->
+            <figure>
+              <img src="media/part23/fig342_j.png" alt="(j)" loading="lazy">
+              <figcaption>(j)</figcaption>
+            </figure>
+            <figure>
+              <img src="media/part23/fig342_k.png" alt="(k)" loading="lazy">
+              <figcaption>(k)</figcaption>
+            </figure>
+            <figure>
+              <img src="media/part23/fig342_l.png" alt="(l)" loading="lazy">
+              <figcaption>(l)</figcaption>
+            </figure>
+          </div>
+      
+          <div class="note">
+            <strong>Caption (adapted from the book):</strong>
+            The first three rows visualize the high, medium, and low-frequency bands (from levels 0, 2, and 4). Left and middle columns show the apple and orange contributions after weighting by smooth interpolation functions; the right column shows their averaged result.
+          </div>
+        </section>
+      </section>
+
+
 
     </section>
 
