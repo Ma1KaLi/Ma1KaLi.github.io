@@ -1121,7 +1121,7 @@ Dy = Dx.T                                               # vertical derivative (h
           <li><strong>Edges &amp; gradients:</strong> \(D_x,D_y\) give directional change; combining them as \(|\nabla I|\) plus a simple threshold yields clean edge maps.</li>
           <li><strong>DoG intuition:</strong> Smoothing then differentiating ≡ differentiating a Gaussian—same result, fewer passes.</li>
           <li><strong>Sharpen &amp; frequency thinking:</strong> Unsharp is just “boost the high-frequency residual”; logs of FFTs made low-/high-pass roles obvious.</li>
-          <li><strong>Pyramids &amp; masks:</strong> Multiresolution blending hides seams by matching structure at each scale; feather width and alignment matter as much as code.</li>
+          <li><strong>Stacks &amp; masks:</strong> Multiresolution blending hides seams by matching structure at each scale; feather width and alignment matter as much as code.</li>
         </ul>
       </section>
 
