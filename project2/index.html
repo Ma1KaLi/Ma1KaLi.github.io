@@ -817,22 +817,34 @@ Dy = Dx.T                                               # vertical derivative (h
       
             <!-- Row 4: (j)(k)(l) -->
             <figure>
-              <img src="media/part23/fig342_j.png" alt="(j)" loading="lazy">
+              <img src="Media/final_row_left_apple_masked.png" alt="(j)" loading="lazy">
               <figcaption>(j)</figcaption>
             </figure>
             <figure>
-              <img src="media/part23/fig342_k.png" alt="(k)" loading="lazy">
+              <img src="Media/final_row_right_apple_masked.png" alt="(k)" loading="lazy">
               <figcaption>(k)</figcaption>
             </figure>
             <figure>
-              <img src="media/part23/fig342_l.png" alt="(l)" loading="lazy">
+              <img src="Media/final_row_mid_blended.png" alt="(l)" loading="lazy">
               <figcaption>(l)</figcaption>
             </figure>
           </div>
-      
+
           <div class="note">
-            <strong>Caption (adapted from the book):</strong>
-            The first three rows visualize the high, medium, and low-frequency bands (from levels 0, 2, and 4). Left and middle columns show the apple and orange contributions after weighting by smooth interpolation functions; the right column shows their averaged result.
+            <div class="note">
+              <strong>Recreating Figure 3.42:</strong>
+              The first three rows visualize the high, medium, and low-frequency bands (from levels 0, 2, and 4). Left and middle columns show the apple and orange contributions after weighting by smooth interpolation functions; the right column shows their averaged result. 
+            </div>
+            <strong>Why our recreation may differ from the original figure.</strong>
+            <ul class="tight">
+              <li><em>Stacks vs. pyramids:</em> Our implementation uses <u>stacks</u> (no downsampling), while the book figure is based on <u>pyramids</u> (with downsampling). Downsampling separates frequency bands more strongly, so corresponding levels can look more distinct.</li>
+              <li><em>Scale spacing:</em> The book highlights levels 0, 2, and 4 (larger jumps). If our σ increments are smaller, levels (e.g., 2 vs. 4) can appear more similar.</li>
+              <li><em>Kernel and padding choices:</em> Differences in Gaussian size, σ, and boundary handling (reflect/zero/wrap) change energy distribution and edge appearance per level.</li>
+              <li><em>Visualization scaling:</em> For clarity we apply per-level contrast stretching (or percentile normalization) to Laplacian views; the book may use different display ranges, affecting perceived differences.</li>
+              <li><em>Mask construction:</em> The mask shape and its Gaussian stack smoothing set the transition width in each band; if these differ from the book’s “smooth interpolation functions,” the left/right contributions won’t look identical.</li>
+              <li><em>Alignment and preprocessing:</em> Registration, color/exposure, and denoising choices influence high/mid/low bands and accumulate through reconstruction.</li>
+              <li><em>Numerical details:</em> Floating-point precision, library implementations (convolution/interpolation), and per-channel handling (RGB vs. grayscale) can introduce small discrepancies that become visible across levels.</li>
+            </ul>
           </div>
         </section>
       </section>
