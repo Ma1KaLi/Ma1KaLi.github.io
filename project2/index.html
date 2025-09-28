@@ -1111,20 +1111,19 @@ Dy = Dx.T                                               # vertical derivative (h
     </section>
 
     <!-- Lessons Learned -->
-    <section id="lessons">
-      <h2>Lessons Learned</h2>
-      <div class="answer">
+      <section id="lessons">
+        <h2>Lessons Learned</h2>
+        <p>
+          I came in thinking these effects required “advanced Photoshop,” but this project showed how simple building blocks—convolution, finite differences, Gaussians, and image pyramids—compose into powerful tools.
+        </p>
         <ul class="tight">
-          <li><strong>Convolution from scratch:</strong> 4-loop（教学用）≈ 2-loop（窗口向量化）≈ SciPy <code>convolve2d</code>（前提是 padding 相同）；性能：SciPy ≫ 2-loop ≫ 4-loop。</li>
-          <li><strong>Finite differences:</strong> <code>D_x</code>/<code>D_y</code> 产生有符号导数；应零居中可视化。梯度幅值 \(|\nabla I|=\sqrt{G_x^2+G_y^2}\) 旋转不变，适合做边缘强度；二值化阈值可用 0.1–0.4 × max 做质性选择。</li>
-          <li><strong>Smoothing → derivative:</strong> 高斯预滤能抑噪，使边缘更干净连续，但会弱化细碎纹理。</li>
-          <li><strong>DoG 等价：</strong> 由卷积结合律可知 \((I \ast G) \ast D \equiv I \ast (G \ast D)\)；在相同边界与“卷积”定义下，一次 DoG 与两次卷积数值等价。</li>
-          <li><strong>Unsharp mask:</strong> \(I_{\text{sharp}}=(1+\alpha)I-\alpha(G_\sigma\ast I)=K\ast I\)。能增强清晰度，但无法完全恢复已被模糊滤掉的高频；\(\alpha\) 过大或 \(\sigma\) 过小可能产生 halo 并放大噪声。</li>
-          <li><strong>实践提示：</strong> 全流程保持相同边界条件；分析时保存浮点原值，展示时再做归一化 PNG。</li>
+          <li><strong>Convolution basics:</strong> Implementing 4-loop/2-loop/SciPy made padding, kernel flips, and runtime tradeoffs concrete.</li>
+          <li><strong>Edges &amp; gradients:</strong> \(D_x,D_y\) give directional change; combining them as \(|\nabla I|\) plus a simple threshold yields clean edge maps.</li>
+          <li><strong>DoG intuition:</strong> Smoothing then differentiating ≡ differentiating a Gaussian—same result, fewer passes.</li>
+          <li><strong>Sharpen &amp; frequency thinking:</strong> Unsharp is just “boost the high-frequency residual”; logs of FFTs made low-/high-pass roles obvious.</li>
+          <li><strong>Pyramids &amp; masks:</strong> Multiresolution blending hides seams by matching structure at each scale; feather width and alignment matter as much as code.</li>
         </ul>
-      </div>
-    </section>
-
+      </section>
 
 
   </main>
