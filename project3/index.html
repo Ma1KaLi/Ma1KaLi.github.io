@@ -49,6 +49,59 @@
     <section id="part-a">
       <h2>Part A: IMAGE WARPING and MOSAICING</h2>
     </section>
+      <section id="a1">
+      <h3>A.1: Shoot the Pictures</h3>
+        <p>
+          Images can be related by many transformations. In this part we care about the
+          <strong>perspective/projective</strong> case—the camera model that explains how a planar scene looks from
+          slightly different viewpoints. You can think of translation/rotation/affine as simpler limits, while
+          projective transforms cover the full perspective effects we see in photos.
+        </p>
+        <p>
+          Intuitively, a projective warp remaps the image as if the camera were tilted or the plane were viewed from a
+          new angle. A few useful facts:
+        </p>
+        <ul class="tight">
+        <li>Straight lines remain straight, but parallel lines may meet at a vanishing point.</li>
+        <li>Distances and their ratios are generally <em>not</em> preserved.</li>
+        <li>There is no requirement that the origin maps to the origin.</li>
+        <li>Composing two projective warps yields another projective warp.</li>
+        <li>Algebraically, it is a change of coordinates in projective space using a 3×3 homography.</li>
+        </ul>
+        <p>
+          Below are two example pairs shot on campus. For each pair, the <em>center of projection</em> is held fixed while the
+          camera rotates, producing the desired projective relationship that we will use later for rectification and
+          mosaicing.
+        </p>
+
+      <!-- Set 1 placeholders -->
+      <div class="grid-2">
+        <figure>
+          <img src="media/WechatIMG114.jpg" alt="Scene 1 from a straight angle" loading="lazy">
+          <figcaption>Scene 1 — Figure 1</figcaption>
+        </figure>
+        <figure>
+          <img src="media/WechatIMG115.jpg" alt="Scene 1 from a rotated angle" loading="lazy">
+          <figcaption>Scene 1 — Figure 2</figcaption>
+        </figure>
+      </div>
+
+      <!-- Set 2 placeholders -->
+      <div class="grid-2" style="margin-top:12px;">
+        <figure>
+          <img src="media/WechatIMG118.jpg" alt="Scene 2 from a straight angle" loading="lazy">
+          <figcaption>Scene 2 — Figure 2</figcaption>
+        </figure>
+        <figure>
+          <img src="media/WechatIMG119.jpg" alt="Scene 2 from a rotated angle" loading="lazy">
+          <figcaption>Scene 2 — Figure 2</figcaption>
+        </figure>
+      </div>
+
+      <p class="note">
+        Note: These are placeholders — replace file names under <code>Media/</code> with your captured image pairs.
+      </p>
+    </section>
   </main>
 
   <footer>
@@ -56,3 +109,4 @@
   </footer>
 </body>
 </html>
+
