@@ -298,7 +298,8 @@
       
         <h3>Nearest vs. Bilinear: brief comparison</h3>
         <ul class="tight">
-          <li><strong>Quality:</strong> Bilinear reduces aliasing and produces smoother, more natural rectifications; Nearest shows staircase artifacts on edges.</li>
+          <li><strong>Quality:</strong> Bilinear reduces aliasing and produces smoother, more natural rectifications; Nearest shows staircase artifacts on edges. 
+                                        This can be clearly observed in the comparison of the two sets of rectified images above, and this phenomenon is particularly noticeable along the edges of walls (painting image)and floor tiles (floor image).</li>
           <li><strong>Sharpness:</strong> Nearest preserves edge crispness but looks blocky; Bilinear is slightly softer.</li>
           <li><strong>Speed:</strong> Nearest is fastest; Bilinear is modestly slower but still lightweight for our image sizes.</li>
         </ul>
