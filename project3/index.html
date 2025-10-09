@@ -249,7 +249,7 @@
         <p>
           We rectify planar objects that are known to be square but appear as general quadrilaterals due to
           perspective. For each case, we (1) click the four corners on the source image (the object in the
-          photo) and (2) define target corners as a perfect rectangle. We then compute \(H\) from these two
+          photo) and (2) define target corners as a square. We then compute \(H\) from these two
           4-point sets and warp the source with both interpolations.
         </p>
       
@@ -292,7 +292,7 @@
           Because the selected regions are squares in the world, the four clicked corners on the original
           image are our source points \(\{(x_i,y_i)\}_{i=1}^4\). We hand-define the target as a perfect
           rectangle, e.g. \(\{(0,0),(W,0),(W,H),(0,H)\}\). Using these two sets, we recover the homography
-          \(H\) (DLT with normalization) and then apply inverse warping with the two interpolation schemes
+          \(H\) and then apply inverse warping with the two interpolation schemes
           to obtain the rectified results shown above.
         </p>
       
