@@ -323,13 +323,11 @@
         <ul class="tight">
           <li><strong>Gain matching in the overlap:</strong> scale the second image to match the first image’s brightness in regions where both are valid.</li>
           <li><strong>Feathered weights:</strong> build per-image alpha that is high near the image center and smoothly decays to zero at the borders (distance-to-edge), so seams are softly shared.</li>
-          <li><strong>Laplacian-pyramid blending:</strong> low frequencies are averaged (smooth transitions) while high-frequency details are taken more from a single image, which suppresses ghosting and keeps edges sharp.</li>
         </ul>
       
         <p class="note">
           Practical notes: (i) We always blend images that are already aligned in the same canvas and size; (ii) weights are
-          normalized at each pixel to avoid exposure jumps; (iii) when scenes are not strictly planar, pyramid blending helps,
-          but significant parallax will still produce residual artifacts.
+          normalized at each pixel to avoid exposure jumps.
         </p>
       
         <!-- ===== Result Set 1 ===== -->
@@ -353,11 +351,11 @@
         <h3 style="margin-top: 18px;">Mosaic Set 2</h3>
         <div class="grid-2">
           <figure>
-            <img src="media/WechatIMG120.jpg" alt="Set 2 — Source image A" />
+            <img src="media/WechatIMG121.jpg" alt="Set 2 — Source image A" />
             <figcaption>Set&nbsp;2 — Image 1 (reference)</figcaption>
           </figure>
           <figure>
-            <img src="media/WechatIMG121.jpg" alt="Set 2 — Source image B" />
+            <img src="media/WechatIMG120.jpg" alt="Set 2 — Source image B" />
             <figcaption>Set&nbsp;2 — Image 2 (warped to reference)</figcaption>
           </figure>
         </div>
@@ -370,11 +368,11 @@
         <h3 style="margin-top: 18px;">Mosaic Set 3</h3>
         <div class="grid-2">
           <figure>
-            <img src="media/WechatIMG112.jpg" alt="Set 3 — Source image A" />
+            <img src="media/WechatIMG113.jpg" alt="Set 3 — Source image A" />
             <figcaption>Set&nbsp;3 — Image 1 (reference)</figcaption>
           </figure>
           <figure>
-            <img src="media/WechatIMG113.jpg" alt="Set 3 — Source image B" />
+            <img src="media/WechatIMG112.jpg" alt="Set 3 — Source image B" />
             <figcaption>Set&nbsp;3 — Image 2 (warped to reference)</figcaption>
           </figure>
         </div>
