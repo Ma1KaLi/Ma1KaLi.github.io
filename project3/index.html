@@ -216,6 +216,95 @@
         \]
       </section>
 
+      <section id="a3">
+        <h2>A.3: Warp the Images</h2>
+      
+        <p>
+          We implement two image warping routines using <em>inverse warping</em> and custom interpolation:
+          <strong>Nearest Neighbor Interpolation</strong> and <strong>Bilinear Interpolation</strong>.
+          Inverse warping treats each output pixel \((x_o,y_o)\) as a query: we map it back with
+          \(H^{-1}\) to a (generally non-integer) input location \((x_i,y_i)\). Sampling at
+          \((x_i,y_i)\) gives the color of \((x_o,y_o)\). This avoids holes that would appear with
+          forward mapping. We also track a per-pixel <strong>alpha mask</strong> that marks whether the
+          back-projected location fell inside the source image (useful for visualization and later blending).
+        </p>
+      
+        <h3>Nearest Neighbor Interpolation</h3>
+        <p>
+          For each back-projected location \((x_i,y_i)\), we round to the closest integer pixel
+          \((\mathrm{round}(x_i), \mathrm{round}(y_i))\) and copy that value. This method is very fast and
+          preserves sharp edges, but can introduce aliasing and blocky artifacts when the image is rotated
+          or scaled.
+        </p>
+      
+        <h3>Bilinear Interpolation</h3>
+        <p>
+          For each \((x_i,y_i)\), we use the four neighbors \((x_0,y_0),(x_1,y_0),(x_0,y_1),(x_1,y_1)\)
+          (with \(x_0=\lfloor x_i\rfloor, x_1=x_0+1, y_0=\lfloor y_i\rfloor, y_1=y_0+1\)) and blend them with
+          weights based on the fractional offsets \(w_x=x_i-x_0,\, w_y=y_i-y_0\). This reduces jaggies and
+          yields smoother results, at the cost of slight blur and a bit more compute.
+        </p>
+      
+        <h3>Images for Rectification</h3>
+        <p>
+          We rectify planar objects that are known to be square but appear as general quadrilaterals due to
+          perspective. For each case, we (1) click the four corners on the source image (the object in the
+          photo) and (2) define target corners as a perfect rectangle. We then compute \(H\) from these two
+          4-point sets and warp the source with both interpolations.
+        </p>
+      
+        <!-- Row 1: Painting -->
+        <h4 style="margin-top:10px;">Set 1 — Painting</h4>
+        <div class="grid-3">
+          <figure>
+            <img src="media/source2.jpg" alt="Painting (original)" />
+            <figcaption>Original</figcaption>
+          </figure>
+          <figure>
+            <img src="media/rectified_nearest_painting.png" alt="Painting rectified (nearest)" />
+            <figcaption>Rectified — Nearest</figcaption>
+          </figure>
+          <figure>
+            <img src="media/rectified_bilinear_painting.png" alt="Painting rectified (bilinear)" />
+            <figcaption>Rectified — Bilinear</figcaption>
+          </figure>
+        </div>
+      
+        <!-- Row 2: Floor -->
+        <h4 style="margin-top:10px;">Set 2 — Floor</h4>
+        <div class="grid-3">
+          <figure>
+            <img src="media/source5.jpg" alt="Floor (original)" />
+            <figcaption>Original</figcaption>
+          </figure>
+          <figure>
+            <img src="media/rectified_nearest_floor.png" alt="Floor rectified (nearest)" />
+            <figcaption>Rectified — Nearest</figcaption>
+          </figure>
+          <figure>
+            <img src="media/rectified_bilinear_floor.png" alt="Floor rectified (bilinear)" />
+            <figcaption>Rectified — Bilinear</figcaption>
+          </figure>
+        </div>
+      
+        <h3>How we compute \(H\) for rectification</h3>
+        <p>
+          Because the selected regions are squares in the world, the four clicked corners on the original
+          image are our source points \(\{(x_i,y_i)\}_{i=1}^4\). We hand-define the target as a perfect
+          rectangle, e.g. \(\{(0,0),(W,0),(W,H),(0,H)\}\). Using these two sets, we recover the homography
+          \(H\) (DLT with normalization) and then apply inverse warping with the two interpolation schemes
+          to obtain the rectified results shown above.
+        </p>
+      
+        <h3>Nearest vs. Bilinear: brief comparison</h3>
+        <ul class="tight">
+          <li><strong>Quality:</strong> Bilinear reduces aliasing and produces smoother, more natural rectifications; Nearest shows staircase artifacts on edges.</li>
+          <li><strong>Sharpness:</strong> Nearest preserves edge crispness but looks blocky; Bilinear is slightly softer.</li>
+          <li><strong>Speed:</strong> Nearest is fastest; Bilinear is modestly slower but still lightweight for our image sizes.</li>
+        </ul>
+      </section>
+
+
 
 
     </section>
