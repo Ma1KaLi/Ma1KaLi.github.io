@@ -115,7 +115,7 @@
       
         <!-- Correspondences visualization -->
         <figure style="margin-top:12px;">
-          <img src="a2_preview.png" alt="Point correspondences visualized side-by-side" />
+          <img src="media/a2preview.png" alt="Point correspondences visualized side-by-side" />
           <figcaption>Eight hand-picked correspondences visualized on the image pair.</figcaption>
         </figure>
       
@@ -133,8 +133,9 @@
             \end{bmatrix}
             \begin{bmatrix}x_i\\ y_i\\ 1\end{bmatrix}.
           \]
-          Eliminating \(\lambda\) gives two linear equations per match. Stacking all
-          \(n\) matches (here \(n=8\)) yields the over-determined system \(A\mathbf{h}=\mathbf{b}\) with
+          Eliminating \(\lambda\) yields two linear equations per match. Stacking all
+          \(n\) matches (here \(n=8\)) gives an over-determined linear system
+          \(A\mathbf{h}=\mathbf{b}\) for the unknown vector
           \(\mathbf{h}=[h_1,h_2,h_3,h_4,h_5,h_6,h_7,h_8]^T\):
           \[
           \underbrace{
@@ -159,6 +160,16 @@
             \end{bmatrix}
           }_{\mathbf{b}}.
           \]
+          We solve for \(\hat{\mathbf{h}}\) in the least-squares sense and assemble
+          \[
+            H=
+            \begin{bmatrix}
+              h_1 & h_2 & h_3\\
+              h_4 & h_5 & h_6\\
+              h_7 & h_8 & 1
+            \end{bmatrix},
+          \]
+          followed by a scale normalization so that \(H_{33}=1\).
         </div>
       
         <!-- How correspondences were collected (math, not code) -->
