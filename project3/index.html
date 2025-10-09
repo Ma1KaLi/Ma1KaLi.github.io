@@ -97,6 +97,79 @@
         </figure>
       </div>
       </section>
+
+      <section id="a2">
+        <h2>A.2: Recover Homographies</h2>
+      
+        <!-- 原图（两张） -->
+        <div class="grid-2">
+          <figure>
+            <img src="WechatIMG115.jpg" alt="Image 1 (source)" />
+            <figcaption>Image 1</figcaption>
+          </figure>
+          <figure>
+            <img src="WechatIMG114.jpg" alt="Image 2 (target)" />
+            <figcaption>Image 2</figcaption>
+          </figure>
+        </div>
+      
+        <!-- 对应点可视化 -->
+        <figure style="margin-top:12px;">
+          <img src="a2_preview.png" alt="Point correspondences visualized side-by-side" />
+          <figcaption>Point correspondences visualized on the images.</figcaption>
+        </figure>
+      
+        <!-- 描述与方程 -->
+        <div class="note" style="margin-top:14px;">
+          我们用点对应 \((x_i, y_i) \leftrightarrow (u_i, v_i)\) 来估计单应矩阵 \(H\)，使得
+          \[
+            \begin{bmatrix}\lambda u\\ \lambda v\\ \lambda\end{bmatrix} =
+            \begin{bmatrix}
+              h_1 & h_2 & h_3\\
+              h_4 & h_5 & h_6\\
+              h_7 & h_8 & 1
+            \end{bmatrix}
+            \begin{bmatrix}x\\ y\\ 1\end{bmatrix}.
+          \]
+          将齐次坐标消去后，对每一对匹配点可得到两条线性约束，把未知量
+          \(\mathbf{h}=[h_1,h_2,h_3,h_4,h_5,h_6,h_7,h_8]^T\) 组织成线性系统
+          \(A\mathbf{h}=\mathbf{b}\)（下式展示了前四对匹配点的行结构；更多点用最小二乘求解）：
+          \[
+            \begin{bmatrix}
+              x_1 & y_1 & 1 & 0 & 0 & 0 & -u_1 x_1 & -u_1 y_1\\
+              0 & 0 & 0 & x_1 & y_1 & 1 & -v_1 x_1 & -v_1 y_1\\[2pt]
+              x_2 & y_2 & 1 & 0 & 0 & 0 & -u_2 x_2 & -u_2 y_2\\
+              0 & 0 & 0 & x_2 & y_2 & 1 & -v_2 x_2 & -v_2 y_2\\[2pt]
+              x_3 & y_3 & 1 & 0 & 0 & 0 & -u_3 x_3 & -u_3 y_3\\
+              0 & 0 & 0 & x_3 & y_3 & 1 & -v_3 x_3 & -v_3 y_3\\[2pt]
+              x_4 & y_4 & 1 & 0 & 0 & 0 & -u_4 x_4 & -u_4 y_4\\
+              0 & 0 & 0 & x_4 & y_4 & 1 & -v_4 x_4 & -v_4 y_4
+            \end{bmatrix}
+            \begin{bmatrix}
+              h_1\\h_2\\h_3\\h_4\\h_5\\h_6\\h_7\\h_8
+            \end{bmatrix} =
+            \begin{bmatrix}
+              u_1\\v_1\\u_2\\v_2\\u_3\\v_3\\u_4\\v_4
+            \end{bmatrix}.
+          \]
+          解得的 \(\hat{\mathbf{h}}\) 回填到
+          \(
+            H=
+            \begin{bmatrix}
+              h_1 & h_2 & h_3\\
+              h_4 & h_5 & h_6\\
+              h_7 & h_8 & 1
+            \end{bmatrix}
+          \)，再按 \(H_{33}=1\) 归一化。
+        </div>
+      
+        <!-- 恢复的 H 矩阵 -->
+        <h3 style="margin-top:14px;">Recovered Homography \(H\)</h3>
+        <pre><code>[[ 5.88791765e-01  1.63905192e-02  1.89669153e+03]
+      [-3.18000604e-01  8.60996283e-01  3.23268751e+02]
+      [-9.53829001e-05 -5.88331546e-06  1.00000000e+00]]</code></pre>
+      </section>
+
     </section>
 
   </main>
