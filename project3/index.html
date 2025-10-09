@@ -309,7 +309,7 @@
         <h2>A.4: Blend the Images into a Mosaic</h2>
       
         <p>
-          Our mosaicing pipeline has three stages: <strong>(1) register</strong> images with a homography, <strong>(2) warp</strong> all images
+          This mosaicing pipeline has three stages: <strong>(1) register</strong> images with a homography, <strong>(2) warp</strong> all images
           into a shared canvas using inverse warping, and <strong>(3) <em>blend</em></strong> the aligned layers to hide seams.
           Concretely, we pick one image as the reference frame (or define a new canvas), compute the mapping
           from each other image into that frame, and predict the global canvas bounds by transforming the four
