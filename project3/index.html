@@ -305,8 +305,69 @@
         </ul>
       </section>
 
-
-
+      <section id="a4">
+        <h2>A.4: Blend the Images into a Mosaic</h2>
+      
+        <p>
+          To build a mosaic, we first recover the homography between a pair of images and choose a reference
+          canvas. Using <em>inverse warping</em>, each source image is mapped into this common canvas, producing
+          aligned layers and their validity masks (alpha). We then <strong>blend</strong> the layers to avoid hard
+          seams. Concretely, we use feathered weighted averaging (center-high, edge-low weights) and, for the
+          final results, a lightweight <em>Laplacian pyramid</em> blend so that low frequencies transition smoothly
+          while high-frequency detail (edges, textures) remains sharp—reducing ghosting and edge artifacts.
+        </p>
+      
+        <!-- ===== Result Set 1 ===== -->
+        <h3 style="margin-top: 8px;">Mosaic Set 1</h3>
+        <div class="grid-2">
+          <figure>
+            <img src="WechatIMG115.jpg" alt="Set 1 — Source image A" />
+            <figcaption>Set&nbsp;1 — Source A</figcaption>
+          </figure>
+          <figure>
+            <img src="WechatIMG114.jpg" alt="Set 1 — Source image B" />
+            <figcaption>Set&nbsp;1 — Source B</figcaption>
+          </figure>
+        </div>
+        <figure style="margin-top:10px;">
+          <img src="mosaic4_1_laplacian.png" alt="Set 1 — Blended mosaic" />
+          <figcaption>Set&nbsp;1 — Blended mosaic (feathered + Laplacian pyramid)</figcaption>
+        </figure>
+      
+        <!-- ===== Result Set 2 ===== -->
+        <h3 style="margin-top: 18px;">Mosaic Set 2</h3>
+        <div class="grid-2">
+          <figure>
+            <img src="SET2_srcA.jpg" alt="Set 2 — Source image A" />
+            <figcaption>Set&nbsp;2 — Source A</figcaption>
+          </figure>
+          <figure>
+            <img src="SET2_srcB.jpg" alt="Set 2 — Source image B" />
+            <figcaption>Set&nbsp;2 — Source B</figcaption>
+          </figure>
+        </div>
+        <figure style="margin-top:10px;">
+          <img src="SET2_mosaic.png" alt="Set 2 — Blended mosaic" />
+          <figcaption>Set&nbsp;2 — Blended mosaic</figcaption>
+        </figure>
+      
+        <!-- ===== Result Set 3 ===== -->
+        <h3 style="margin-top: 18px;">Mosaic Set 3</h3>
+        <div class="grid-2">
+          <figure>
+            <img src="SET3_srcA.jpg" alt="Set 3 — Source image A" />
+            <figcaption>Set&nbsp;3 — Source A</figcaption>
+          </figure>
+          <figure>
+            <img src="SET3_srcB.jpg" alt="Set 3 — Source image B" />
+            <figcaption>Set&nbsp;3 — Source B</figcaption>
+          </figure>
+        </div>
+        <figure style="margin-top:10px;">
+          <img src="SET3_mosaic.png" alt="Set 3 — Blended mosaic" />
+          <figcaption>Set&nbsp;3 — Blended mosaic</figcaption>
+        </figure>
+      </section>
 
     </section>
 
