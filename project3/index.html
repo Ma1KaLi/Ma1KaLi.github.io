@@ -115,7 +115,7 @@
       
         <!-- Correspondences visualization -->
         <figure style="margin-top:12px;">
-          <img src="media/a2_preview.png" alt="Point correspondences visualized side-by-side" />
+          <img src="a2_preview.png" alt="Point correspondences visualized side-by-side" />
           <figcaption>Eight hand-picked correspondences visualized on the image pair.</figcaption>
         </figure>
       
@@ -130,12 +130,11 @@
               h_1 & h_2 & h_3\\
               h_4 & h_5 & h_6\\
               h_7 & h_8 & 1
-            </end{bmatrix}
+            \end{bmatrix}
             \begin{bmatrix}x_i\\ y_i\\ 1\end{bmatrix}.
           \]
-          Eliminating \(\lambda\) yields two linear equations per match. Stacking all
-          \(n\) matches (here \(n=8\)) gives an over-determined linear system
-          \(A\mathbf{h}=\mathbf{b}\) for the unknown vector
+          Eliminating \(\lambda\) gives two linear equations per match. Stacking all
+          \(n\) matches (here \(n=8\)) yields the over-determined system \(A\mathbf{h}=\mathbf{b}\) with
           \(\mathbf{h}=[h_1,h_2,h_3,h_4,h_5,h_6,h_7,h_8]^T\):
           \[
           \underbrace{
@@ -145,7 +144,7 @@
               \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
               x_n & y_n & 1 & 0   & 0   & 0 & -u_nx_n & -u_ny_n\\
               0   & 0   & 0 & x_n & y_n & 1 & -v_nx_n & -v_ny_n
-            </bmatrix}
+            \end{bmatrix}
           }_{A \in \mathbb{R}^{2n\times 8}}
           \;
           \underbrace{
@@ -157,39 +156,41 @@
           \underbrace{
             \begin{bmatrix}
               u_1\\ v_1\\ \vdots\\ u_n\\ v_n
-            </bmatrix}
+            \end{bmatrix}
           }_{\mathbf{b}}.
           \]
-          We solve for \(\hat{\mathbf{h}}\) in the least-squares sense and assemble
-          \[
-            H=
-            \begin{bmatrix}
-              h_1 & h_2 & h_3\\
-              h_4 & h_5 & h_6\\
-              h_7 & h_8 & 1
-            \end{bmatrix},
-          \]
-          followed by a scale normalization so that \(H_{33}=1\).
         </div>
       
-        <!-- How correspondences were collected -->
+        <!-- How correspondences were collected (math, not code) -->
         <div class="answer" style="margin-top:14px;">
-          We collected the eight correspondences with the online tool
-          <a href="https://cal-cs180.github.io/fa23/hw/proj3/tool.html" target="_blank" rel="noopener">Point Clicking Tool</a>.
-          The selected points are:
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
-            <div>
-              <strong>Image&nbsp;1 (source) points \((x_i,y_i)\):</strong>
-              <pre><code>[[666,2455],[1178,1768],[2307,1098],[1036,1526],
-      [1716,1926],[2083,4048],[1539,3011],[2205,1785]]</code></pre>
-            </div>
-            <div>
-              <strong>Image&nbsp;2 (target) points \((u_i,v_i)\):</strong>
-              <pre><code>[[2531,2415],[2984,1674],[4233,696],[2837,1465],
-      [3559,1736],[4105,4044],[3407,2910],[4141,1486]]</code></pre>
-            </div>
-          </div>
-          We substitute these as \((x_i,y_i)\) and \((u_i,v_i)\) in the system above and recover the following homography.
+          We collected eight correspondences using the
+          <a href="https://cal-cs180.github.io/fa23/hw/proj3/tool.html" target="_blank" rel="noopener">online point-clicking tool</a>.
+          The selected coordinates are shown below (rows correspond to matches):
+          \[
+            \text{Image 1 (source) } \{(x_i,y_i)\}_{i=1}^{8} =
+            \begin{bmatrix}
+            666 & 2455\\
+            1178 & 1768\\
+            2307 & 1098\\
+            1036 & 1526\\
+            1716 & 1926\\
+            2083 & 4048\\
+            1539 & 3011\\
+            2205 & 1785
+            \end{bmatrix},\qquad
+            \text{Image 2 (target) } \{(u_i,v_i)\}_{i=1}^{8} =
+            \begin{bmatrix}
+            2531 & 2415\\
+            2984 & 1674\\
+            4233 &  696\\
+            2837 & 1465\\
+            3559 & 1736\\
+            4105 & 4044\\
+            3407 & 2910\\
+            4141 & 1486
+            \end{bmatrix}.
+          \]
+          Substituting these into the system above and solving in least squares produces the homography below.
         </div>
       
         <!-- Recovered H (MathJax numeric matrix) -->
@@ -203,6 +204,7 @@
         \end{bmatrix}
         \]
       </section>
+
 
 
     </section>
