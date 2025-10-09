@@ -104,18 +104,18 @@
         <!-- Two original images -->
         <div class="grid-2">
           <figure>
-            <img src="WechatIMG115.jpg" alt="Image 1 (source)" />
+            <img src="media/WechatIMG115.jpg" alt="Image 1 (source)" />
             <figcaption>Image 1</figcaption>
           </figure>
           <figure>
-            <img src="WechatIMG114.jpg" alt="Image 2 (target)" />
+            <img src="media/WechatIMG114.jpg" alt="Image 2 (target)" />
             <figcaption>Image 2</figcaption>
           </figure>
         </div>
       
         <!-- Correspondences visualization -->
         <figure style="margin-top:12px;">
-          <img src="a2_preview.png" alt="Point correspondences visualized side-by-side" />
+          <img src="media/a2_preview.png" alt="Point correspondences visualized side-by-side" />
           <figcaption>Eight hand-picked correspondences visualized on the image pair.</figcaption>
         </figure>
       
@@ -130,7 +130,7 @@
               h_1 & h_2 & h_3\\
               h_4 & h_5 & h_6\\
               h_7 & h_8 & 1
-            \end{bmatrix}
+            </end{bmatrix}
             \begin{bmatrix}x_i\\ y_i\\ 1\end{bmatrix}.
           \]
           Eliminating \(\lambda\) yields two linear equations per match. Stacking all
@@ -145,7 +145,7 @@
               \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots & \vdots \\
               x_n & y_n & 1 & 0   & 0   & 0 & -u_nx_n & -u_ny_n\\
               0   & 0   & 0 & x_n & y_n & 1 & -v_nx_n & -v_ny_n
-            \end{bmatrix}
+            </bmatrix}
           }_{A \in \mathbb{R}^{2n\times 8}}
           \;
           \underbrace{
@@ -157,7 +157,7 @@
           \underbrace{
             \begin{bmatrix}
               u_1\\ v_1\\ \vdots\\ u_n\\ v_n
-            \end{bmatrix}
+            </bmatrix}
           }_{\mathbf{b}}.
           \]
           We solve for \(\hat{\mathbf{h}}\) in the least-squares sense and assemble
@@ -172,6 +172,26 @@
           followed by a scale normalization so that \(H_{33}=1\).
         </div>
       
+        <!-- How correspondences were collected -->
+        <div class="answer" style="margin-top:14px;">
+          We collected the eight correspondences with the online tool
+          <a href="https://cal-cs180.github.io/fa23/hw/proj3/tool.html" target="_blank" rel="noopener">Point Clicking Tool</a>.
+          The selected points are:
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
+            <div>
+              <strong>Image&nbsp;1 (source) points \((x_i,y_i)\):</strong>
+              <pre><code>[[666,2455],[1178,1768],[2307,1098],[1036,1526],
+      [1716,1926],[2083,4048],[1539,3011],[2205,1785]]</code></pre>
+            </div>
+            <div>
+              <strong>Image&nbsp;2 (target) points \((u_i,v_i)\):</strong>
+              <pre><code>[[2531,2415],[2984,1674],[4233,696],[2837,1465],
+      [3559,1736],[4105,4044],[3407,2910],[4141,1486]]</code></pre>
+            </div>
+          </div>
+          We substitute these as \((x_i,y_i)\) and \((u_i,v_i)\) in the system above and recover the following homography.
+        </div>
+      
         <!-- Recovered H (MathJax numeric matrix) -->
         <h3 style="margin-top:14px;">Recovered Homography \(H\)</h3>
         \[
@@ -183,6 +203,7 @@
         \end{bmatrix}
         \]
       </section>
+
 
     </section>
 
