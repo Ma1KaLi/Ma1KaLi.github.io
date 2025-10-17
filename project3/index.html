@@ -389,47 +389,65 @@
     
       <section id="b1">
         <h3>B.1: Harris Corner Detection</h3>
+    
         <p>
-          We first detect interest points using a Harris corner detector and then thin them with
-          <em>Adaptive Non-Maximal Suppression</em> (ANMS) to obtain a compact yet well-distributed set.
-          Concretely, we convert the image to grayscale, optionally apply a light Gaussian blur, compute the
-          Harris response \(R=\det(\mathbf{M})-k\,\mathrm{trace}(\mathbf{M})^2\) (single scale), and
-          pick local maxima with a small minimum distance. ANMS then assigns each candidate a
-          <em>suppression radius</em>—the distance to the nearest stronger corner (scaled by a factor \(c\)),
-          and we keep the points with the largest radii so features spread across the image rather than cluster.
+          We begin the automatic pipeline by detecting repeatable 2D features. Our detector is the
+          classic <strong>Harris corner</strong>, followed by <strong>Adaptive Non-Maximal Suppression</strong> (ANMS) to thin out clusters and
+          distribute features spatially. At a single scale, Harris computes a structure-tensor
+          response \(R=\det(\mathbf{M})-k\,\mathrm{trace}(\mathbf{M})^2\); we then keep local maxima of \(R\)
+          and finally apply ANMS so that retained points are strong <em>and</em> well spread across the image.
         </p>
-        <div class="note">
-          Parameters (typical values used in our runs): pre-blur \(\sigma\approx 0.8\!-\!1.0\),
-          Harris \(k\approx 0.04\!-\!0.06\), local-max min distance \(=1\) px, relative threshold \(\approx 0.003\),
-          edge discard \(=20\) px. For ANMS we use \(c=0.9\) and keep \(600\!\sim\!1200\) points depending on the scene.
-        </div>
+    
+        <p class="note">
+          <strong>Detector settings used in our runs</strong> (single-scale):
+          <ul class="tight">
+            <li><code>MAX_LONG_EDGE = 1600</code> — images are resized so the long edge is 1600 px (speeds up processing while keeping detail).</li>
+            <li><code>GAUSS_SIGMA_PRE = 1.0</code> — light pre-blur to suppress pixel noise before gradients.</li>
+            <li><code>EDGE_DISCARD = 20</code> — ignore a 20-px border where responses are unreliable.</li>
+            <li><code>HARRIS_SIGMA = 1.0</code>, <code>HARRIS_K = 0.05</code> — gradient smoothing and Harris sensitivity.</li>
+            <li><code>PLM_MIN_DIST = 1</code>, <code>PLM_THR_REL = 0.003</code> — local maxima (peak) extraction with a small
+                minimum spacing and a relative response threshold (keep peaks above 0.3% of the global maximum).</li>
+            <li><code>TOPK_BEFORE_ANMS = 6000</code> — cap for how many candidates we visualize before ANMS (actual number depends on the image and thresholds).</li>
+            <li><code>ANMS_C = 0.90</code>, <code>ANMS_KEEP = 600</code> — ANMS keeps points with the largest suppression radii
+                where \(r_i=\min_j\|x_i-x_j\|\) subject to \(R_j &gt; c\,R_i\) with \(c=0.9\); we retain the top 600 radii.</li>
+          </ul>
+        </p>
+    
+        <p>
+          <strong>Why ANMS?</strong> Plain Harris often returns many neighboring peaks along edges, windows, or textures.
+          ANMS enforces a <em>distance to stronger neighbors</em>, so we keep fewer, stronger, and more
+          <em>uniformly distributed</em> features, which improves matching robustness and RANSAC later.
+          In our visualizations below, “Before ANMS” shows dense Harris candidates, and “After ANMS”
+          shows the thinned, well-spread set using \(c=0.9\) and keep=600.
+        </p>
     
         <!-- Scene 1 -->
         <h3 style="margin-top:14px; font-size:1.05rem;">Scene 1</h3>
         <div class="grid-2">
           <figure>
-            <img src="b1_outputs/corners_harris_top2772.png" alt="Harris corners before ANMS — scene 1">
+            <img src="image/WechatIMG115.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 1">
             <figcaption>Before ANMS — Harris Top-K (dense candidates)</figcaption>
           </figure>
           <figure>
-            <img src="b1_outputs/corners_anms_top1200.png" alt="Corners after ANMS — scene 1">
-            <figcaption>After ANMS — \(c=0.9\), keep=1200 (more uniform)</figcaption>
+            <img src="image/WechatIMG115.jpg_corners_harris_top600.png" alt="Corners after ANMS — scene 1">
+            <figcaption>After ANMS — \(c=0.9\), keep=600 (uniform &amp; strong)</figcaption>
           </figure>
         </div>
     
-        <!-- Scene 2 (placeholders: replace with your files) -->
+        <!-- Scene 2 (placeholders: replace with your actual files) -->
         <h3 style="margin-top:10px; font-size:1.05rem;">Scene 2</h3>
         <div class="grid-2">
           <figure>
-            <img src="b1_outputs/scene2_corners_harris_topK.png" alt="Harris corners before ANMS — scene 2">
+            <img src="image/WechatIMG114.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 2">
             <figcaption>Before ANMS — Harris Top-K</figcaption>
           </figure>
           <figure>
-            <img src="b1_outputs/scene2_corners_anms_keep.png" alt="Corners after ANMS — scene 2">
-            <figcaption>After ANMS — \(c=0.9\), keep=800</figcaption>
+            <img src="image/WechatIMG114.jpg_corners_harris_top600.png" alt="Corners after ANMS — scene 2">
+            <figcaption>After ANMS — \(c=0.9\), keep=600</figcaption>
           </figure>
         </div>
       </section>
+
       
     </section>
 
