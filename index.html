@@ -1,19 +1,195 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Portfolio</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CS180 — Homework Portfolio</title>
+  <style>
+    :root{
+      --maxw: 1040px;
+      --bg: #fafafa;
+      --card: #ffffff;
+      --ink: #202124;
+      --muted: #5f6368;
+      --line: #e9e9ef;
+      --brand: #0b5fff;
+      --pill: #eef3ff;
+      --shadow: 0 1px 2px rgba(0,0,0,.06), 0 6px 24px rgba(0,0,0,.06);
+      --radius: 14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+    header{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:28px 20px 12px;
+    }
+    header h1{
+      margin:0 0 6px;
+      font-size:clamp(1.6rem, 2.2vw + 1rem, 2.2rem);
+      letter-spacing:.2px;
+    }
+    header p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:0.98rem;
+    }
+    main{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:10px 20px 28px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(0, 1fr));
+      gap:18px;
+    }
+    @media (max-width:1000px){ .grid{grid-template-columns:repeat(3,1fr);} }
+    @media (max-width:760px){ .grid{grid-template-columns:repeat(2,1fr);} }
+    @media (max-width:520px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    }
+    .card:hover{
+      transform:translateY(-3px);
+      box-shadow:0 4px 20px rgba(0,0,0,.08);
+      border-color:#dfe3f0;
+    }
+    .thumb{
+      aspect-ratio: 16/9;
+      background:
+        linear-gradient(135deg, #f6f8ff, #eef3ff);
+      border-bottom:1px solid var(--line);
+      display:flex; align-items:center; justify-content:center;
+      color:#7a83ff; font-weight:600; letter-spacing:.4px; font-size:.95rem;
+    }
+    .body{ padding:14px 14px 12px; }
+    .title{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:8px; margin:2px 0 4px;
+    }
+    .title a{
+      color:var(--ink); text-decoration:none; font-weight:600;
+    }
+    .title a:hover{ color:var(--brand); }
+    .desc{ color:var(--muted); font-size:.95rem; margin:2px 0 10px; min-height:44px; }
+    .meta{ display:flex; gap:8px; flex-wrap:wrap; }
+    .pill{
+      background:var(--pill);
+      color:#1745ff;
+      border:1px solid #dce6ff;
+      padding:4px 8px;
+      border-radius:999px;
+      font-size:.78rem;
+      font-weight:600;
+    }
+    .pill.gray{ background:#f3f4f7; color:#444; border-color:#eceef3; }
+    footer{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:16px 20px 40px;
+      color:var(--muted);
+      font-size:.9rem;
+    }
+    .sub{ font-size:.88rem; color:var(--muted); margin:10px 0 18px; }
+  </style>
 </head>
 <body>
-    <h1>Welcome to My CS180 Portfolio!</h1>
-    <a href="./project0/index.html">Project 0</a>
-    <a href="./project1/index.html">Project 1</a>
-    <a href="./project2/index.html">Project 2</a>    
-    <a href="./project3/index.html">Project 3</a>    
+  <header>
+    <h1>CS180 — Homework Portfolio</h1>
+    <p class="sub">A collection of projects on image processing, warping, features, and mosaics. Click a card to view the write-up and results.</p>
+  </header>
+
+  <main>
+    <div class="grid">
+
+      <!-- Project 0 -->
+      <article class="card">
+        <div class="thumb">P0 · Warmup</div>
+        <div class="body">
+          <div class="title">
+            <a href="./project0/index.html">Project 0 — Warmup</a>
+            <span class="pill gray">Starter</span>
+          </div>
+          <p class="desc">Basic Python/NumPy &amp; image I/O practice to get the toolchain ready.</p>
+          <div class="meta">
+            <span class="pill">NumPy</span>
+            <span class="pill">I/O</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 1 -->
+      <article class="card">
+        <div class="thumb">P1 · Filters</div>
+        <div class="body">
+          <div class="title">
+            <a href="./project1/index.html">Project 1 — Fun with Filters</a>
+            <span class="pill gray">Core</span>
+          </div>
+          <p class="desc">Convolution, sharpening, hybrid images, frequency analysis.</p>
+          <div class="meta">
+            <span class="pill">FFT</span>
+            <span class="pill">Edges</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 2 -->
+      <article class="card">
+        <div class="thumb">P2 · Morphing</div>
+        <div class="body">
+          <div class="title">
+            <a href="./project2/index.html">Project 2 — Face Morphing</a>
+            <span class="pill gray">Core</span>
+          </div>
+          <p class="desc">Affine pieces, triangulations, and smooth warps between faces.</p>
+          <div class="meta">
+            <span class="pill">Delaunay</span>
+            <span class="pill">Warping</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project 3 -->
+      <article class="card">
+        <div class="thumb">P3 · Mosaics</div>
+        <div class="body">
+          <div class="title">
+            <a href="./project3/index.html">Project 3 — Stitching Photo Mosaics</a>
+            <span class="pill">Featured</span>
+          </div>
+          <p class="desc">Homographies, rectification, blending, and feature-based autostitching.</p>
+          <div class="meta">
+            <span class="pill">Homography</span>
+            <span class="pill">ANMS</span>
+            <span class="pill">RANSAC</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </main>
+
+  <footer>
+    © <script>document.write(new Date().getFullYear());</script> CS180 Portfolio · Built with vanilla HTML/CSS to match project styles.
+  </footer>
 </body>
 </html>
+
