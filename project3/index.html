@@ -381,9 +381,58 @@
           <figcaption>Set&nbsp;3 — Blended mosaic</figcaption>
         </figure>
       </section>
-
-
     </section>
+
+    <!-- ======================= Part B ======================= -->
+    <section id="part-b">
+      <h2>Part B — FEATURE MATCHING for AUTOSTITCHING</h2>
+    
+      <section id="b1">
+        <h3>B.1: Harris Corner Detection</h3>
+        <p>
+          We first detect interest points using a Harris corner detector and then thin them with
+          <em>Adaptive Non-Maximal Suppression</em> (ANMS) to obtain a compact yet well-distributed set.
+          Concretely, we convert the image to grayscale, optionally apply a light Gaussian blur, compute the
+          Harris response \(R=\det(\mathbf{M})-k\,\mathrm{trace}(\mathbf{M})^2\) (single scale), and
+          pick local maxima with a small minimum distance. ANMS then assigns each candidate a
+          <em>suppression radius</em>—the distance to the nearest stronger corner (scaled by a factor \(c\)),
+          and we keep the points with the largest radii so features spread across the image rather than cluster.
+        </p>
+        <div class="note">
+          Parameters (typical values used in our runs): pre-blur \(\sigma\approx 0.8\!-\!1.0\),
+          Harris \(k\approx 0.04\!-\!0.06\), local-max min distance \(=1\) px, relative threshold \(\approx 0.003\),
+          edge discard \(=20\) px. For ANMS we use \(c=0.9\) and keep \(600\!\sim\!1200\) points depending on the scene.
+        </div>
+    
+        <!-- Scene 1 -->
+        <h3 style="margin-top:14px; font-size:1.05rem;">Scene 1</h3>
+        <div class="grid-2">
+          <figure>
+            <img src="b1_outputs/corners_harris_top2772.png" alt="Harris corners before ANMS — scene 1">
+            <figcaption>Before ANMS — Harris Top-K (dense candidates)</figcaption>
+          </figure>
+          <figure>
+            <img src="b1_outputs/corners_anms_top1200.png" alt="Corners after ANMS — scene 1">
+            <figcaption>After ANMS — \(c=0.9\), keep=1200 (more uniform)</figcaption>
+          </figure>
+        </div>
+    
+        <!-- Scene 2 (placeholders: replace with your files) -->
+        <h3 style="margin-top:10px; font-size:1.05rem;">Scene 2</h3>
+        <div class="grid-2">
+          <figure>
+            <img src="b1_outputs/scene2_corners_harris_topK.png" alt="Harris corners before ANMS — scene 2">
+            <figcaption>Before ANMS — Harris Top-K</figcaption>
+          </figure>
+          <figure>
+            <img src="b1_outputs/scene2_corners_anms_keep.png" alt="Corners after ANMS — scene 2">
+            <figcaption>After ANMS — \(c=0.9\), keep=800</figcaption>
+          </figure>
+        </div>
+      </section>
+      
+    </section>
+
 
   </main>
 
