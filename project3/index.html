@@ -402,22 +402,7 @@
           <strong>Why ANMS?</strong> Plain Harris often returns many neighboring peaks along edges, windows, or textures.
           ANMS enforces a <em>distance to stronger neighbors</em>, so we keep fewer, stronger, and more
           <em>uniformly distributed</em> features, which improves matching robustness and RANSAC later.
-          In our visualizations below, “Before ANMS” shows dense Harris candidates, and “After ANMS”
-          shows the thinned, well-spread set using \(c=0.9\) and keep=600.
-        </p>
-
-        <p>
-          In this part, I implemented the <strong>Harris Interest Point Detector</strong> followed by
-          <strong>Adaptive Non-Maximal Suppression (ANMS)</strong> to identify and select reliable corner points
-          across the image. For the Harris detector, I used a single-scale implementation with
-          <code>HARRIS_K = 0.05</code> and <code>HARRIS_SIGMA = 1.0</code>, applying a light Gaussian blur
-          (<code>GAUSS_SIGMA_PRE = 1.0</code>) to reduce noise. A relative response threshold
-          of <code>PLM_THR_REL = 0.003</code> and a minimum local distance of <code>PLM_MIN_DIST = 1</code>
-          were used to identify strong local maxima, while ignoring a <code>20 px</code> boundary region.
-        </p>
-
-        <p>
-          To implement <strong>Adaptive Non-Maximal Suppression (ANMS)</strong>, I computed a suppression radius for each
+          To implement Adaptive Non-Maximal Suppression (ANMS), I computed a suppression radius for each
           candidate corner point as described in the paper <em>"Multi-Image Matching using Multi-Scale Oriented Patches"</em>.
           The suppression radius is defined as the minimum distance to another corner that is stronger,
           scaled by a factor of <code>c = 0.9</code>. By selecting corners with the largest suppression radii,
@@ -426,27 +411,27 @@
         </p>
     
         <!-- Scene 1 -->
-        <h3 style="margin-top:14px; font-size:1.05rem;">Scene 1</h3>
+        <h3 style="margin-top:14px; font-size:1.05rem;">Image 1</h3>
         <div class="grid-2">
           <figure>
             <img src="media/WechatIMG115.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 1">
-            <figcaption>Before ANMS — Harris Top-K (dense candidates)</figcaption>
+            <figcaption>Before ANMS — Harris</figcaption>
           </figure>
           <figure>
-            <img src="media/WechatIMG115.jpg_corners_harris_top600.png" alt="Corners after ANMS — scene 1">
+            <img src="media/WechatIMG115.jpg_corners_anms_top600.png" alt="Corners after ANMS — scene 1">
             <figcaption>After ANMS — \(c=0.9\), keep=600 (uniform &amp; strong)</figcaption>
           </figure>
         </div>
     
         <!-- Scene 2 (placeholders: replace with your actual files) -->
-        <h3 style="margin-top:10px; font-size:1.05rem;">Scene 2</h3>
+        <h3 style="margin-top:10px; font-size:1.05rem;">Image 2</h3>
         <div class="grid-2">
           <figure>
             <img src="media/WechatIMG114.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 2">
-            <figcaption>Before ANMS — Harris Top-K</figcaption>
+            <figcaption>Before ANMS — Harris</figcaption>
           </figure>
           <figure>
-            <img src="media/WechatIMG114.jpg_corners_harris_top600.png" alt="Corners after ANMS — scene 2">
+            <img src="media/WechatIMG114.jpg_corners_anms_top600.png" alt="Corners after ANMS — scene 2">
             <figcaption>After ANMS — \(c=0.9\), keep=600</figcaption>
           </figure>
         </div>
