@@ -394,23 +394,8 @@
           We begin the automatic pipeline by detecting repeatable 2D features. Our detector is the
           classic <strong>Harris corner</strong>, followed by <strong>Adaptive Non-Maximal Suppression</strong> (ANMS) to thin out clusters and
           distribute features spatially. At a single scale, Harris computes a structure-tensor
-          response \(R=\det(\mathbf{M})-k\,\mathrm{trace}(\mathbf{M})^2\); we then keep local maxima of \(R\)
+          response \(R\); we then keep local maxima of \(R\)
           and finally apply ANMS so that retained points are strong <em>and</em> well spread across the image.
-        </p>
-    
-        <p class="note">
-          <strong>Detector settings used in our runs</strong> (single-scale):
-          <ul class="tight">
-            <li><code>MAX_LONG_EDGE = 1600</code> — images are resized so the long edge is 1600 px (speeds up processing while keeping detail).</li>
-            <li><code>GAUSS_SIGMA_PRE = 1.0</code> — light pre-blur to suppress pixel noise before gradients.</li>
-            <li><code>EDGE_DISCARD = 20</code> — ignore a 20-px border where responses are unreliable.</li>
-            <li><code>HARRIS_SIGMA = 1.0</code>, <code>HARRIS_K = 0.05</code> — gradient smoothing and Harris sensitivity.</li>
-            <li><code>PLM_MIN_DIST = 1</code>, <code>PLM_THR_REL = 0.003</code> — local maxima (peak) extraction with a small
-                minimum spacing and a relative response threshold (keep peaks above 0.3% of the global maximum).</li>
-            <li><code>TOPK_BEFORE_ANMS = 6000</code> — cap for how many candidates we visualize before ANMS (actual number depends on the image and thresholds).</li>
-            <li><code>ANMS_C = 0.90</code>, <code>ANMS_KEEP = 600</code> — ANMS keeps points with the largest suppression radii
-                where \(r_i=\min_j\|x_i-x_j\|\) subject to \(R_j &gt; c\,R_i\) with \(c=0.9\); we retain the top 600 radii.</li>
-          </ul>
         </p>
     
         <p>
@@ -420,16 +405,35 @@
           In our visualizations below, “Before ANMS” shows dense Harris candidates, and “After ANMS”
           shows the thinned, well-spread set using \(c=0.9\) and keep=600.
         </p>
+
+        <p>
+          In this part, I implemented the <strong>Harris Interest Point Detector</strong> followed by
+          <strong>Adaptive Non-Maximal Suppression (ANMS)</strong> to identify and select reliable corner points
+          across the image. For the Harris detector, I used a single-scale implementation with
+          <code>HARRIS_K = 0.05</code> and <code>HARRIS_SIGMA = 1.0</code>, applying a light Gaussian blur
+          (<code>GAUSS_SIGMA_PRE = 1.0</code>) to reduce noise. A relative response threshold
+          of <code>PLM_THR_REL = 0.003</code> and a minimum local distance of <code>PLM_MIN_DIST = 1</code>
+          were used to identify strong local maxima, while ignoring a <code>20 px</code> boundary region.
+        </p>
+
+        <p>
+          To implement <strong>Adaptive Non-Maximal Suppression (ANMS)</strong>, I computed a suppression radius for each
+          candidate corner point as described in the paper <em>"Multi-Image Matching using Multi-Scale Oriented Patches"</em>.
+          The suppression radius is defined as the minimum distance to another corner that is stronger,
+          scaled by a factor of <code>c = 0.9</code>. By selecting corners with the largest suppression radii,
+          we obtain a well-distributed set of feature points across the image. From this, I kept the
+          top <code>600</code> corners as the final interest points.
+        </p>
     
         <!-- Scene 1 -->
         <h3 style="margin-top:14px; font-size:1.05rem;">Scene 1</h3>
         <div class="grid-2">
           <figure>
-            <img src="image/WechatIMG115.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 1">
+            <img src="media/WechatIMG115.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 1">
             <figcaption>Before ANMS — Harris Top-K (dense candidates)</figcaption>
           </figure>
           <figure>
-            <img src="image/WechatIMG115.jpg_corners_harris_top600.png" alt="Corners after ANMS — scene 1">
+            <img src="media/WechatIMG115.jpg_corners_harris_top600.png" alt="Corners after ANMS — scene 1">
             <figcaption>After ANMS — \(c=0.9\), keep=600 (uniform &amp; strong)</figcaption>
           </figure>
         </div>
@@ -438,11 +442,11 @@
         <h3 style="margin-top:10px; font-size:1.05rem;">Scene 2</h3>
         <div class="grid-2">
           <figure>
-            <img src="image/WechatIMG114.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 2">
+            <img src="media/WechatIMG114.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 2">
             <figcaption>Before ANMS — Harris Top-K</figcaption>
           </figure>
           <figure>
-            <img src="image/WechatIMG114.jpg_corners_harris_top600.png" alt="Corners after ANMS — scene 2">
+            <img src="media/WechatIMG114.jpg_corners_harris_top600.png" alt="Corners after ANMS — scene 2">
             <figcaption>After ANMS — \(c=0.9\), keep=600</figcaption>
           </figure>
         </div>
