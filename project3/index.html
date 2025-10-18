@@ -414,11 +414,11 @@
         <h3 style="margin-top:14px; font-size:1.05rem;">Image 1</h3>
         <div class="grid-2">
           <figure>
-            <img src="media/WechatIMG115.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 1">
+            <img src="media/WechatIMG114.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 1">
             <figcaption>Before ANMS — Harris</figcaption>
           </figure>
           <figure>
-            <img src="media/WechatIMG115.jpg_corners_anms_top600.png" alt="Corners after ANMS — scene 1">
+            <img src="media/WechatIMG114.jpg_corners_anms_top600.png" alt="Corners after ANMS — scene 1">
             <figcaption>After ANMS — \(c=0.9\), keep=600</figcaption>
           </figure>
         </div>
@@ -427,14 +427,190 @@
         <h3 style="margin-top:10px; font-size:1.05rem;">Image 2</h3>
         <div class="grid-2">
           <figure>
-            <img src="media/WechatIMG114.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 2">
+            <img src="media/WechatIMG115.jpg_corners_harris_top6000.png" alt="Harris corners before ANMS — scene 2">
             <figcaption>Before ANMS — Harris</figcaption>
           </figure>
           <figure>
-            <img src="media/WechatIMG114.jpg_corners_anms_top600.png" alt="Corners after ANMS — scene 2">
+            <img src="media/WechatIMG115.jpg_corners_anms_top600.png" alt="Corners after ANMS — scene 2">
             <figcaption>After ANMS — \(c=0.9\), keep=600</figcaption>
           </figure>
         </div>
+      </section>
+
+      <section id="b2">
+        <h3>B.2: Feature Descriptor Extraction</h3>
+
+        <p>
+          For each interest point from B.1, I represent local appearance with a compact,
+          illumination-robust patch descriptor. Following the spirit of Brown et&nbsp;al. (MOPS),
+          I extract an <em>axis-aligned</em> 8×8 intensity patch from a larger 40×40 window
+          centered at the keypoint (no rotation or multi-scale in this assignment).
+          The 40×40 window is first low-pass filtered (Gaussian) and then uniformly
+          resampled onto an 8×8 grid (5-pixel spacing, bilinear sampling). Sampling from a
+          blurred, larger window gives a smooth, <em>low-frequency signature</em> of the neighborhood,
+          which is far more stable to pixel-level misalignment and sensor noise than a raw 8×8 crop.
+        </p>
+
+        <p>
+          Finally, each 8×8 patch is <strong>bias/gain normalized</strong> (zero-mean, unit-variance).
+          This removes brightness and contrast changes (linear photometric variations) and puts all
+          descriptors on a comparable scale, so that simple SSD behaves similarly to normalized
+          correlation. In short, the pipeline is:
+        </p>
+
+        <ul>
+          <li>Center a 40×40 window at each ANMS keypoint (reflect padding near borders).</li>
+          <li>Apply Gaussian blur to prevent aliasing.</li>
+          <li>Resample the blurred window to 8×8 at cell centers (5-pixel stride) with bilinear interpolation.</li>
+          <li>Bias/gain normalization: subtract mean and divide by standard deviation.</li>
+        </ul>
+
+        <p>
+          The result is a 64-D descriptor that captures the <em>coarse structure</em> of the neighborhood
+          and is robust to small geometric jitter and linear illumination change. For visualization,
+          I show the top-80 normalized 8×8 patches (ranked by gradient energy) from each image.
+        </p>
+
+        <div class="grid-2">
+          <figure>
+            <img src="media/WechatIMG114_descriptors_top80.png" alt="Top-80 normalized 8×8 descriptors for image 1">
+            <figcaption>Image&nbsp;1 — Top-80 normalized 8×8 descriptors (sampled from blurred 40×40 windows).</figcaption>
+          </figure>
+          <figure>
+            <img src="media/WechatIMG115_descriptors_top80.png" alt="Top-80 normalized 8×8 descriptors for image 2">
+            <figcaption>Image&nbsp;2 — Top-80 normalized 8×8 descriptors (sampled from blurred 40×40 windows).</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="b3">
+        <h3>B.3: Feature Matching</h3>
+
+        <p>
+          Given the ANMS keypoints and the normalized 8×8 descriptors from B.2, we match features
+          across images using a nearest-neighbor strategy that balances recall and precision.
+          Similarity is measured with SSD on the normalized patches (equivalently, a monotonic
+          transform of normalized correlation). To reduce ambiguous matches on repeated textures,
+          we adopt Lowe’s <em>ratio test</em>: for each descriptor in image&nbsp;1 we find its two nearest
+          neighbors in image&nbsp;2 with distances \(d_1\) and \(d_2\); we accept the match only if
+          \(d_1/d_2 < \tau\) (typical \(\tau\in[0.65,0.80]\)), meaning the best match is
+          significantly better than the second best. We then apply a <em>mutual consistency</em>
+          check (cross-check): a match is kept only if the chosen pair is also each other’s nearest
+          neighbor in the reverse direction. This removes many one-sided coincidences.
+        </p>
+
+        <p>
+          For visualization, we provide two complementary views. The <strong>clear view</strong> shows a small,
+          spatially dispersed subset of the strongest correspondences (selected by the best ratio
+          and simple spatial non-max suppression) with thick, colored lines and labels—easy to audit.
+          The <strong>full view</strong> draws a large set of accepted matches with thin, semi-transparent lines,
+          revealing the global structure and coverage. To further sanity-check the appearance
+          similarity, we include a <strong>patch comparison panel</strong> that, for a handful of matched pairs,
+          displays the 40×40 blurred source windows and the resulting 8×8 normalized descriptors
+          (upsampled for visibility). Good pairs exhibit closely matching low-frequency structure.
+        </p>
+
+        <!-- Clear vs. Full -->
+        <div class="grid-2">
+          <figure>
+            <img src="media/matches_clear_FIXED_WechatIMG120_vs_WechatIMG121.png"
+                 alt="Clean, spatially thinned feature matches">
+            <figcaption>Clean view — top-ranked, spatially thinned matches (thick colored lines).</figcaption>
+          </figure>
+          <figure>
+            <img src="media/matches_full_FIXED_WechatIMG120_vs_WechatIMG121.png"
+                 alt="Dense visualization of all accepted matches">
+            <figcaption>Full view — dense visualization of accepted matches (semi-transparent thin lines).</figcaption>
+          </figure>
+        </div>
+
+        <!-- Patch pair panel -->
+        <figure style="margin-top:12px;">
+          <img src="media/patch_panel_WechatIMG120_vs_WechatIMG121_K40.png"
+               alt="Patch comparison panel showing 40×40 blurred patches and 8×8 normalized descriptors for matched pairs">
+          <figcaption>
+            Patch comparison panel — for selected matches, each tile shows the 40×40 blurred image
+            patches (top row) and the corresponding 8×8 normalized descriptors (bottom row), one pair
+            per column. Ratios are annotated for quick quality inspection.
+          </figcaption>
+        </figure>
+      </section>
+
+      
+      <section id="b4">
+        <h3>B.4: RANSAC for Robust Homography</h3>
+
+        <p>
+          To turn pairwise feature matches into a reliable image alignment, we estimate a single
+          projective mapping (homography) between the two views using a <strong>4-point RANSAC</strong> loop.
+          At each iteration we randomly sample four correspondences, compute a candidate homography
+          with normalized DLT, and score it by the <em>reprojection error</em> of all matches in the target
+          image. Inliers are those whose error falls below a pixel threshold. We keep the model that
+          produces the largest inlier set and then <em>re-estimate</em> the homography from all inliers to
+          obtain the final transformation. This procedure is robust to outliers from mismatches,
+          repeated textures, or small non-planar effects.
+        </p>
+
+        <ul>
+          <li>Minimal sample: 4 correspondences \((\mathbf{x}_2 \leftrightarrow \mathbf{x}_1)\); solve \( \mathbf{x}_1 \sim \mathbf{H}\,\mathbf{x}_2 \) via normalized DLT.</li>
+          <li>Score by reprojection: \( \|\hat{\mathbf{x}}_1 - \mathbf{x}_1\| \); inliers if error &lt; \(\tau\) px.</li>
+          <li>Iterate until confidence is met; refine \(\mathbf{H}\) with all inliers.</li>
+          <li>Mosaicing: project image-2 corners to define the canvas, <em>inverse-warp</em> image-2 into image-1’s frame, then blend in the overlap with smooth, seam-aware weights.</li>
+        </ul>
+
+        <p>
+          Below we compare <strong>manual stitching</strong> (homographies from hand-picked correspondences)
+          with our <strong>automatic</strong> pipeline (Harris+ANMS → 8×8 descriptors → ratio-test matching → 4-point RANSAC).
+        </p>
+
+        <!-- Mosaic Pair 1 -->
+        <h4 style="margin-top:14px;">Mosaic Pair 1</h4>
+        <div class="grid-2">
+          <figure>
+            <img src="media/mosaic_manual_pair1.png" alt="Manual mosaic — pair 1">
+            <figcaption>Manual stitching (pair 1)</figcaption>
+          </figure>
+          <figure>
+            <img src="media/mosaic_auto_pair1.png" alt="Automatic mosaic — pair 1">
+            <figcaption>Automatic stitching (pair 1)</figcaption>
+          </figure>
+        </div>
+
+        <!-- Mosaic Pair 2 -->
+        <h4 style="margin-top:12px;">Mosaic Pair 2</h4>
+        <div class="grid-2">
+          <figure>
+            <img src="media/mosaic_manual_pair2.png" alt="Manual mosaic — pair 2">
+            <figcaption>Manual stitching (pair 2)</figcaption>
+          </figure>
+          <figure>
+            <img src="media/mosaic_auto_pair2.png" alt="Automatic mosaic — pair 2">
+            <figcaption>Automatic stitching (pair 2)</figcaption>
+          </figure>
+        </div>
+
+        <!-- Mosaic Pair 3 -->
+        <h4 style="margin-top:12px;">Mosaic Pair 3</h4>
+        <div class="grid-2">
+          <figure>
+            <img src="media/mosaic_manual_pair3.png" alt="Manual mosaic — pair 3">
+            <figcaption>Manual stitching (pair 3)</figcaption>
+          </figure>
+          <figure>
+            <img src="media/mosaic_auto_pair3.png" alt="Automatic mosaic — pair 3">
+            <figcaption>Automatic stitching (pair 3)</figcaption>
+          </figure>
+        </div>
+
+        <p style="margin-top:14px;">
+          <strong>Manual vs. automatic.</strong> Manual stitching can be very accurate when high-quality,
+          well-spread correspondences are chosen, but it is time-consuming and does not scale. The
+          automatic pipeline is <em>repeatable</em> and <em>scalable</em>: it finds many candidate matches and uses
+          RANSAC to discard outliers before refining a single homography, then warps and blends the
+          images into a seamless mosaic. Automatic results may degrade on very low-texture scenes,
+          strong parallax/non-planarity, or large viewpoint changes, but with sufficient inliers
+          they closely match manual quality while requiring no user input.
+        </p>
       </section>
 
       
