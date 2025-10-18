@@ -441,9 +441,9 @@
         <h3>B.2: Feature Descriptor Extraction</h3>
 
         <p>
-          For each interest point from B.1, I represent local appearance with a compact,
+          For each interest point from B.1, we represent local appearance with a compact,
           illumination-robust patch descriptor. Following the spirit of Brown et&nbsp;al. (MOPS),
-          I extract an <em>axis-aligned</em> 8×8 intensity patch from a larger 40×40 window
+          we extract an <em>axis-aligned</em> 8×8 intensity patch from a larger 40×40 window
           centered at the keypoint (no rotation or multi-scale in this assignment).
           The 40×40 window is first low-pass filtered (Gaussian) and then uniformly
           resampled onto an 8×8 grid (5-pixel spacing, bilinear sampling). Sampling from a
@@ -468,16 +468,16 @@
         <p>
           The result is a 64-D descriptor that captures the <em>coarse structure</em> of the neighborhood
           and is robust to small geometric jitter and linear illumination change. For visualization,
-          I show the top-80 normalized 8×8 patches (ranked by gradient energy) from each image.
+          we show the top-80 normalized 8×8 patches (ranked by gradient energy) from each image.
         </p>
 
         <div class="grid-2">
           <figure>
-            <img src="media/WechatIMG114_desc_grid_top80.png" alt="Top-80 normalized 8×8 descriptors for image 1">
+            <img src="media/114.png" alt="Top-80 normalized 8×8 descriptors for image 1">
             <figcaption>Image&nbsp;1 — Top-80 normalized 8×8 descriptors (sampled from blurred 40×40 windows).</figcaption>
           </figure>
           <figure>
-            <img src="media/WechatIMG115_desc_grid_top80.png" alt="Top-80 normalized 8×8 descriptors for image 2">
+            <img src="media/115.png" alt="Top-80 normalized 8×8 descriptors for image 2">
             <figcaption>Image&nbsp;2 — Top-80 normalized 8×8 descriptors (sampled from blurred 40×40 windows).</figcaption>
           </figure>
         </div>
@@ -493,7 +493,7 @@
           transform of normalized correlation). To reduce ambiguous matches on repeated textures,
           we adopt Lowe’s <em>ratio test</em>: for each descriptor in image&nbsp;1 we find its two nearest
           neighbors in image&nbsp;2 with distances \(d_1\) and \(d_2\); we accept the match only if
-          \(d_1/d_2 < \tau\) (typical \(\tau\in[0.65,0.80]\)), meaning the best match is
+          \(d_1/d_2 < \tau\), meaning the best match is
           significantly better than the second best. We then apply a <em>mutual consistency</em>
           check (cross-check): a match is kept only if the chosen pair is also each other’s nearest
           neighbor in the reverse direction. This removes many one-sided coincidences.
@@ -603,13 +603,15 @@
         </div>
 
         <p style="margin-top:14px;">
-          <strong>Manual vs. automatic.</strong> Manual stitching can be very accurate when high-quality,
-          well-spread correspondences are chosen, but it is time-consuming and does not scale. The
+          <strong>Manual vs. Automatic.</strong> Manual stitching can be very accurate when high-quality,
+          well-spread correspondences are chosen, but it is time-consuming and does not scale. Also, due to 
+          the precision errors inherent in manual selection, we can clearly see from the above examples that 
+          automatic stitching results effectively reduce the blurring present in manual stitching results. Besides, the
           automatic pipeline is <em>repeatable</em> and <em>scalable</em>: it finds many candidate matches and uses
           RANSAC to discard outliers before refining a single homography, then warps and blends the
           images into a seamless mosaic. Automatic results may degrade on very low-texture scenes,
           strong parallax/non-planarity, or large viewpoint changes, but with sufficient inliers
-          they closely match manual quality while requiring no user input.
+          they closely match manual quality while requiring no user input. 
         </p>
       </section>
 
