@@ -196,13 +196,13 @@
       <!-- Network Architecture intro -->
       <h3>Network Architecture</h3>
       <p>
-        We learn a 2D neural field that maps normalized pixel coordinates <code>(x,y)∈[0,1]^2</code> to RGB in <code>[0,1]</code>.
+        We learn a 2D neural field mapping normalized pixel coordinates <code>(x,y)∈[0,1]^2</code> to RGB in <code>[0,1]</code>.
         Coordinates are expanded by sinusoidal positional encoding (PE): for levels <code>l=0…L−1</code> we append
-        <code>sin(2^lπ·)</code> and <code>cos(2^lπ·)</code> for each axis while keeping the raw <code>(x,y)</code>, so the input
-        dimension is <code>2 + 4L</code>. The encoder output is fed to an MLP:
+        <code>sin(2^lπ·)</code> and <code>cos(2^lπ·)</code> for each axis while keeping the raw <code>(x,y)</code>, yielding input
+        dimension <code>2 + 4L</code>. The encoder output is fed to an MLP:
       </p>
       <ul>
-        <li><b>MLP:</b> <code>[Linear(width) + ReLU] × K</code> → <code>Linear(3)</code> → <code>Sigmoid</code> (bounds output to [0,1]).</li>
+        <li><b>MLP:</b> <code>[Linear(width) + ReLU] × K</code> → <code>Linear(3)</code> → <code>Sigmoid</code> (bounds to [0,1]).</li>
         <li><b>Loss / Optimizer:</b> MSELoss / Adam with <code>lr = 1e-2</code>.</li>
         <li><b>Training:</b> each iteration randomly samples 10k pixels (coordinates + RGB) from the image.</li>
       </ul>
@@ -219,6 +219,32 @@
             <tr><td>Iterations</td><td>1000–3000 (shown: 2000/3000)</td></tr>
           </tbody>
         </table>
+      </div>
+    
+      <!-- 2×2: separate images for L × width (moved here, just after architecture) -->
+      <h3>Effect of Max PE Frequency (L) and Width</h3>
+      <p>
+        To understand how frequency content and model capacity trade off in reconstruction, we vary the maximum PE level
+        <b>L</b> and the hidden-layer <b>width</b>. The 2×2 comparison below uses <b>L ∈ {3, 10}</b> and
+        <b>width ∈ {64, 256}</b> on the staff image.
+      </p>
+      <div class="grid-2">
+        <figure>
+          <img src="outputs/sweep/final_L3_W64.png" alt="L=3, width=64">
+          <figcaption>L = 3, width = 64</figcaption>
+        </figure>
+        <figure>
+          <img src="outputs/sweep/final_L3_W256.png" alt="L=3, width=256">
+          <figcaption>L = 3, width = 256</figcaption>
+        </figure>
+        <figure>
+          <img src="outputs/sweep/final_L10_W64.png" alt="L=10, width=64">
+          <figcaption>L = 10, width = 64</figcaption>
+        </figure>
+        <figure>
+          <img src="outputs/sweep/final_L10_W256.png" alt="L=10, width=256">
+          <figcaption>L = 10, width = 256</figcaption>
+        </figure>
       </div>
     
       <!-- Training progression: Provided Test Image (2x2: 200/400/1000/3000) -->
@@ -263,29 +289,7 @@
         </figure>
       </div>
     
-      <!-- 2×2: separate images for L × width -->
-      <h3>Effect of Max PE Frequency (L) and Width</h3>
-      <p>Four final reconstructions shown separately (not a stitched panel):</p>
-      <div class="grid-2">
-        <figure>
-          <img src="outputs/sweep/final_L3_W64.png" alt="L=3, width=64">
-          <figcaption>L = 3, width = 64</figcaption>
-        </figure>
-        <figure>
-          <img src="outputs/sweep/final_L3_W256.png" alt="L=3, width=256">
-          <figcaption>L = 3, width = 256</figcaption>
-        </figure>
-        <figure>
-          <img src="outputs/sweep/final_L10_W64.png" alt="L=10, width=64">
-          <figcaption>L = 10, width = 64</figcaption>
-        </figure>
-        <figure>
-          <img src="outputs/sweep/final_L10_W256.png" alt="L=10, width=256">
-          <figcaption>L = 10, width = 256</figcaption>
-        </figure>
-      </div>
-    
-      <!-- Two PSNR curves in one row -->
+      <!-- Two PSNR curves in one horizontal row -->
       <h3>Training PSNR</h3>
       <div class="row">
         <figure>
@@ -301,8 +305,8 @@
       <!-- Final results 2×2 -->
       <h3>Final Results</h3>
       <p>
-        Below are the source images and the reconstructions after <b>2000 iterations</b> using
-        <b>L = 12</b>, <b>width = 384</b>, and the same MLP/PE configuration described above.
+        Below are the source photographs and the reconstructions after <b>2000 iterations</b> using
+        <b>L = 12</b>, <b>width = 384</b>, and the same PE+MLP configuration described above.
       </p>
       <div class="grid-2">
         <figure>
@@ -323,6 +327,7 @@
         </figure>
       </div>
     </section>
+
 
 
     
