@@ -48,17 +48,6 @@
   </header>
 
   <main>
-    <!-- Intro -->
-    <section id="intro">
-      <h2>Overview</h2>
-      <p>
-        This project builds a Neural Radiance Field (NeRF) from my own image capture. The pipeline follows four stages: (0) camera calibration and pose estimation with ArUco tags; (1) NeRF training on the undistorted images and poses; (2) quality improvements and diagnostics; and (3) visualizations and novel-view renderings.
-      </p>
-      <div class="answer">
-        <strong>What I implement in Part&nbsp;0</strong><br>
-        Tag-based calibration (OpenCV ArUco), robust PnP for per-frame camera poses, undistortion with an optimal new intrinsics (cropped ROI, corrected principal point), and packaging images/poses/focal into a compact <code>.npz</code> dataset for training.
-      </div>
-    </section>
 
     <!-- Part 0 title only -->
     <section id="part0">
