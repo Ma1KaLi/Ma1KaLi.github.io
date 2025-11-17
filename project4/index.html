@@ -629,54 +629,64 @@
     
             <h4>Training Progression and Validation PSNR</h4>
             <p>
-                The figures below show the evolution of the rendered Lego image from a fixed validation camera over the
-                course of training, as well as the PSNR curve on the validation set. The training process starts from
-                a noisy, blurred reconstruction and gradually recovers the Lego geometry and high-frequency details.
+                The figures below summarize how the network improves over time. I first show the PSNR curves for both
+                the training batches and the held-out validation views, and then visualize snapshots of a single
+                validation camera across different iterations to illustrate how the reconstruction sharpens over time.
             </p>
-    
-            <div class="image-col">
+
+            <!-- PSNR plots: train and validation side by side -->
+            <div class="image-row">
                 <figure>
-                    <img src="media/Part2.5_1.png" alt="Predicted validation view at early training">
-                    <figcaption>Iteration 1</figcaption>
+                    <img src="media/Part2.5_7.png" alt="Train PSNR over training steps">
+                    <figcaption>
+                        Train PSNR over steps. The PSNR of the mini-batches gradually increases as the NeRF fits the
+                        Lego radiance field.
+                    </figcaption>
                 </figure>
                 <figure>
-                    <img src="media/Part2.5_2.png" alt="Predicted validation view at intermediate training">
-                    <figcaption>Iteration 50</figcaption>
-                </figure>
-                <figure>
-                    <img src="media/Part2.5_3.png" alt="Predicted validation view at later training">
-                    <figcaption>Iteration 100</figcaption>
-                </figure>
-                <figure>
-                    <img src="media/Part2.5_4.png" alt="Predicted validation view near convergence">
-                    <figcaption>Iteration 200</figcaption>
-                </figure>
-                <figure>
-                    <img src="media/Part2.5_5.png" alt="Predicted validation view near convergence">
-                    <figcaption>Iteration 500</figcaption>
-                </figure>
-                <figure>
-                    <img src="media/Part2.5_6.png" alt="Predicted validation view near convergence">
-                    <figcaption>Iteration 1000</figcaption>
+                    <img src="media/Part2.5_8.png" alt="Validation PSNR over training iterations">
+                    <figcaption>
+                        Validation PSNR over training. The curve tracks the average PSNR across the 6 validation views
+                        and plateaus as the model converges.
+                    </figcaption>
                 </figure>
             </div>
-    
-            <div class="image-row">
+
+            <p>
+                To better understand the perceptual quality, I also render the same validation viewpoint at different
+                training iterations. The 2&times;3 grid below shows how the model evolves from a blurry, noisy estimate
+                to a sharp reconstruction with clear geometry and textures.
+            </p>
+
+            <!-- 2x3 grid of intermediate validation renders -->
+            <div class="image-grid">
                 <div class="image-row">
-                  <figure>
-                      <img src="media/Part2.5_7.png" alt="Validation PSNR curve over training iterations">
-                      <figcaption>
-                          PSNR curve on the validation set (6 images) as a function of training iteration. The PSNR
-                          steadily improves as the network learns the Lego radiance field.
-                      </figcaption>
-                  </figure>
-                  <figure>
-                      <img src="media/Part2.5_8.png" alt="Validation PSNR curve over training iterations">
-                      <figcaption>
-                          PSNR curve on the validation set (6 images) as a function of training iteration. The PSNR
-                          steadily improves as the network learns the Lego radiance field.
-                      </figcaption>
-                  </figure>
+                    <figure>
+                        <img src="media/Part2.5_1.png" alt="Predicted validation view at early training (iteration 1)">
+                        <figcaption>Iteration 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="media/Part2.5_2.png" alt="Predicted validation view at intermediate training (iteration 50)">
+                        <figcaption>Iteration 50</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="media/Part2.5_3.png" alt="Predicted validation view at later training (iteration 100)">
+                        <figcaption>Iteration 100</figcaption>
+                    </figure>
+                </div>
+                <div class="image-row">
+                    <figure>
+                        <img src="media/Part2.5_4.png" alt="Predicted validation view at iteration 200">
+                        <figcaption>Iteration 200</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="media/Part2.5_5.png" alt="Predicted validation view at iteration 500">
+                        <figcaption>Iteration 500</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="media/Part2.5_6.png" alt="Predicted validation view at iteration 1000">
+                        <figcaption>Iteration 1000</figcaption>
+                    </figure>
                 </div>
             </div>
     
@@ -702,7 +712,7 @@
                 </figure>
             </div>
         </section>
-    </section>
+
 
 
 
