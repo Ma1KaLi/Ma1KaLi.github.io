@@ -333,6 +333,375 @@
       </div>
     </section>
 
+    <!-- ======================= Part 2: Neural Radiance Field on Lego ======================= -->
+    <section id="part2">
+        <h2>Part 2: Fit a Neural Radiance Field from Multi-view Images</h2>
+        <p>
+            In this part, I extend the 2D neural field from Part 1 into a full Neural Radiance Field (NeRF)
+            that models a 3D Lego scene from multi-view calibrated images. Given camera intrinsics, camera-to-world
+            (c2w) matrices, and posed images, I implement the full NeRF rendering pipeline: ray generation,
+            stratified sampling along rays, a 3D neural field that predicts color and density, and differentiable
+            volume rendering. The final model can synthesize novel views of the Lego from unseen camera poses.
+        </p>
+    
+        <!-- ======================= Part 2.1 ======================= -->
+        <section id="part2-1">
+            <h3>Part 2.1: Create Rays from Cameras</h3>
+            <p>
+                To render a 3D scene from calibrated cameras, I first convert image pixels into 3D rays in world space.
+                This involves three coordinate systems: pixel coordinates, camera coordinates, and world coordinates.
+                I implement all transformations in a batched fashion so that entire images or large sets of rays can
+                be processed efficiently with NumPy.
+            </p>
+    
+            <h4>Camera to World Coordinates</h4>
+            <p>
+                Each camera pose is provided as a camera-to-world transformation matrix <code>c2w</code>, which consists
+                of a rotation <code>R</code> and translation <code>t</code>. I implemented a function
+                <code>x_world = transform(c2w, x_cam)</code> that applies
+                <code>x_world = R &times; x_cam + t</code> to batched 3D points. To correctly handle batches of points
+                and matrices, I use <code>np.einsum</code> instead of explicit Python loops, which makes the
+                implementation vectorized and efficient.
+            </p>
+    
+            <h4>Pixel to Camera Coordinates</h4>
+            <p>
+                Given the intrinsic matrix <code>K</code> and pixel coordinates <code>(u, v)</code>, I implemented
+                <code>x_cam = pixel_to_camera(K, uv, s)</code> to map pixels to camera coordinates at a chosen depth
+                <code>s</code>. I compute the inverse of <code>K</code> analytically and use simple NumPy operations
+                to convert pixel centers <code>(u + 0.5, v + 0.5)</code> into normalized camera-space points. For
+                ray directions, I fix <code>s = 1.0</code> so that I get a canonical point along each ray.
+            </p>
+    
+            <h4>Pixel to Ray Conversion</h4>
+            <p>
+                A ray is defined by an origin <code>r<sub>o</sub></code> and a direction <code>r<sub>d</sub></code>.
+                For a pinhole camera, the ray origin is simply the camera center in world space, which I take as the
+                translation part of <code>c2w</code>. To get the direction, I:
+            </p>
+            <ul>
+                <li>Convert a pixel to a 3D point in camera coordinates at depth 1.0 with <code>pixel_to_camera</code>.</li>
+                <li>Transform that point into world coordinates using <code>transform(c2w, x_cam)</code>.</li>
+                <li>Compute the direction as <code>r<sub>d</sub> = normalize(x_world - r<sub>o</sub>)</code>.</li>
+            </ul>
+            <p>
+                The implementation supports both single rays and batched inputs where <code>c2w</code> and
+                <code>uv</code> have leading batch dimensions. This batched design is reused later when generating
+                rays for entire images and for ray-based training.
+            </p>
+    
+            <div class="image-row">
+                <figure>
+                    <img src="figs/part2_1_cameras_rays.png" alt="Camera frustums and example rays in 3D">
+                    <figcaption>
+                        Camera frustums and a grid of rays generated from one training image. Black, red, and green
+                        frustums correspond to train, validation, and test cameras respectively.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+    
+        <!-- ======================= Part 2.2 ======================= -->
+        <section id="part2-2">
+            <h3>Part 2.2: Sampling Rays and Points Along Rays</h3>
+            <p>
+                With pixel-to-ray conversion in place, the next step is to sample rays from the training images and
+                discretize each ray into a set of 3D points. These sampled points will be queried by the NeRF network
+                to produce color and density values.
+            </p>
+    
+            <h4>Sampling Rays from Multi-view Images</h4>
+            <p>
+                I implemented two ray-sampling strategies:
+            </p>
+            <ul>
+                <li>
+                    <b>Global sampling:</b> flatten all pixels across all training images and uniformly sample indices
+                    to get a global set of rays. This is simple but can oversample certain views when batch size is small.
+                </li>
+                <li>
+                    <b>Grouped sampling (used for training):</b> randomly choose <code>M</code> cameras, then sample
+                    roughly <code>N / M</code> pixels from each image. This guarantees that each mini-batch sees rays
+                    from multiple views, which makes training more stable. In my experiments I typically used
+                    <code>M = 8</code> cameras per batch.
+                </li>
+            </ul>
+            <p>
+                In both cases, I use <code>pixel_to_ray</code> to convert the sampled pixels into ray origins and
+                directions, and I gather the corresponding RGB colors from the training images as supervision targets.
+            </p>
+    
+            <h4>Sampling Points Along Rays</h4>
+            <p>
+                For a ray parameterized as <code>r(t) = r<sub>o</sub> + t &middot; r<sub>d</sub></code>, I sample
+                <code>n = 64</code> points between a near and far bound. For the Lego scene, I use
+                <code>near = 2.0</code> and <code>far = 6.0</code>, which roughly brackets the object in front of
+                the cameras. I implemented a stratified sampling function
+                <code>sample_along_rays(ray_o, ray_d, near, far, n_samples, perturb)</code> that:
+            </p>
+            <ul>
+                <li>Creates evenly spaced depth values between <code>near</code> and <code>far</code>.</li>
+                <li>Optionally perturbs each sample within its bin with uniform noise when <code>perturb=True</code>.</li>
+                <li>Computes the 3D points as <code>p = ray_o + t &middot; ray_d</code> in a fully batched manner.</li>
+            </ul>
+            <p>
+                During training, I enable perturbation to approximate the continuous volume integral and improve robustness.
+                For validation and rendering, I disable perturbation to get deterministic and smooth images.
+            </p>
+    
+            <div class="image-row">
+                <figure>
+                    <img src="figs/part2_2_sampling_schematic.png" alt="Schematic of stratified sampling along rays">
+                    <figcaption>
+                        Illustration of stratified sampling along a ray between <code>near</code> and <code>far</code>,
+                        with optional jitter inside each bin to reduce aliasing and improve training stability.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+    
+        <!-- ======================= Part 2.3 ======================= -->
+        <section id="part2-3">
+            <h3>Part 2.3: Dataloader and Ray &amp; Sample Visualization</h3>
+            <p>
+                After building the ray and point sampling utilities, I combined them into a <code>RaysData</code> dataset
+                that serves batches of rays for NeRF training. This dataset is responsible for randomly sampling pixels
+                from the multi-view images, converting them to rays, and returning the corresponding RGB colors.
+            </p>
+    
+            <h4>Dataloader Design</h4>
+            <p>
+                At initialization, the dataset precomputes:
+            </p>
+            <ul>
+                <li>
+                    A flattened array of all pixel coordinates <code>uvs</code> for all training images, stored as
+                    integer <code>(x, y)</code> indices.
+                </li>
+                <li>
+                    The corresponding target RGB values flattened into a <code>(T &times; H &times; W, 3)</code> tensor.
+                </li>
+                <li>
+                    Precomputed ray origins and directions for every pixel using <code>pixel_to_ray</code>.
+                </li>
+            </ul>
+            <p>
+                The method <code>sample_rays(B)</code> randomly samples <code>B</code> indices from this flattened pool
+                and returns batched ray origins, directions, and RGB colors, all with shape <code>(B, 3)</code>. I also
+                included checks to verify that the flattened indices and colors correctly match the original
+                <code>images_train</code> tensor.
+            </p>
+    
+            <h4>Ray and Sample Visualization</h4>
+            <p>
+                To verify the correctness of ray generation and sampling, I visualized a single training step using
+                <code>viser</code>. I randomly sample up to 100 rays from the dataloader, transform them into 3D world
+                space, and plot:
+            </p>
+            <ul>
+                <li>The camera frustums for all training/validation/test cameras.</li>
+                <li>The 3D line segments representing each ray.</li>
+                <li>The 3D sample points along each ray produced by <code>sample_along_rays</code>.</li>
+            </ul>
+            <p>
+                The plot below shows that all sampled rays stay within the camera frustums and that the sample points
+                lie along the correct ray directions, which helps catch subtle bugs in the camera and ray construction.
+            </p>
+    
+            <div class="image-row">
+                <figure>
+                    <img src="figs/part2_3_rays_samples_vis.png" alt="3D visualization of cameras, rays, and sample points">
+                    <figcaption>
+                        3D visualization of the cameras (frustums), a subset of sampled rays (up to 100 rays),
+                        and the corresponding sample points along each ray at a single training step.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+    
+        <!-- ======================= Part 2.4 ======================= -->
+        <section id="part2-4">
+            <h3>Part 2.4: Neural Radiance Field Network</h3>
+            <p>
+                The Neural Radiance Field (NeRF) network generalizes the 2D neural field from Part 1 to model a 3D
+                scene with view-dependent appearance. Instead of taking 2D pixel coordinates, the NeRF network takes
+                3D world coordinates and a viewing direction as input and outputs both color and density at each 3D
+                location along a ray.
+            </p>
+    
+            <h4>Input Encoding</h4>
+            <p>
+                I use sinusoidal positional encoding (PE) for both the 3D position and the 3D ray direction:
+            </p>
+            <ul>
+                <li>
+                    <b>Position encoding:</b> a 3D point <code>x</code> is encoded with <code>L<sub>x</sub> = 12</code>
+                    frequency bands, giving <code>3 &times; (2L<sub>x</sub> + 1)</code> channels.
+                </li>
+                <li>
+                    <b>Direction encoding:</b> the ray direction <code>d</code> is encoded with
+                    <code>L<sub>d</sub> = 6</code> frequency bands, giving <code>3 &times; (2L<sub>d</sub> + 1)</code>
+                    channels.
+                </li>
+            </ul>
+            <p>
+                This positional encoding allows the network to represent high-frequency detail in both geometry and
+                view-dependent color while still using a standard MLP.
+            </p>
+    
+            <h4>Network Architecture</h4>
+            <p>
+                The NeRF MLP is deeper and wider than the 2D network in Part 1 to handle the increased complexity of
+                a full 3D scene. My architecture is:
+            </p>
+            <ul>
+                <li>
+                    A stack of fully-connected layers that process the encoded 3D position. I use 8 layers with
+                    hidden width 256 and ReLU activations.
+                </li>
+                <li>
+                    A skip connection that concatenates the original position encoding back into the network at a
+                    middle layer (after 4 layers). This helps prevent deep layers from “forgetting” the input
+                    coordinates.
+                </li>
+                <li>
+                    A density (sigma) head that maps the final position features to a single scalar density value.
+                    I apply a ReLU to ensure that density is non-negative.
+                </li>
+                <li>
+                    A feature head that produces a 256-dimensional feature vector, which is fed into the color branch.
+                </li>
+                <li>
+                    A color branch that concatenates the feature vector with the encoded viewing direction and passes
+                    them through additional layers to produce an RGB color. I apply a Sigmoid activation at the end to
+                    constrain the RGB values to <code>[0, 1]</code>.
+                </li>
+            </ul>
+            <p>
+                Both the Lego and test novel views use the exact same architecture: positional encoding with
+                <code>L<sub>x</sub> = 12</code> and <code>L<sub>d</sub> = 6</code>, hidden width 256, and 8 layers with
+                a single skip connection in the middle. The network is implemented in PyTorch.
+            </p>
+    
+            <div class="image-row">
+                <figure>
+                    <img src="figs/part2_4_nerf_architecture.png" alt="Diagram of the NeRF MLP architecture">
+                    <figcaption>
+                        NeRF network architecture. The encoded 3D position is processed by a deep MLP with a skip
+                        connection. The network branches into a density head and a feature head. The feature head
+                        is combined with an encoded viewing direction to produce view-dependent RGB colors.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+    
+        <!-- ======================= Part 2.5 ======================= -->
+        <section id="part2-5">
+            <h3>Part 2.5: Volume Rendering and Training</h3>
+            <p>
+                With the NeRF network and sampling routines in place, the final step is to implement differentiable
+                volume rendering along each ray and train the network on the multi-view Lego dataset.
+            </p>
+    
+            <h4>Volume Rendering</h4>
+            <p>
+                For each ray, the NeRF network predicts a density <code>&sigma;<sub>i</sub></code> and color
+                <code>c<sub>i</sub></code> at a set of discrete sample points along the ray. I implemented the discrete
+                volume rendering equation:
+            </p>
+            <p class="equation">
+                Ĉ(r) = &sum;<sub>i</sub> T<sub>i</sub> &alpha;<sub>i</sub> c<sub>i</sub>, &nbsp;&nbsp;
+                &alpha;<sub>i</sub> = 1 - exp(-&sigma;<sub>i</sub> &Delta;<sub>i</sub>), &nbsp;&nbsp;
+                T<sub>i</sub> = exp(-&sum;<sub>j &lt; i</sub> &sigma;<sub>j</sub> &Delta;<sub>j</sub>),
+            </p>
+            <p>
+                where <code>&Delta;<sub>i</sub></code> is the distance between neighboring samples (the step size).
+                In code, I use PyTorch tensor operations and <code>torch.cumsum</code> to compute the accumulated
+                transmittance and weights in a fully vectorized way, and then perform a weighted sum of the colors
+                along each ray. This function is differentiable and used inside the training loop so that gradients
+                flow back into the NeRF MLP.
+            </p>
+    
+            <h4>Training Procedure</h4>
+            <p>
+                For each training iteration, I:
+            </p>
+            <ol>
+                <li>Sample <code>N</code> rays (origins, directions, and target RGBs) from the dataloader using the grouped ray sampler (<code>M = 8</code> cameras per batch).</li>
+                <li>Use <code>sample_along_rays</code> with <code>n_samples = 64</code>, <code>near = 2.0</code> and <code>far = 6.0</code> and <code>perturb=True</code> to obtain 3D sample points along each ray.</li>
+                <li>Pass the sample points and directions through the NeRF network to obtain per-sample colors and densities.</li>
+                <li>Apply the volume rendering function to collapse the samples back into a single RGB color for each ray.</li>
+                <li>Compute the MSE loss between the rendered RGBs and the ground-truth image colors, and backpropagate.</li>
+            </ol>
+            <p>
+                I use the Adam optimizer with a learning rate of <code>2 &times; 10<sup>-4</sup></code> and a batch size
+                of 8192 rays per iteration. The positional encoding frequencies are fixed to
+                <code>L<sub>x</sub> = 12</code> for positions and <code>L<sub>d</sub> = 6</code> for directions. I
+                train the network for up to 1200 iterations, periodically evaluating on the validation set by rendering
+                all 6 validation cameras and computing the average PSNR.
+            </p>
+    
+            <h4>Training Progression and Validation PSNR</h4>
+            <p>
+                The figures below show the evolution of the rendered Lego image from a fixed validation camera over the
+                course of training, as well as the PSNR curve on the validation set. The training process starts from
+                a noisy, blurred reconstruction and gradually recovers the Lego geometry and high-frequency details.
+            </p>
+    
+            <div class="image-row">
+                <figure>
+                    <img src="figs/part2_5_val_pred_step_001.png" alt="Predicted validation view at early training">
+                    <figcaption>Validation view at an early training step.</figcaption>
+                </figure>
+                <figure>
+                    <img src="figs/part2_5_val_pred_step_200.png" alt="Predicted validation view at intermediate training">
+                    <figcaption>Validation view after a few hundred iterations.</figcaption>
+                </figure>
+                <figure>
+                    <img src="figs/part2_5_val_pred_step_600.png" alt="Predicted validation view at later training">
+                    <figcaption>Validation view at a later training stage.</figcaption>
+                </figure>
+                <figure>
+                    <img src="figs/part2_5_val_pred_step_1000.png" alt="Predicted validation view near convergence">
+                    <figcaption>Validation view near convergence.</figcaption>
+                </figure>
+            </div>
+    
+            <div class="image-row">
+                <figure>
+                    <img src="figs/part2_5_val_psnr_curve.png" alt="Validation PSNR curve over training iterations">
+                    <figcaption>
+                        PSNR curve on the validation set (6 images) as a function of training iteration. The PSNR
+                        steadily improves as the network learns the Lego radiance field.
+                    </figcaption>
+                </figure>
+            </div>
+    
+            <h4>Novel View Spherical Rendering</h4>
+            <p>
+                After training, I use the provided test camera extrinsics <code>c2ws_test</code> to render a spherical
+                novel-view video of the Lego scene. For each test camera pose, I render a full image using
+                the <code>render_image</code> function and then concatenate the frames into a video. This produces a
+                smooth fly-around of the reconstructed Lego, demonstrating that the NeRF has learned a coherent
+                3D representation that generalizes to unseen viewpoints.
+            </p>
+    
+            <div class="image-row">
+                <figure>
+                    <video controls loop muted width="320">
+                        <source src="media/lego_test.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <figcaption>
+                        Spherical novel-view rendering of the Lego using the test camera poses <code>c2ws_test</code>.
+                        The video smoothly orbits the scene, showing consistent geometry and view-dependent shading.
+                    </figcaption>
+                </figure>
+            </div>
+        </section>
+    </section>
+
+
 
 
     
