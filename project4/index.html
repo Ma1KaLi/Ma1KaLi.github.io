@@ -389,16 +389,6 @@
                 <code>uv</code> have leading batch dimensions. This batched design is reused later when generating
                 rays for entire images and for ray-based training.
             </p>
-    
-            <div class="image-row">
-                <figure>
-                    <img src="figs/part2_1_cameras_rays.png" alt="Camera frustums and example rays in 3D">
-                    <figcaption>
-                        Camera frustums and a grid of rays generated from one training image. Black, red, and green
-                        frustums correspond to train, validation, and test cameras respectively.
-                    </figcaption>
-                </figure>
-            </div>
         </section>
     
         <!-- ======================= Part 2.2 ======================= -->
@@ -447,17 +437,7 @@
             <p>
                 During training, I enable perturbation to approximate the continuous volume integral and improve robustness.
                 For validation and rendering, I disable perturbation to get deterministic and smooth images.
-            </p>
-    
-            <div class="image-row">
-                <figure>
-                    <img src="figs/part2_2_sampling_schematic.png" alt="Schematic of stratified sampling along rays">
-                    <figcaption>
-                        Illustration of stratified sampling along a ray between <code>near</code> and <code>far</code>,
-                        with optional jitter inside each bin to reduce aliasing and improve training stability.
-                    </figcaption>
-                </figure>
-            </div>
+            </p> 
         </section>
     
         <!-- ======================= Part 2.3 ======================= -->
