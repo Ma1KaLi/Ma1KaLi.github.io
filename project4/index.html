@@ -53,6 +53,7 @@
     <section id="part0">
       <h2>Part 0 — Calibrating Your Camera, Capturing a 3D Scan, Estimating Poses, and Building the Dataset</h2>
       <!-- Content to be filled in next iteration: 0.1 Calibration, 0.2 Capture, 0.3 Pose (Viser frustums), 0.4 Undistort & NPZ packaging -->
+      <!-- Part 0.1 -->
       <section id="part01">
       <h2>Part 0.1 — Calibrating Your Camera</h2>
       <p>
@@ -119,8 +120,52 @@
         </div>
       </div>
     </section>
+    <!-- Part 0.3 — Estimating Camera Pose -->
+    <section id="part03">
+      <h2>Part 0.3 — Estimating Camera Pose</h2>
+      <p>
+        With the intrinsics and distortion from Part&nbsp;0.1, I estimated a camera pose
+        for every object-frame. This is a PnP setup: match the 2D image corners of the
+        single ArUco tag to their known 3D coordinates on the tabletop (meters), solve
+        for rotation and translation, and convert to a camera-to-world (<code>c2w</code>)
+        matrix for visualization and later NeRF training.
+      </p>
+    
+      <div class="answer">
+        <strong>Implementation overview (high level)</strong>
+        <ul style="margin:6px 0 0 18px;">
+          <li><b>Detect & refine:</b> Detect the single tag in each frame and refine its 4 corners to sub-pixel accuracy.</li>
+          <li><b>Pose per frame:</b> Solve a planar PnP (square tag) to obtain world-to-camera extrinsics, then invert to <code>c2w</code>.</li>
+          <li><b>Quality gate:</b> Skip frames without the tag and compute per-image reprojection error to catch outliers.</li>
+          <li><b>Consistency:</b> Use the same intrinsics/zoom as calibration; keep tag size in meters (here 0.060&nbsp;m) so poses have a consistent scale.</li>
+          <li><b>Outputs:</b> Save <code>c2w</code> for each image along with diagnostics to <code>part0_poses.npz/json</code>.</li>
+        </ul>
+      </div>
+    
+      <div class="note">
+        OpenCV returns world-to-camera by default; for NeRF I use <code>c2w = (w2c)^{-1}</code>. I visualize these poses as
+        camera frustums with the source images textured on the image planes.
+      </div>
+    
+      <h3 style="margin-top:14px;">Camera Frustum Visualization</h3>
+      <p>
+        I rendered the estimated poses in 3D using Viser. Each frustum shows a camera’s position, orientation,
+        and its captured image. Below are two views of the same pose cloud.
+      </p>
+    
+      <div class="grid-2" style="align-items:start;">
+        <figure>
+          <img src="media/cloud_of_cameras1.png" alt="Viser visualization (view 1)" loading="lazy" />
+          <figcaption>Viser visualization (view&nbsp;1).</figcaption>
+        </figure>
+        <figure>
+          <img src="media/cloud_of_cameras2.png" alt="Viser visualization (view 2)" loading="lazy" />
+          <figcaption>Viser visualization (view&nbsp;2).</figcaption>
+        </figure>
+      </div>
     </section>
-    <!-- Part 0.1 -->
+    </section>
+    
     
 
 
