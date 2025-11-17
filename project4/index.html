@@ -620,10 +620,10 @@
                 <li>Compute the MSE loss between the rendered RGBs and the ground-truth image colors, and backpropagate.</li>
             </ol>
             <p>
-                I use the Adam optimizer with a learning rate of <code>2 &times; 10<sup>-4</sup></code> and a batch size
+                I use the Adam optimizer with a learning rate of <code>5 &times; 10<sup>-4</sup></code> and a batch size
                 of 8192 rays per iteration. The positional encoding frequencies are fixed to
-                <code>L<sub>x</sub> = 12</code> for positions and <code>L<sub>d</sub> = 6</code> for directions. I
-                train the network for up to 1200 iterations, periodically evaluating on the validation set by rendering
+                <code>L<sub>x</sub> = 10</code> for positions and <code>L<sub>d</sub> = 4</code> for directions. I
+                train the network for up to 2000 iterations, periodically evaluating on the validation set by rendering
                 all 6 validation cameras and computing the average PSNR.
             </p>
     
@@ -631,7 +631,7 @@
 
             <p>
                 To better understand the perceptual quality, I also render the same validation viewpoint at different
-                training iterations. The 2&times;3 grid below shows how the model evolves from a blurry, noisy estimate
+                training iterations. The 2&times;4 grid below shows how the model evolves from a blurry, noisy estimate
                 to a sharp reconstruction with clear geometry and textures.
             </p>
 
