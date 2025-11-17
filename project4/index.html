@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Project 4 — Neural Radiance Field (NeRF)</title>
+  <style>
+    :root { --maxw: 980px; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0; line-height: 1.6; color: #222; background: #fafafa;
+    }
+    header, main, footer { max-width: var(--maxw); margin: 0 auto; padding: 20px; }
+    header h1 { margin: 0 0 6px; }
+    header a { color: #0b5fff; text-decoration: none; }
+    .back { display: inline-block; margin-top: 6px; }
+    section {
+      background: #fff; border: 1px solid #eee; border-radius: 14px;
+      padding: 18px; margin: 18px 0 24px; box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    h2 { margin: 0 0 12px; font-size: 1.25rem; }
+    p { margin: 8px 0; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    @media (max-width: 720px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    figure { margin: 0; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; }
+    figure img, figure video { display: block; width: 100%; height: auto; }
+    figcaption { font-size: .9rem; padding: 10px 12px; background: #f6f7fb; border-top: 1px solid #eee; }
+
+    .answer { background: #f4fbf6; border: 1px solid #d8f1df; border-radius: 10px; padding: 10px 12px; margin-top: 10px; }
+    .note { font-size: .92rem; color: #555; background: #fff7e6; border: 1px solid #ffe2a8; border-radius: 10px; padding: 10px 12px; margin-top: 10px; }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; }
+    thead th { text-align: left; font-weight: 600; padding: 10px 10px; background: #f6f7fb; border-bottom: 1px solid #eee; }
+    tbody td { padding: 10px; border-top: 1px solid #eee; vertical-align: middle; }
+    td img { width: 240px; height: auto; display: block; border-radius: 10px; border: 1px solid #eee; }
+    td.number, td.time { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    @media (max-width: 720px) { td img { width: 100%; } }
+
+    footer { font-size: .9rem; color: #666; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Project 4 — Neural Radiance Field (NeRF)</h1>
+    <a class="back" href="../index.html">← Back to main portfolio</a>
+  </header>
+
+  <main>
+    <!-- Intro -->
+    <section id="intro">
+      <h2>Overview</h2>
+      <p>
+        This project builds a Neural Radiance Field (NeRF) from my own image capture. The pipeline follows four stages: (0) camera calibration and pose estimation with ArUco tags; (1) NeRF training on the undistorted images and poses; (2) quality improvements and diagnostics; and (3) visualizations and novel-view renderings.
+      </p>
+      <div class="answer">
+        <strong>What I implement in Part&nbsp;0</strong><br>
+        Tag-based calibration (OpenCV ArUco), robust PnP for per-frame camera poses, undistortion with an optimal new intrinsics (cropped ROI, corrected principal point), and packaging images/poses/focal into a compact <code>.npz</code> dataset for training.
+      </div>
+    </section>
+
+    <!-- Part 0 title only -->
+    <section id="part0">
+      <h2>Part 0 — Calibrating Your Camera, Capturing a 3D Scan, Estimating Poses, and Building the Dataset</h2>
+      <!-- Content to be filled in next iteration: 0.1 Calibration, 0.2 Capture, 0.3 Pose (Viser frustums), 0.4 Undistort & NPZ packaging -->
+    </section>
+
+    <!-- Future sections placeholders (do not render yet) -->
+    <!--
+    <section id="part1"><h2>Part 1 — NeRF Training</h2></section>
+    <section id="part2"><h2>Part 2 — Improvements & Novel Views</h2></section>
+    -->
+  </main>
+
+  <footer>
+    © <script>document.write(new Date().getFullYear());</script> Project 4. All images and results by the author.
+  </footer>
+</body>
+</html>
