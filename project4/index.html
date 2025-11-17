@@ -48,17 +48,6 @@
   </header>
 
   <main>
-    <!-- Intro -->
-    <section id="intro">
-      <h2>Overview</h2>
-      <p>
-        This project builds a Neural Radiance Field (NeRF) from my own image capture. The pipeline follows four stages: (0) camera calibration and pose estimation with ArUco tags; (1) NeRF training on the undistorted images and poses; (2) quality improvements and diagnostics; and (3) visualizations and novel-view renderings.
-      </p>
-      <div class="answer">
-        <strong>What I implement in Part&nbsp;0</strong><br>
-        Tag-based calibration (OpenCV ArUco), robust PnP for per-frame camera poses, undistortion with an optimal new intrinsics (cropped ROI, corrected principal point), and packaging images/poses/focal into a compact <code>.npz</code> dataset for training.
-      </div>
-    </section>
 
     <!-- Part 0 title only -->
     <section id="part0">
@@ -98,6 +87,41 @@
         </div>
       </div>
     </section>
+
+    <!-- Part 0.2 — Capturing a 3D Object Scan -->
+    <section id="part02">
+      <h2>Part 0.2 — Capturing a 3D Object Scan</h2>
+      <p>
+        I captured a tabletop object with a <strong>single printed ArUco tag</strong> (DICT_4X4_50, 60&nbsp;mm square)
+        placed next to the object. I used the <strong>same phone, resolution, and zoom</strong> as in calibration and took
+        roughly <strong>30–50 images</strong> from diverse horizontal and vertical angles to achieve good coverage while
+        keeping exposure consistent.
+      </p>
+    
+      <div class="grid-2" style="align-items:start;">
+        <figure>
+          <img src="media/1751763004714_.pic.jpg" alt="Example of my object with a single ArUco tag" loading="lazy" />
+          <figcaption>Example of my object with a single ArUco tag.</figcaption>
+        </figure>
+    
+        <div>
+          <div class="answer">
+            <strong>Capture checklist</strong>
+            <ul style="margin:6px 0 0 18px;">
+              <li>Keep <em>zoom/focal length fixed</em>; lock exposure if possible to avoid brightness jumps.</li>
+              <li>Ensure the tag has a <em>white border</em> and lies flat on the tabletop next to the object.</li>
+              <li>Maintain a roughly <em>uniform distance (≈10–20&nbsp;cm)</em> so the object fills about 50% of the frame.</li>
+              <li>Vary viewpoints <em>both horizontally and vertically</em>; avoid motion blur.</li>
+              <li>Keep the entire tag (with border) visible in every frame for robust detection.</li>
+            </ul>
+          </div>
+          <div class="note">
+            Frames are saved under <code>data/Object_Scan2</code> and will be used for pose estimation in Part&nbsp;0.3.
+          </div>
+        </div>
+      </div>
+    </section>
+
 
     <!-- Future sections placeholders (do not render yet) -->
     <!--
