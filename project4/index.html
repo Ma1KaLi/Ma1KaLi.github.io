@@ -48,11 +48,55 @@
   </header>
 
   <main>
+    <!-- Intro -->
+    <section id="intro">
+      <h2>Overview</h2>
+      <p>
+        This project builds a Neural Radiance Field (NeRF) from my own image capture. The pipeline follows four stages: (0) camera calibration and pose estimation with ArUco tags; (1) NeRF training on the undistorted images and poses; (2) quality improvements and diagnostics; and (3) visualizations and novel-view renderings.
+      </p>
+      <div class="answer">
+        <strong>What I implement in Part&nbsp;0</strong><br>
+        Tag-based calibration (OpenCV ArUco), robust PnP for per-frame camera poses, undistortion with an optimal new intrinsics (cropped ROI, corrected principal point), and packaging images/poses/focal into a compact <code>.npz</code> dataset for training.
+      </div>
+    </section>
 
     <!-- Part 0 title only -->
     <section id="part0">
-      <h2>Part 0 — Calibrating Your Camera and Capturing a 3D Scan</h2>
+      <h2>Part 0 — Calibrating Your Camera, Capturing a 3D Scan, Estimating Poses, and Building the Dataset</h2>
       <!-- Content to be filled in next iteration: 0.1 Calibration, 0.2 Capture, 0.3 Pose (Viser frustums), 0.4 Undistort & NPZ packaging -->
+    </section>
+    <!-- Part 0.1 -->
+    <section id="part01">
+      <h2>Part 0.1 — Calibrating Your Camera</h2>
+      <p>
+        I calibrate the phone camera using a printed 3×2 grid of ArUco tags (DICT_4X4_50), sized 
+        <strong>60&nbsp;mm</strong> square each, with center-to-center spacing of <strong>90.00&nbsp;mm (H)</strong> and <strong>75.67&nbsp;mm (V)</strong>.
+        I captured <strong>30–50 images</strong> at a fixed zoom and resolution, while varying viewing angle and distance to
+        improve numerical conditioning. Blurry frames or images with mismatched resolution are discarded.
+      </p>
+      <div class="grid-2" style="align-items:start;">
+        <figure>
+          <img src="media/831763004403_.pic.jpg" alt="Example calibration photo with a 3×2 ArUco grid" loading="lazy"/>
+          <figcaption>Example of calibration image with ArUco tags.</figcaption>
+        </figure>
+        <div>
+          <div class="answer">
+            <strong>Implementation summary</strong>
+            <ol style="margin:6px 0 0 18px;">
+              <li>Detect all markers per frame via OpenCV ArUco; refine 4-corner locations with <code>cornerSubPix</code>.</li>
+              <li>Map detected IDs <code>0…5</code> to a row-major 3×2 grid and build world points on the Z=0 plane.
+                  The grid origin is the center of the (0,0) tag; each tag’s TL–TR–BR–BL corners are offset by ±L/2.</li>
+              <li>Accumulate <code>(objectPoints, imagePoints)</code> across views and call <code>cv2.calibrateCamera</code> to solve for
+                  intrinsics <code>K</code> and distortion <code>dist</code>.</li>
+              <li>Compute per-image reprojection error; skip frames with missing tags or outlier errors; save
+                  <code>part0_calibration.npz/json</code> with <code>K</code>, <code>dist</code>, and diagnostics.</li>
+            </ol>
+          </div>
+          <div class="note">
+            Capture rules: fixed zoom, consistent exposure, no motion blur, include the full tag borders, and vary angles to avoid near-degenerate views.
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Future sections placeholders (do not render yet) -->
@@ -67,3 +111,4 @@
   </footer>
 </body>
 </html>
+
