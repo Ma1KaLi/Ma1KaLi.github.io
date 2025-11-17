@@ -628,29 +628,6 @@
             </p>
     
             <h4>Training Progression and Validation PSNR</h4>
-            <p>
-                The figures below summarize how the network improves over time. I first show the PSNR curves for both
-                the training batches and the held-out validation views, and then visualize snapshots of a single
-                validation camera across different iterations to illustrate how the reconstruction sharpens over time.
-            </p>
-
-            <!-- PSNR plots: train and validation side by side -->
-            <div class="image-row">
-                <figure>
-                    <img src="media/Part2.5_7.png" alt="Train PSNR over training steps">
-                    <figcaption>
-                        Train PSNR over steps. The PSNR of the mini-batches gradually increases as the NeRF fits the
-                        Lego radiance field.
-                    </figcaption>
-                </figure>
-                <figure>
-                    <img src="media/Part2.5_8.png" alt="Validation PSNR over training iterations">
-                    <figcaption>
-                        Validation PSNR over training. The curve tracks the average PSNR across the 6 validation views
-                        and plateaus as the model converges.
-                    </figcaption>
-                </figure>
-            </div>
 
             <p>
                 To better understand the perceptual quality, I also render the same validation viewpoint at different
@@ -659,36 +636,71 @@
             </p>
 
             <!-- 2x3 grid of intermediate validation renders -->
-            <div class="image-grid">
-                <div class="image-row">
-                    <figure>
-                        <img src="media/Part2.5_1.png" alt="Predicted validation view at early training (iteration 1)">
-                        <figcaption>Iteration 1</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="media/Part2.5_2.png" alt="Predicted validation view at intermediate training (iteration 50)">
-                        <figcaption>Iteration 50</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="media/Part2.5_3.png" alt="Predicted validation view at later training (iteration 100)">
-                        <figcaption>Iteration 100</figcaption>
-                    </figure>
-                </div>
-                <div class="image-row">
-                    <figure>
-                        <img src="media/Part2.5_4.png" alt="Predicted validation view at iteration 200">
-                        <figcaption>Iteration 200</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="media/Part2.5_5.png" alt="Predicted validation view at iteration 500">
-                        <figcaption>Iteration 500</figcaption>
-                    </figure>
-                    <figure>
-                        <img src="media/Part2.5_6.png" alt="Predicted validation view at iteration 1000">
-                        <figcaption>Iteration 1000</figcaption>
-                    </figure>
-                </div>
+            <div class="grid-2x3"
+                 style="
+                    display:grid;
+                    grid-template-columns: repeat(3, minmax(0, 1fr));
+                    grid-auto-rows: auto;
+                    gap:16px;
+                    justify-items:center;
+                    align-items:center;
+                 ">
+                <figure>
+                    <img src="media/Part2.5_1.png" alt="Predicted validation view at early training (iteration 1)"
+                         style="width:100%; max-width:260px; height:auto;">
+                    <figcaption>Iteration 1</figcaption>
+                </figure>
+                <figure>
+                    <img src="media/Part2.5_2.png" alt="Predicted validation view at intermediate training (iteration 50)"
+                         style="width:100%; max-width:260px; height:auto;">
+                    <figcaption>Iteration 50</figcaption>
+                </figure>
+                <figure>
+                    <img src="media/Part2.5_3.png" alt="Predicted validation view at later training (iteration 100)"
+                         style="width:100%; max-width:260px; height:auto;">
+                    <figcaption>Iteration 100</figcaption>
+                </figure>
+                <figure>
+                    <img src="media/Part2.5_4.png" alt="Predicted validation view at iteration 200"
+                         style="width:100%; max-width:260px; height:auto;">
+                    <figcaption>Iteration 200</figcaption>
+                </figure>
+                <figure>
+                    <img src="media/Part2.5_5.png" alt="Predicted validation view at iteration 500"
+                         style="width:100%; max-width:260px; height:auto;">
+                    <figcaption>Iteration 500</figcaption>
+                </figure>
+                <figure>
+                    <img src="media/Part2.5_6.png" alt="Predicted validation view at iteration 1000"
+                         style="width:100%; max-width:260px; height:auto;">
+                    <figcaption>Iteration 1000</figcaption>
+                </figure>
             </div>
+
+            <p>
+                The figures below summarize how the network improves over time. I first show the PSNR curves for both
+                the training batches and the held-out validation views, and then visualize snapshots of a single
+                validation camera across different iterations to illustrate how the reconstruction sharpens over time.
+            </p>
+
+            <!-- PSNR plots: train and validation side by side -->
+            <div class="psnr-row" style="display:flex; gap:24px; justify-content:center; align-items:flex-start; flex-wrap:wrap;">
+                <figure style="flex:1 1 280px; max-width:480px; text-align:center;">
+                    <img src="media/Part2.5_7.png" alt="Train PSNR over training steps" style="width:100%; height:auto;">
+                    <figcaption>
+                        Train PSNR over steps. The PSNR of the mini-batches gradually increases as the NeRF fits the
+                        Lego radiance field.
+                    </figcaption>
+                </figure>
+                <figure style="flex:1 1 280px; max-width:480px; text-align:center;">
+                    <img src="media/Part2.5_8.png" alt="Validation PSNR over training iterations" style="width:100%; height:auto;">
+                    <figcaption>
+                        Validation PSNR over training. The curve tracks the average PSNR across the 6 validation views
+                        and plateaus as the model converges.
+                    </figcaption>
+                </figure>
+            </div>
+
     
             <h4>Novel View Spherical Rendering</h4>
             <p>
