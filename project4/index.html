@@ -886,7 +886,7 @@
             <div class="image-row">
                 <figure>
                     <!-- Replace with a 2-view debug panel: GT vs Pred -->
-                    <img src="media/Part2.6_2view_debug.png" alt="2-view NeRF debug: ground truth and predictions">
+                    <img src="media/check1.png" alt="2-view NeRF debug: ground truth and predictions (200 steps)">
                     <figcaption>
                         Two-view sanity check. Left: ground-truth training views. Right: NeRF predictions
                         after training only on these two images. The model overfits these views and
@@ -898,12 +898,11 @@
             <div class="image-row">
                 <figure>
                     <!-- Replace with a 4-view debug panel: GT vs Pred -->
-                    <img src="media/Part2.6_4view_debug.png" alt="4-view NeRF debug: ground truth and predictions">
+                    <img src="media/check2.png" alt="2-view NeRF debug: ground truth and predictions (400 steps)">
                     <figcaption>
-                        Four-view sanity check. The network still reconstructs all four views
-                        reasonably well, although details are blurrier than in the 2-view case.
-                        These experiments suggest that the NeRF architecture and volume-rendering
-                        code are working correctly on small, consistent subsets of the data.
+                        Two-view sanity check. Left: ground-truth training views. Right: NeRF predictions
+                        after training only on these two images. The model overfits these views and
+                        reproduces the mug and paper with reasonable sharpness.
                     </figcaption>
                 </figure>
             </div>
