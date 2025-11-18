@@ -734,6 +734,246 @@
             </div>
         </section>
 
+        <!-- ======================= Part 2.6 ======================= -->
+        <section id="part2-6">
+            <h3>Part 2.6: NeRF on My Own Object</h3>
+
+            <p>
+                In this part I applied my NeRF implementation to the real-world dataset that I captured in
+                Part&nbsp;0 (a metal travel mug on a sheet of paper with an ArUco marker).
+                The goal was to train a NeRF that can reproduce the training views and then render a
+                novel-view gif of a virtual camera circling the object.
+            </p>
+
+            <h4>Training Setup</h4>
+            <p>
+                I reused the same NeRF architecture as in the Lego experiment (8-layer MLP with positional
+                encoding on positions and directions), but had to make several changes to make training
+                work on the real data:
+            </p>
+            <ul>
+                <li>
+                    <strong>Intrinsics and poses.</strong> I loaded the calibrated intrinsics
+                    <code>K_custom</code> and camera-to-world matrices <code>c2ws_train_custom</code>,
+                    <code>c2ws_val_custom</code>, and <code>c2ws_test_custom</code> from
+                    <code>my_data.npz</code>. The intrinsics were built at the same resolution as
+                    the training images.
+                </li>
+                <li>
+                    <strong>Near / far bounds.</strong> Instead of the Lego values
+                    (<code>near = 2.0</code>, <code>far = 6.0</code>), I used
+                    <code>near = 0.12</code> and <code>far = 0.80</code>, which empirically
+                    covered the depth range from the marker paper up to the front of the mug.
+                </li>
+                <li>
+                    <strong>Samples per ray.</strong> I first debugged using
+                    <code>n_samples = 32</code> and then switched to <code>n_samples = 64</code>
+                    for the final training to improve visual quality, at the cost of longer training time.
+                </li>
+                <li>
+                    <strong>Ray sampling.</strong> As in Part&nbsp;2.5, I used the grouped
+                    sampler that first chooses <code>M = 8</code> cameras per batch and then
+                    samples pixels within those cameras. This improves stability on multi-view
+                    data.
+                </li>
+                <li>
+                    <strong>Optimization.</strong> I used Adam with a base learning rate of
+                    <code>2 &times; 10<sup>-4</sup></code>, batch size 8192 rays, and trained for
+                    a few thousand steps. The learning rate was decayed by factors of 0.5 and 0.25
+                    at roughly half and 80% of the total iterations, respectively.
+                </li>
+            </ul>
+
+            <div class="image-row">
+                <figure>
+                    <!-- Replace with your combined loss / PSNR plot -->
+                    <img src="media/Part2.6_train_loss_psnr.png" alt="Training loss and PSNR curves on the custom object">
+                    <figcaption>
+                        Training loss (MSE) and batch PSNR over iterations for the custom-object NeRF.
+                        The loss decreases steadily and the PSNR rises to around 19–21&nbsp;dB on the
+                        training batches.
+                    </figcaption>
+                </figure>
+            </div>
+
+            <h4>Intermediate Renders During Training</h4>
+            <p>
+                To visualize the learning dynamics, I periodically rendered the first validation view
+                at multiple checkpoints (e.g., steps 1, 50, 100, 200, 400, 800, 1200, 1600, 2000, 2500).
+                Initially the NeRF predicts nearly uniform colors, then gradually discovers the rough
+                silhouette of the mug and the paper, and finally recovers some of the color contrast
+                and shading, although the result remains relatively blurry compared to the ground truth.
+            </p>
+
+            <div class="image-row">
+                <figure>
+                    <!-- Replace with your grid of intermediate validation renders -->
+                    <img src="media/Part2.6_intermediate_renders.png" alt="Intermediate NeRF renders of the custom object over training">
+                    <figcaption>
+                        Intermediate renders of a fixed validation view at different training steps.
+                        The mug and the paper become progressively more recognizable, but the final
+                        reconstruction still exhibits noticeable blur and streaking.
+                    </figcaption>
+                </figure>
+            </div>
+
+            <h4>Sanity Checks on 2-View and 4-View Subsets</h4>
+            <p>
+                Before training on the full dataset, I debugged the pipeline using small subsets of
+                the training views. I first trained a NeRF on only <strong>2 views</strong>, and
+                then on <strong>4 views</strong>. In both cases, the network was able to
+                overfit these views reasonably well:
+            </p>
+            <ul>
+                <li>
+                    For 2 views, the reconstructions reached &gt;20&nbsp;dB PSNR on those two images,
+                    and the mug, lid, and marker pattern were clearly recognizable.
+                </li>
+                <li>
+                    For 4 views, the PSNR was slightly lower per view, but the NeRF still produced
+                    plausible reconstructions for all four cameras.
+                </li>
+            </ul>
+
+            <div class="image-row">
+                <figure>
+                    <!-- Replace with a 2-view debug panel: GT vs Pred -->
+                    <img src="media/Part2.6_2view_debug.png" alt="2-view NeRF debug: ground truth and predictions">
+                    <figcaption>
+                        Two-view sanity check. Left: ground-truth training views. Right: NeRF predictions
+                        after training only on these two images. The model overfits these views and
+                        reproduces the mug and paper with reasonable sharpness.
+                    </figcaption>
+                </figure>
+            </div>
+
+            <div class="image-row">
+                <figure>
+                    <!-- Replace with a 4-view debug panel: GT vs Pred -->
+                    <img src="media/Part2.6_4view_debug.png" alt="4-view NeRF debug: ground truth and predictions">
+                    <figcaption>
+                        Four-view sanity check. The network still reconstructs all four views
+                        reasonably well, although details are blurrier than in the 2-view case.
+                        These experiments suggest that the NeRF architecture and volume-rendering
+                        code are working correctly on small, consistent subsets of the data.
+                    </figcaption>
+                </figure>
+            </div>
+
+            <h4>Novel-View Spherical Rendering (Custom Object Gif)</h4>
+            <p>
+                After training on the full set of images, I generated a gif of the camera circling
+                the object using the starter-code pattern provided in the assignment. I first chose
+                a reasonable starting camera position <code>START_POS</code> (similar in distance
+                and height to one of the training views), constructed a camera-to-world matrix that
+                looks at the origin via <code>look_at_origin(START_POS)</code>, and then applied a
+                rotation around the vertical axis:
+            </p>
+
+<pre><code>def look_at_origin(pos):
+    forward = -pos / np.linalg.norm(pos)
+    up = np.array([0., 1., 0.])
+    right = np.cross(up, forward)
+    right /= np.linalg.norm(right)
+    up = np.cross(forward, right)
+
+    c2w = np.eye(4)
+    c2w[:3, 0] = right
+    c2w[:3, 1] = up
+    c2w[:3, 2] = forward
+    c2w[:3, 3] = pos
+    return c2w
+
+def rot_x(phi):
+    return np.array([
+        [math.cos(phi), -math.sin(phi), 0., 0.],
+        [math.sin(phi),  math.cos(phi), 0., 0.],
+        [0.,            0.,            1., 0.],
+        [0.,            0.,            0., 1.],
+    ])
+
+START_POS = np.array([&hellip;])  # chosen near one of the training camera centers
+NUM_SAMPLES = 60
+
+frames = []
+for phi in np.linspace(360., 0., NUM_SAMPLES, endpoint=False):
+    base_c2w = look_at_origin(START_POS)
+    extrinsic = rot_x(phi / 180. * np.pi) @ base_c2w
+    frame = render_image(
+        nerf_full, K_custom, extrinsic,
+        H_render, W_render,
+        near=near_custom, far=far_custom,
+        n_samples=n_samples_custom,
+        step_size=step_size_custom,
+        chunk_rays=8192,
+    )
+    frames.append(frame)</code></pre>
+
+            <p>
+                The resulting frames were converted to an animated gif that loops continuously:
+            </p>
+
+            <div class="image-row">
+                <figure>
+                    <!-- Replace src with your final gif path -->
+                    <img src="media/custom_object_orbit.gif" alt="Orbit gif of the reconstructed custom object">
+                    <figcaption>
+                        Novel-view gif of the reconstructed mug. The virtual camera circles the object using
+                        the assignment-provided <code>look_at_origin</code> and <code>rot_x</code> pattern.
+                        The overall shape of the mug is visible, but the reconstruction is noticeably
+                        blurry and exhibits streaking artifacts.
+                    </figcaption>
+                </figure>
+            </div>
+
+            <h4>Why the Result Is Not Perfect</h4>
+            <p>
+                Compared to the Lego experiment, the final NeRF of my custom object is much less sharp,
+                and many views suffer from blur and ghosting. Several diagnostics support the idea that
+                this is largely due to issues with the captured data and calibration, rather than just
+                model capacity:
+            </p>
+            <ul>
+                <li>
+                    <strong>Per-view PSNR is very uneven.</strong> When I evaluated PSNR on each individual
+                    training view, a few cameras reached around 20&nbsp;dB, but many others were stuck
+                    around 9–12&nbsp;dB. This suggests that different views are not fully consistent with
+                    a single static 3D scene, or that some poses are significantly noisier than others.
+                </li>
+                <li>
+                    <strong>2-view / 4-view subsets work much better.</strong> On a carefully chosen
+                    subset of 2 or 4 neighboring views, the NeRF overfits well and produces clean
+                    reconstructions. As soon as I include many more views distributed around the mug,
+                    the reconstruction degrades and becomes streaky. This pattern is consistent with
+                    small calibration or pose errors that accumulate around the circle.
+                </li>
+                <li>
+                    <strong>Real capture imperfections.</strong> During data collection, the mug and the
+                    ArUco marker might have slightly moved between shots, the paper might not have been
+                    perfectly flat, and the camera center-to-marker distance and orientation might have
+                    varied more than desired. All of these violate the static, perfectly calibrated
+                    multi-view assumption of NeRF.
+                </li>
+                <li>
+                    <strong>Limited views and background clutter.</strong> Compared to the synthetic Lego
+                    dataset, I have fewer views and a larger share of each image is background (table, wall,
+                    etc.) instead of the mug itself. The network spends many samples modeling the
+                    slowly varying background, which also contributes to the blurred look.
+                </li>
+            </ul>
+
+            <p>
+                Overall, the experiments show that the NeRF implementation itself is functioning
+                correctly (as demonstrated by the smaller 2-view and 4-view experiments), but that
+                achieving a high-quality reconstruction on real data is quite sensitive to the
+                calibration accuracy, capture setup, and number and distribution of views. With
+                more careful data capture (denser views around the object, more stable tripod,
+                flatter marker sheet, and possibly cropping the images to focus more tightly on
+                the mug), the quality of the custom-object NeRF would likely improve significantly.
+            </p>
+        </section>
+
+
 
 
 
