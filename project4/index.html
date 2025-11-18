@@ -14,6 +14,14 @@
     header h1 { margin: 0 0 6px; }
     header a { color: #0b5fff; text-decoration: none; }
     .back { display: inline-block; margin-top: 6px; }
+    /* 让这个 GIF 在 cell 中缩小并保持比例、居中 */
+    .small-gif {
+        max-width: 300px;   /* 控制大小：可以改成 250 / 350 等 */
+        width: 100%;        /* 在小屏上可以自适应缩放，但不会超过 max-width */
+        height: auto;       /* 保持宽高比 */
+        display: block;     /* 为了下面的 margin 居中 */
+        margin: 0 auto;     /* 水平居中 */
+    }
     section {
       background: #fff; border: 1px solid #eee; border-radius: 14px;
       padding: 18px; margin: 18px 0 24px; box-shadow: 0 1px 3px rgba(0,0,0,.05);
