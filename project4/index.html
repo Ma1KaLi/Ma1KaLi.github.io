@@ -785,16 +785,24 @@
             </ul>
 
             <div class="image-row">
-                <figure>
-                    <!-- Replace with your combined loss / PSNR plot -->
-                    <img src="media/Part2.6_train_loss_psnr.png" alt="Training loss and PSNR curves on the custom object">
-                    <figcaption>
-                        Training loss (MSE) and batch PSNR over iterations for the custom-object NeRF.
-                        The loss decreases steadily and the PSNR rises to around 19–21&nbsp;dB on the
-                        training batches.
-                    </figcaption>
-                </figure>
+              <figure>
+                  <!-- Training loss (MSE) curve -->
+                  <img src="media/Part2.6_train_loss.png" alt="Training loss (MSE) on the custom object">
+                  <figcaption>
+                      Training loss (MSE) over iterations for the custom-object NeRF. The loss decreases
+                      as the network overfits to all captured views.
+                  </figcaption>
+              </figure>
+              <figure>
+                  <!-- Training PSNR curve -->
+                  <img src="media/Part2.6_train_psnr.png" alt="Training PSNR on the custom object">
+                  <figcaption>
+                      Training batch PSNR over iterations. The PSNR gradually rises into the
+                      19–21&nbsp;dB range as the model fits the dataset.
+                  </figcaption>
+              </figure>
             </div>
+
 
             <h4>Intermediate Renders During Training</h4>
             <p>
@@ -805,17 +813,50 @@
                 and shading, although the result remains relatively blurry compared to the ground truth.
             </p>
 
-            <div class="image-row">
+            <div class="image-grid-2x4">
+            
                 <figure>
-                    <!-- Replace with your grid of intermediate validation renders -->
-                    <img src="media/Part2.6_intermediate_renders.png" alt="Intermediate NeRF renders of the custom object over training">
-                    <figcaption>
-                        Intermediate renders of a fixed validation view at different training steps.
-                        The mug and the paper become progressively more recognizable, but the final
-                        reconstruction still exhibits noticeable blur and streaking.
-                    </figcaption>
+                    <img src="media/Part2.6_intermediate_0001.png" alt="Render at iteration 1">
+                    <figcaption>Iteration 1</figcaption>
                 </figure>
+            
+                <figure>
+                    <img src="media/Part2.6_intermediate_0100.png" alt="Render at iteration 100">
+                    <figcaption>Iteration 100</figcaption>
+                </figure>
+            
+                <figure>
+                    <img src="media/Part2.6_intermediate_0200.png" alt="Render at iteration 200">
+                    <figcaption>Iteration 200</figcaption>
+                </figure>
+            
+                <figure>
+                    <img src="media/Part2.6_intermediate_0400.png" alt="Render at iteration 400">
+                    <figcaption>Iteration 400</figcaption>
+                </figure>
+            
+                <figure>
+                    <img src="media/Part2.6_intermediate_0800.png" alt="Render at iteration 800">
+                    <figcaption>Iteration 800</figcaption>
+                </figure>
+            
+                <figure>
+                    <img src="media/Part2.6_intermediate_1600.png" alt="Render at iteration 1600">
+                    <figcaption>Iteration 1600</figcaption>
+                </figure>
+            
+                <figure>
+                    <img src="media/Part2.6_intermediate_2000.png" alt="Render at iteration 2000">
+                    <figcaption>Iteration 2000</figcaption>
+                </figure>
+            
+                <figure>
+                    <img src="media/Part2.6_intermediate_3000.png" alt="Render at iteration 3000">
+                    <figcaption>Iteration 3000</figcaption>
+                </figure>
+            
             </div>
+
 
             <h4>Sanity Checks on 2-View and 4-View Subsets</h4>
             <p>
