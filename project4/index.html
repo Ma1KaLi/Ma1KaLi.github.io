@@ -784,10 +784,10 @@
                 </li>
             </ul>
 
-            <div class="image-row">
+            <div class="image-grid-2">
               <figure>
                   <!-- Training loss (MSE) curve -->
-                  <img src="media/Part2.6_train_loss.png" alt="Training loss (MSE) on the custom object">
+                  <img src="media/Part2.6_11.png" alt="Training loss (MSE) on the custom object">
                   <figcaption>
                       Training loss (MSE) over iterations for the custom-object NeRF. The loss decreases
                       as the network overfits to all captured views.
@@ -795,7 +795,7 @@
               </figure>
               <figure>
                   <!-- Training PSNR curve -->
-                  <img src="media/Part2.6_train_psnr.png" alt="Training PSNR on the custom object">
+                  <img src="media/Part2.6_12.png" alt="Training PSNR on the custom object">
                   <figcaption>
                       Training batch PSNR over iterations. The PSNR gradually rises into the
                       19–21&nbsp;dB range as the model fits the dataset.
@@ -813,45 +813,52 @@
                 and shading, although the result remains relatively blurry compared to the ground truth.
             </p>
 
-            <div class="image-grid-2x4">
-            
+            <div class="grid-2x4"
+                 style="
+                    display:grid;
+                    grid-template-columns: repeat(4, minmax(0, 1fr));
+                    grid-auto-rows: auto;
+                    gap:16px;
+                    justify-items:center;
+                    align-items:center;
+                 ">
                 <figure>
-                    <img src="media/Part2.6_intermediate_0001.png" alt="Render at iteration 1">
+                    <img src="media/inter_1.png" alt="Render at iteration 1">
                     <figcaption>Iteration 1</figcaption>
                 </figure>
             
                 <figure>
-                    <img src="media/Part2.6_intermediate_0100.png" alt="Render at iteration 100">
+                    <img src="media/inter_100.png" alt="Render at iteration 100">
                     <figcaption>Iteration 100</figcaption>
                 </figure>
             
                 <figure>
-                    <img src="media/Part2.6_intermediate_0200.png" alt="Render at iteration 200">
+                    <img src="media/inter_200.png" alt="Render at iteration 200">
                     <figcaption>Iteration 200</figcaption>
                 </figure>
             
                 <figure>
-                    <img src="media/Part2.6_intermediate_0400.png" alt="Render at iteration 400">
+                    <img src="media/inter_400.png" alt="Render at iteration 400">
                     <figcaption>Iteration 400</figcaption>
                 </figure>
             
                 <figure>
-                    <img src="media/Part2.6_intermediate_0800.png" alt="Render at iteration 800">
+                    <img src="media/inter_800.png" alt="Render at iteration 800">
                     <figcaption>Iteration 800</figcaption>
                 </figure>
             
                 <figure>
-                    <img src="media/Part2.6_intermediate_1600.png" alt="Render at iteration 1600">
+                    <img src="media/inter_1600.png" alt="Render at iteration 1600">
                     <figcaption>Iteration 1600</figcaption>
                 </figure>
             
                 <figure>
-                    <img src="media/Part2.6_intermediate_2000.png" alt="Render at iteration 2000">
+                    <img src="media/inter_2000.png" alt="Render at iteration 2000">
                     <figcaption>Iteration 2000</figcaption>
                 </figure>
             
                 <figure>
-                    <img src="media/Part2.6_intermediate_3000.png" alt="Render at iteration 3000">
+                    <img src="media/inter_3000.png" alt="Render at iteration 3000">
                     <figcaption>Iteration 3000</figcaption>
                 </figure>
             
