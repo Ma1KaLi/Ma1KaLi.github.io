@@ -868,46 +868,7 @@
                 and height to one of the training views), constructed a camera-to-world matrix that
                 looks at the origin via <code>look_at_origin(START_POS)</code>, and then applied a
                 rotation around the vertical axis:
-            </p>
-
-<pre><code>def look_at_origin(pos):
-    forward = -pos / np.linalg.norm(pos)
-    up = np.array([0., 1., 0.])
-    right = np.cross(up, forward)
-    right /= np.linalg.norm(right)
-    up = np.cross(forward, right)
-
-    c2w = np.eye(4)
-    c2w[:3, 0] = right
-    c2w[:3, 1] = up
-    c2w[:3, 2] = forward
-    c2w[:3, 3] = pos
-    return c2w
-
-def rot_x(phi):
-    return np.array([
-        [math.cos(phi), -math.sin(phi), 0., 0.],
-        [math.sin(phi),  math.cos(phi), 0., 0.],
-        [0.,            0.,            1., 0.],
-        [0.,            0.,            0., 1.],
-    ])
-
-START_POS = np.array([&hellip;])  # chosen near one of the training camera centers
-NUM_SAMPLES = 60
-
-frames = []
-for phi in np.linspace(360., 0., NUM_SAMPLES, endpoint=False):
-    base_c2w = look_at_origin(START_POS)
-    extrinsic = rot_x(phi / 180. * np.pi) @ base_c2w
-    frame = render_image(
-        nerf_full, K_custom, extrinsic,
-        H_render, W_render,
-        near=near_custom, far=far_custom,
-        n_samples=n_samples_custom,
-        step_size=step_size_custom,
-        chunk_rays=8192,
-    )
-    frames.append(frame)</code></pre>
+            </p> 
 
             <p>
                 The resulting frames were converted to an animated gif that loops continuously:
