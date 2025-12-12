@@ -1,1 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Project 5 — Fun With Diffusion Models!</title>
+  <style>
+    :root { --maxw: 980px; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0; line-height: 1.6; color: #222; background: #fafafa;
+    }
+    header, main, footer { max-width: var(--maxw); margin: 0 auto; padding: 20px; }
+    header h1 { margin: 0 0 6px; }
+    header a { color: #0b5fff; text-decoration: none; }
+    .back { display: inline-block; margin-top: 6px; }
+
+    section {
+      background: #fff; border: 1px solid #eee; border-radius: 14px;
+      padding: 18px; margin: 18px 0 24px; box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+    h2 { margin: 0 0 12px; font-size: 1.25rem; }
+    h3 { margin-top: 12px; }
+    p { margin: 8px 0; }
+
+    /* Grids */
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .grid-6 { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+    .image-row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+    @media (max-width: 900px) {
+      .grid-3, .grid-4, .grid-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 720px) {
+      .grid-2, .grid-3, .grid-4, .grid-6 { grid-template-columns: 1fr; }
+      .image-row { flex-direction: column; align-items: stretch; }
+    }
+
+    figure { margin: 0; border: 1px solid #eee; border-radius: 12px; overflow: hidden; background: #fff; }
+    figure img, figure video { display: block; width: 100%; height: auto; }
+    figcaption { font-size: .9rem; padding: 10px 12px; background: #f6f7fb; border-top: 1px solid #eee; }
+
+    .answer {
+      background: #f4fbf6; border: 1px solid #d8f1df; border-radius: 10px;
+      padding: 10px 12px; margin-top: 10px;
+    }
+    .note {
+      font-size: .92rem; color: #555; background: #fff7e6;
+      border: 1px solid #ffe2a8; border-radius: 10px;
+      padding: 10px 12px; margin-top: 10px;
+    }
+
+    /* Tables (if needed later) */
+    table { width: 100%; border-collapse: collapse; }
+    thead th { text-align: left; font-weight: 600; padding: 10px 10px; background: #f6f7fb; border-bottom: 1px solid #eee; }
+    tbody td { padding: 10px; border-top: 1px solid #eee; vertical-align: middle; }
+    td img { width: 240px; height: auto; display: block; border-radius: 10px; border: 1px solid #eee; }
+    td.number, td.time { white-space: nowrap; font-variant-numeric: tabular-nums; }
+    @media (max-width: 720px) { td img { width: 100%; } }
+
+    footer { font-size: .9rem; color: #666; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Project 5 — Fun With Diffusion Models!</h1>
+    <a class="back" href="../index.html">← Back to main portfolio</a>
+  </header>
+
+  <main>
+
+    <!-- ======================= Part A ======================= -->
+    <section id="partA">
+      <h2>Part A — The Power of Diffusion Models!</h2>
+
+      <!-- Part 0: Setup -->
+      <section id="part0">
+        <h2>Part 0 — Setup</h2>
+        <p>
+          For this project I use the two–stage <strong>DeepFloyd IF</strong> text-to-image model from HuggingFace:
+          a 64×64 base diffusion model (stage&nbsp;1) followed by a 256×256 super-resolution model (stage&nbsp;2).
+          I run everything in a Colab notebook with GPU acceleration.
+        </p>
+        <div class="answer">
+          <strong>Implementation notes</strong>
+          <ul style="margin:6px 0 0 18px;">
+            <li>Load <code>DeepFloyd/IF-I-L-v1.0</code> and <code>DeepFloyd/IF-II-L-v1.0</code> in half precision on CUDA.</li>
+            <li>Obtain text embeddings using the provided T5 encoder space on HuggingFace; I cache them as a
+                <code>prompt_embeds_dict.pth</code> file.</li>
+            <li>All images are normalized to the range <code>[-1, 1]</code> for the diffusion model and mapped
+                back to <code>[0, 1]</code> for visualization.</li>
+            <li>I fix the random seed to <code>100</code> and reuse it across all experiments to make the
+                qualitative comparisons easier.</li>
+          </ul>
+        </div>
+        <p>
+          I prepared several prompts that I will reuse later for SDEdit, visual anagrams, and hybrid images
+          (for example, a busy daytime city street, a snowy owl portrait, and a black-and-white scientist
+          portrait). The figure below shows three example generations using stage&nbsp;1 and stage&nbsp;2.
+        </p>
+        <div class="grid-3">
+          <figure>
+            <img src="media/p0_prompt1_20steps.png" alt="Prompt 1 sample">
+            <figcaption>Example sample for prompt 1 with <code>num_inference_steps = 20</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p0_prompt2_20steps.png" alt="Prompt 2 sample">
+            <figcaption>Example sample for prompt 2 using the same seed across the pipeline.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p0_prompt3_100steps.png" alt="Prompt 3 sample">
+            <figcaption>Increasing <code>num_inference_steps</code> generally sharpens textures but costs more time.</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          Throughout Part&nbsp;A I keep the seed at <strong>100</strong>, so changes in the images mainly come from the
+          sampling schedule or the text conditioning, not from a different random initialization.
+        </div>
+      </section>
+
+      <!-- ======================= Part 1: Sampling Loops ======================= -->
+      <section id="part1">
+        <h2>Part 1 — Sampling Loops</h2>
+
+        <!-- 1.1 Forward -->
+        <h3 id="part1-1">1.1 Implementing the Forward Process</h3>
+        <p>
+          A diffusion model defines a <em>forward process</em> that gradually corrupts a clean image
+          <code>x_0</code> into noisy versions <code>x_t</code>. Using the schedule
+          <code>&#257;&#945;<sub>t</sub></code> provided by the model, I implemented:
+        </p>
+        <p class="answer">
+          <code>x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * eps</code>, with
+          <code>eps ~ N(0, I)</code>.
+        </p>
+        <p>
+          The Campanile image from the starter code serves as my test case. Below I show
+          <code>t = 250, 500, 750</code> using the <code>forward</code> function.
+        </p>
+        <div class="grid-4">
+          <figure>
+            <img src="media/p1_1_campanile_clean.png" alt="Clean campanile">
+            <figcaption><code>t = 0</code> (clean image).</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_1_campanile_t250.png" alt="Campanile t=250">
+            <figcaption><code>t = 250</code> — noticeable grain but structure still clear.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_1_campanile_t500.png" alt="Campanile t=500">
+            <figcaption><code>t = 500</code> — tower barely visible under strong noise.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_1_campanile_t750.png" alt="Campanile t=750">
+            <figcaption><code>t = 750</code> — almost pure Gaussian noise.</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          As <code>t</code> increases, the effective signal-to-noise ratio collapses; by
+          <code>t = 750</code> it is hard to tell that the image ever contained a tower at all.
+          The reverse process has to recover global structure from almost no obvious signal.
+        </div>
+
+        <!-- 1.2 Classical Denoising -->
+        <h3 id="part1-2">1.2 Classical Denoising</h3>
+        <p>
+          Before relying on learned models, I tried denoising the same noisy Campanile with
+          <strong>Gaussian blur</strong>. For stronger noise levels I used larger kernels and
+          sigmas, trading detail for smoothness.
+        </p>
+        <div class="grid-3">
+          <figure>
+            <img src="media/p1_2_gauss_t250.png" alt="Gaussian denoise t=250">
+            <figcaption>Gaussian blur for <code>t = 250</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_2_gauss_t500.png" alt="Gaussian denoise t=500">
+            <figcaption>Gaussian blur for <code>t = 500</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_2_gauss_t750.png" alt="Gaussian denoise t=750">
+            <figcaption>Gaussian blur for <code>t = 750</code>.</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          Blurring suppresses high-frequency noise but also wipes out edges and fine structure.
+          The tower turns into a vague blob, illustrating why hand-crafted filters struggle
+          at the noise levels used in modern diffusion models.
+        </div>
+
+        <!-- 1.3 One-Step Denoising -->
+        <h3 id="part1-3">1.3 One-Step Denoising</h3>
+        <p>
+          Next I used the pretrained <code>stage_1.unet</code> to estimate the noise
+          <code>eps_hat</code> at a single timestep and directly solve for a clean estimate:
+        </p>
+        <p class="answer">
+          <code>x0_hat = (x_t - sqrt(1 - alpha_bar_t) * eps_hat) / sqrt(alpha_bar_t)</code>.
+        </p>
+        <p>
+          Using the generic prompt embedding <code>"a high quality photo"</code>, I denoise the
+          three noisy Campanile images with one UNet pass:
+        </p>
+        <div class="grid-3">
+          <figure>
+            <img src="media/p1_3_onestep_t250.png" alt="One-step denoise t=250">
+            <figcaption>One-step estimate at <code>t = 250</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_3_onestep_t500.png" alt="One-step denoise t=500">
+            <figcaption>One-step estimate at <code>t = 500</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_3_onestep_t750.png" alt="One-step denoise t=750">
+            <figcaption>One-step estimate at <code>t = 750</code>.</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          Even a single step produces images that are far sharper than Gaussian blur, especially
+          for <code>t = 250</code>. However, for higher noise levels the estimate still looks
+          oversmoothed and washed out, motivating an iterative denoising scheme.
+        </div>
+
+        <!-- 1.4 Iterative Denoising -->
+        <h3 id="part1-4">1.4 Iterative Denoising</h3>
+        <p>
+          Full DDPM sampling starts from pure noise and applies the reverse update for every
+          timestep, which is expensive. Instead, I use a <strong>strided schedule</strong>:
+          starting at <code>t = 990</code> and stepping by 30 down to 0. At each step I estimate
+          <code>x_0</code> with one-step denoising and then compute a less noisy sample
+          <code>x_{t'}</code> using the closed-form DDPM update.
+        </p>
+        <div class="grid-3">
+          <figure>
+            <img src="media/p1_4_iter_step0.png" alt="Iter step 0">
+            <figcaption>Early iteration, still close to the noisy input.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_4_iter_step10.png" alt="Iter step mid">
+            <figcaption>Mid-way through the strided schedule.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_4_iter_final.png" alt="Iter final">
+            <figcaption>Final iterative estimate of the Campanile.</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          Compared side-by-side, iterative denoising gives a cleaner sky and sharper tower edges
+          than the single-step method, while still recovering the overall color scheme of the
+          original photo.
+        </div>
+
+        <!-- 1.5 Sampling -->
+        <h3 id="part1-5">1.5 Diffusion Model Sampling</h3>
+        <p>
+          With the iterative loop in place, I can now generate images from scratch by starting
+          from Gaussian noise and setting <code>i_start = 0</code>. Using the neutral prompt
+          <code>"a high quality photo"</code>, I sample five random images from the stage&nbsp;1
+          model.
+        </p>
+        <div class="grid-5 image-row">
+          <figure style="flex:1 1 150px; max-width:180px;">
+            <img src="media/p1_5_sample1.png" alt="Sample 1">
+            <figcaption>Sample 1.</figcaption>
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px;">
+            <img src="media/p1_5_sample2.png" alt="Sample 2">
+            <figcaption>Sample 2.</figcaption>
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px;">
+            <img src="media/p1_5_sample3.png" alt="Sample 3">
+            <figcaption>Sample 3.</figcaption>
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px;">
+            <img src="media/p1_5_sample4.png" alt="Sample 4">
+            <figcaption>Sample 4.</figcaption>
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px;">
+            <img src="media/p1_5_sample5.png" alt="Sample 5">
+            <figcaption>Sample 5.</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          With only a vague “high quality photo” prompt, the model produces a wide variety of
+          scenes—landscapes, portraits, and abstract patterns—illustrating both the richness and
+          randomness of the learned prior.
+        </div>
+
+        <!-- 1.6 CFG -->
+        <h3 id="part1-6">1.6 Classifier-Free Guidance (CFG)</h3>
+        <p>
+          Classifier-free guidance sharpens generations by combining conditional and unconditional
+          noise estimates:
+        </p>
+        <p class="answer">
+          <code>eps = eps_u + gamma * (eps_c - eps_u)</code>, with <code>gamma &gt; 1</code>.
+        </p>
+        <p>
+          I implement <code>iterative_denoise_cfg</code> which runs the UNet twice per step
+          (once with the prompt and once with an empty prompt) and then follows the same DDPM
+          update. The figure below compares unguided and CFG-guided samples for
+          <code>gamma = 7</code>.
+        </p>
+        <div class="grid-4">
+          <figure>
+            <img src="media/p1_6_nocfg.png" alt="No CFG">
+            <figcaption>Sampling without CFG.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_6_cfg.png" alt="With CFG">
+            <figcaption>Sampling with <code>gamma = 7</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_6_cfg_detail1.png" alt="CFG sample 1">
+            <figcaption>Guided sample emphasizing coherent objects.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_6_cfg_detail2.png" alt="CFG sample 2">
+            <figcaption>Guided sample with crisper textures and contrast.</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          CFG noticeably increases contrast and semantic clarity at the cost of some diversity.
+          Many samples collapse toward “typical” natural photos, which is exactly what we want
+          when building image-to-image tools in later parts.
+        </div>
+
+        <!-- 1.7 Image-to-image Translation -->
+        <h3 id="part1-7">1.7 Image-to-image Translation (SDEdit)</h3>
+        <p>
+          SDEdit interprets image editing as “add noise, then project back to the natural image
+          manifold”. For a given image I add noise at a chosen timestep and then run
+          <code>iterative_denoise_cfg</code> from an intermediate index <code>i_start</code>.
+          Small <code>i_start</code> values correspond to heavy edits, and large ones yield
+          subtle retouching.
+        </p>
+        <div class="grid-6">
+          <figure>
+            <img src="media/p1_7_campanile_sde_1.png" alt="i_start=1">
+            <figcaption><code>i_start = 1</code></figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_campanile_sde_3.png" alt="i_start=3">
+            <figcaption><code>i_start = 3</code></figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_campanile_sde_5.png" alt="i_start=5">
+            <figcaption><code>i_start = 5</code></figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_campanile_sde_7.png" alt="i_start=7">
+            <figcaption><code>i_start = 7</code></figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_campanile_sde_10.png" alt="i_start=10">
+            <figcaption><code>i_start = 10</code></figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_campanile_sde_20.png" alt="i_start=20">
+            <figcaption><code>i_start = 20</code> (closest to original).</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          As <code>i_start</code> increases, the edits become more conservative: the composition
+          and lighting of the Campanile remain similar while textures are subtly reimagined by the
+          model.
+        </div>
+
+        <!-- 1.7.1 Hand-drawn and web images -->
+        <h4 id="part1-7-1">1.7.1 Editing Hand-Drawn and Web Images</h4>
+        <p>
+          The same SDEdit procedure is particularly fun on non-photorealistic inputs. I first
+          download a cartoon-style web image, run it through <code>process_pil_im</code>, and
+          then apply SDEdit with several noise levels.
+        </p>
+        <div class="grid-6">
+          <figure>
+            <img src="media/p1_7_web_sde_1.png" alt="Web image sde 1">
+            <figcaption>Web image, <code>i_start = 1</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_web_sde_3.png" alt="Web image sde 3">
+            <figcaption><code>i_start = 3</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_web_sde_5.png" alt="Web image sde 5">
+            <figcaption><code>i_start = 5</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_web_sde_7.png" alt="Web image sde 7">
+            <figcaption><code>i_start = 7</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_web_sde_10.png" alt="Web image sde 10">
+            <figcaption><code>i_start = 10</code>.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_web_sde_20.png" alt="Web image sde 20">
+            <figcaption><code>i_start = 20</code>.</figcaption>
+          </figure>
+        </div>
+        <p>
+          I repeat the experiment with two quick doodles drawn in the Colab canvas—a simple
+          landscape and a small character sketch. The model consistently “upgrades” flat drawings
+          into textured scenes while roughly preserving the original layout.
+        </p>
+        <div class="grid-3">
+          <figure>
+            <img src="media/p1_7_draw1_sequence.png" alt="Hand drawn sequence 1">
+            <figcaption>Sequence for hand-drawn image 1.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_draw2_sequence.png" alt="Hand drawn sequence 2">
+            <figcaption>Sequence for hand-drawn image 2.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_draw_originals.png" alt="Original drawings">
+            <figcaption>Original doodles for reference.</figcaption>
+          </figure>
+        </div>
+
+        <!-- 1.7.2 Inpainting -->
+        <h4 id="part1-7-2">1.7.2 Inpainting</h4>
+        <p>
+          Inpainting uses the diffusion model to hallucinate content only in a masked region.
+          At each denoising step I overwrite the unmasked pixels with a noised version of the
+          original image, ensuring that those locations stay anchored while the masked area
+          evolves freely.
+        </p>
+        <div class="grid-3">
+          <figure>
+            <img src="media/p1_7_inpaint_mask.png" alt="Inpainting mask">
+            <figcaption>Campanile with a mask over the tower top.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_inpaint_campanile.png" alt="Inpainted campanile">
+            <figcaption>One inpainted version of the Campanile.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_inpaint_custom.png" alt="Inpainted custom image">
+            <figcaption>Inpainting on a custom cityscape: replacing the sky region.</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          Because the model was never explicitly trained for inpainting, results vary between runs.
+          Re-sampling a few times usually produces at least one plausible completion for the masked
+          area.
+        </div>
+
+        <!-- 1.7.3 Text-conditional I2I -->
+        <h4 id="part1-7-3">1.7.3 Text-Conditional Image-to-Image Translation</h4>
+        <p>
+          Finally, I combine SDEdit with stronger text conditioning. Instead of using the neutral
+          prompt, I choose prompts such as <em>“a rocket ship launching into the sky”</em> or
+          <em>“a pencil drawing on a sketchbook”</em> and run SDEdit starting from real photos.
+        </p>
+        <div class="grid-3">
+          <figure>
+            <img src="media/p1_7_text_campanile_rocket.png" alt="Rocket ship campanile">
+            <figcaption>Campanile gradually morphed into a rocket-launch scene.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_text_bigben_pencil.png" alt="Pencil big ben">
+            <figcaption>A landmark translated into a pencil-style illustration.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_7_text_custom_sequence.png" alt="Custom text sequence">
+            <figcaption>Sequence of edits on a custom building photo.</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          The images retain the coarse layout of the original photographs (horizon line, building
+          location) while the textures and colors are pulled toward the new textual description.
+        </div>
+
+        <!-- 1.8 Visual Anagrams -->
+        <h3 id="part1-8">1.8 Visual Anagrams</h3>
+        <p>
+          Visual anagrams are optical illusions that look like one thing upright and something
+          else when flipped upside down. I implement <code>make_flip_illusion</code>, which at
+          each step averages two CFG noise estimates:
+        </p>
+        <div class="answer">
+          <ul style="margin:6px 0 0 18px;">
+            <li>Estimate <code>eps_1</code> on <code>x_t</code> with prompt <code>p1</code>.</li>
+            <li>Flip <code>x_t</code> 180° and estimate <code>eps_2</code> with prompt <code>p2</code>.</li>
+            <li>Flip <code>eps_2</code> back and set <code>eps = (eps_1 + eps_2) / 2</code>.</li>
+          </ul>
+        </div>
+        <p>
+          Starting from pure noise and using this combined noise in the DDPM update yields a single
+          image whose semantics change under rotation.
+        </p>
+        <div class="grid-2">
+          <figure>
+            <img src="media/p1_8_illusion1_upright.png" alt="Illusion 1 upright">
+            <figcaption>Illusion 1 upright: e.g., “an oil painting of an old man”.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_8_illusion1_flipped.png" alt="Illusion 1 flipped">
+            <figcaption>Illusion 1 flipped: e.g., “people sitting around a campfire”.</figcaption>
+          </figure>
+        </div>
+        <div class="grid-2" style="margin-top:12px;">
+          <figure>
+            <img src="media/p1_8_illusion2_upright.png" alt="Illusion 2 upright">
+            <figcaption>Illusion 2 upright: a landscape-style prompt.</figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_8_illusion2_flipped.png" alt="Illusion 2 flipped">
+            <figcaption>Illusion 2 flipped: a different scene revealed when rotated.</figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          These illusions are quite sensitive to random seed and guidance scale; it often takes a
+          few attempts before both orientations look recognizable and match their respective prompts.
+        </div>
+
+        <!-- 1.9 Hybrid Images -->
+        <h3 id="part1-9">1.9 Hybrid Images</h3>
+        <p>
+          Hybrid images mix low frequencies from one concept with high frequencies from another.
+          I implement <code>make_hybrids</code>, which computes two CFG noise estimates for
+          prompts <code>p1</code> and <code>p2</code> and combines them in frequency space:
+        </p>
+        <p class="answer">
+          <code>eps = lowpass(eps_1) + highpass(eps_2)</code>, where lowpass is a Gaussian blur
+          (kernel&nbsp;33, sigma&nbsp;2) and highpass subtracts a blurred copy from <code>eps_2</code>.
+        </p>
+        <p>
+          The resulting image looks like <code>p1</code> from far away (because low frequencies
+          dominate) but reveals details of <code>p2</code> up close.
+        </p>
+        <div class="grid-2">
+          <figure>
+            <img src="media/p1_9_hybrid1.png" alt="Hybrid 1">
+            <figcaption>
+              Hybrid 1: e.g., low-frequency scientist portrait + high-frequency actress portrait.
+            </figcaption>
+          </figure>
+          <figure>
+            <img src="media/p1_9_hybrid2.png" alt="Hybrid 2">
+            <figcaption>
+              Hybrid 2: cartoon emoji face blended with a landscape-style prompt.
+            </figcaption>
+          </figure>
+        </div>
+        <div class="note">
+          Just like in the classic CS&nbsp;180 hybrid-image assignment, choosing prompts with
+          complementary structure is crucial. Faces vs. faces and emoji pairs tend to work
+          especially well, while highly dissimilar layouts are harder for the viewer to parse.
+        </div>
+
+      </section> <!-- end Part 1 -->
+    </section> <!-- end Part A -->
+
+  </main>
+
+  <footer>
+    © <script>document.write(new Date().getFullYear());</script> Project 5. All images and results by the author.
+  </footer>
+</body>
+</html>
 
