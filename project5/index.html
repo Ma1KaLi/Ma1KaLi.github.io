@@ -969,6 +969,9 @@
       </section> <!-- end Part 1 -->
     </section> <!-- end Part A -->
 
+    <!-- ===================== Part B ===================== -->
+    <section id="partB">
+
     <!-- ===================== Part B Overview ===================== -->
 
     <h2 id="part-b">Part B: Flow Matching from Scratch!</h2>
@@ -1197,8 +1200,7 @@
     <p>
     I trained the time-conditioned UNet on MNIST with batch size 64 and hidden
     dimension D = 64. The optimizer is Adam with initial learning rate 1e−2 and an
-    exponential learning rate scheduler that decays the LR by a factor of 0.1 over
-    the full training run. For each batch, I sample a random timestep t, construct
+    exponential learning rate scheduler that decays the LR by 0.1 over the full training run. For each batch, I sample a random timestep t, construct
     x<sub>t</sub> via linear interpolation between noise and data, and minimize the
     L2 difference between the predicted flow and the ground-truth flow
     x₁ − x₀.
@@ -1337,7 +1339,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b2_classcond_sched_epoch1.png" alt="Class-conditioned samples with scheduler after epoch 1">
+        <img src="media/partB2_6_0_withscheduler.png" alt="Class-conditioned samples with scheduler after epoch 1">
         <figcaption>
           Class-conditioned samples after 1 epoch (with LR scheduler). The correct
           digit structure is already visible, but many strokes are noisy or broken.
@@ -1347,7 +1349,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b2_classcond_sched_epoch5.png" alt="Class-conditioned samples with scheduler after epoch 5">
+        <img src="media/partB2_6_1_withscheduler.png" alt="Class-conditioned samples with scheduler after epoch 5">
         <figcaption>
           Samples after 5 epochs. The digits are much clearer and more consistently
           match their target classes, with cleaner backgrounds.
@@ -1357,7 +1359,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b2_classcond_sched_epoch10.png" alt="Class-conditioned samples with scheduler after epoch 10">
+        <img src="media/partB2_6_2_withscheduler.png" alt="Class-conditioned samples with scheduler after epoch 10">
         <figcaption>
           Samples after 10 epochs. The model produces sharp, well-separated digits
           that closely resemble MNIST, demonstrating the benefits of class
@@ -1377,7 +1379,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b2_classcond_nosched_epoch1.png" alt="Class-conditioned samples without scheduler after epoch 1">
+        <img src="media/partB2_6_4_withoutscheduler.png" alt="Class-conditioned samples without scheduler after epoch 1">
         <figcaption>
           Samples after 1 epoch without an LR scheduler. The digits are slightly
           noisier than in the scheduled case but still mostly recognizable.
@@ -1387,7 +1389,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b2_classcond_nosched_epoch5.png" alt="Class-conditioned samples without scheduler after epoch 5">
+        <img src="media/partB2_6_5_withoutscheduler.png" alt="Class-conditioned samples without scheduler after epoch 5">
         <figcaption>
           Samples after 5 epochs. The model catches up to the scheduled version:
           digit identities are clear and backgrounds are mostly clean.
@@ -1397,7 +1399,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b2_classcond_nosched_epoch10.png" alt="Class-conditioned samples without scheduler after epoch 10">
+        <img src="media/partB2_6_6_withoutscheduler.png" alt="Class-conditioned samples without scheduler after epoch 10">
         <figcaption>
           Samples after 10 epochs. Using a smaller constant learning rate achieves
           comparable sample quality to the exponential scheduler while keeping the
@@ -1413,6 +1415,7 @@
     reach very similar performance.
     </p>
 
+    </section> <!-- end Part B -->
 
   </main>
 
