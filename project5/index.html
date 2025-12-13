@@ -490,7 +490,7 @@
           </figure>
           <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
             <div style="font-size:0.9rem; margin-bottom:4px;">original</div>
-            <img src="media/part1_1_4" alt="Great Hall SDEdit i_start=20">
+            <img src="media/part1_1_4.png" alt="Great Hall SDEdit i_start=20">
           </figure>
         </div>
         <p style="margin-top:6px; font-weight:500;">Campanile Sequence</p>
@@ -757,6 +757,455 @@
 
       </section> <!-- end Part 1 -->
     </section> <!-- end Part A -->
+
+    <!-- ===================== Part B Overview ===================== -->
+
+    <h2 id="part-b">Part B: Flow Matching from Scratch!</h2>
+    
+    <p>
+    In this part of the project, I moved away from pretrained diffusion models and
+    trained several <strong>flow-based denoisers from scratch on MNIST</strong>.
+    Starting from a simple one-step UNet denoiser, I gradually added time
+    conditioning and class conditioning, and finally used classifier-free guidance
+    to generate clean, class-controllable digits from pure Gaussian noise.
+    </p>
+    
+    <!-- ===================== B.1.1 Implementing UNet ===================== -->
+    
+    <h3 id="part-b-1-1">Part B.1.1: Implementing a Single-Step Denoising UNet</h3>
+    
+    <p>
+    I first implemented the provided UNet architecture using PyTorch. The model is
+    fully convolutional and follows a standard encoder–decoder design with skip
+    connections:
+    three <code>DownBlock</code>s progressively reduce spatial resolution, then
+    two <code>UpBlock</code>s and a final <code>ConvBlock</code> reconstruct a
+    28×28 output. Each block is built from simple operations
+    (<code>Conv</code>, <code>DownConv</code>, <code>UpConv</code>,
+    <code>Flatten</code>, <code>Unflatten</code>, and channel-wise
+    <code>Concat</code>), and uses BatchNorm + GELU activations.
+    </p>
+    
+    <p>
+    The UNet takes a noisy image as input and outputs a denoised image of the same
+    shape (1×28×28). This architecture will be reused for all later experiments,
+    with only the conditioning mechanism changing.
+    </p>
+    
+    <!-- ===================== B.1.2.0 Noising Process ===================== -->
+    
+    <h3 id="part-b-1-2-0">Part B.1.2.0: Noising Process</h3>
+    
+    <p>
+    To generate training pairs for the denoiser, I corrupt MNIST digits with
+    additive Gaussian noise:
+    </p>
+    
+    <p style="text-align:center;">
+    <code>z = x + σ · ε</code>, where <code>ε ~ N(0, I)</code>.
+    </p>
+    
+    <p>
+    Here <code>x</code> is a clean digit in <code>[0, 1]</code>, and
+    <code>σ</code> controls the noise level. I visualized the noising process for a
+    fixed digit and noise levels
+    <code>σ ∈ {0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0}</code>. As σ increases, the
+    digit gradually disappears into Gaussian noise while the overall contrast
+    remains bounded by the [0, 1] range.
+    </p>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b1_noising_grid.png" alt="MNIST digits with different noise levels sigma">
+        <figcaption>
+          Noising process on one MNIST digit for different values of σ. Larger σ
+          produces progressively noisier images.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <!-- ===================== B.1.2.1 Training single-step denoiser ===================== -->
+    
+    <h3 id="part-b-1-2-1">Part B.1.2.1: Training the Single-Step Denoiser</h3>
+    
+    <p>
+    Next, I trained the UNet to directly map a noisy image
+    <code>z = x + 0.5 · ε</code> back to its clean target <code>x</code> using an
+    L2 reconstruction loss. I used the MNIST training split, batch size 256, and
+    Adam optimizer with learning rate 1e−4 for 5 epochs. At each iteration I
+    sample a fresh <code>ε</code>, so the model sees a different noisy version of
+    the same digit every epoch, which improves generalization.
+    </p>
+    
+    <h4>Training Loss Curve</h4>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b1_denoiser_train_loss.png" alt="Training loss curve for single-step denoising UNet">
+        <figcaption>
+          Training loss of the single-step UNet denoiser for σ = 0.5 over 5 epochs. The
+          loss decreases steadily and starts to flatten as the model converges.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <h4>Denoising Results on Test Set</h4>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b1_test_noisy_sigma05.png" alt="Noisy test images with sigma = 0.5">
+        <figcaption>
+          Test digits corrupted with Gaussian noise σ = 0.5.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="media/b1_test_denoised_epoch1.png" alt="Denoised results after 1 epoch of training">
+        <figcaption>
+          Denoised outputs after 1 epoch. Digits start to emerge from the noise, but
+          the shapes are still blurry and edges are not very sharp.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="media/b1_test_denoised_epoch5.png" alt="Denoised results after 5 epochs of training">
+        <figcaption>
+          Denoised outputs after 5 epochs. The digits are much clearer and closely
+          match the clean MNIST digits, with most background noise removed.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <!-- ===================== B.1.2.2 OOD testing ===================== -->
+    
+    <h3 id="part-b-1-2-2">Part B.1.2.2: Out-of-Distribution Testing</h3>
+    
+    <p>
+    Although the denoiser was trained only on σ = 0.5, I evaluated it on the same
+    test digit with a range of noise levels
+    <code>σ ∈ {0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0}</code>. For each σ, I applied
+    noise once and then passed the noisy image through the trained UNet.
+    </p>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b1_ood_sigma_grid.png" alt="Out-of-distribution denoising results for different sigmas">
+        <figcaption>
+          Out-of-distribution denoising results for a fixed digit at different noise
+          levels. The model generalizes reasonably well between σ = 0.2 and 0.6, but
+          struggles when σ is extremely high (0.8 or 1.0), where the input is close
+          to pure noise.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <p>
+    For small and moderate noise (up to about σ = 0.6), the model still recovers a
+    recognizable digit even though it never saw those exact noise levels during
+    training. When σ becomes very large, the input no longer carries enough
+    information, so the UNet can only guess a vague “4-like” pattern.
+    </p>
+    
+    <!-- ===================== B.1.2.3 Denoising pure noise ===================== -->
+    
+    <h3 id="part-b-1-2-3">Part B.1.2.3: Denoising Pure Noise</h3>
+    
+    <p>
+    I then retrained the UNet on a more extreme setup: the input is <em>pure
+    Gaussian noise</em> <code>ε ~ N(0, I)</code>, while the target is a clean MNIST
+    digit <code>x</code>. The architecture and optimizer settings are the same as
+    before. Now the model must generate a digit from a blank noisy canvas in one
+    step, making the task fully generative.
+    </p>
+    
+    <h4>Training Loss Curve</h4>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b1_purenoise_train_loss.png" alt="Training loss curve for pure-noise denoiser">
+        <figcaption>
+          Training loss when denoising pure noise. The curve still decreases, but
+          more slowly than in the σ = 0.5 setting, reflecting the harder task.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <h4>Denoising Results on Pure Noise</h4>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b1_purenoise_input.png" alt="Pure Gaussian noise inputs">
+        <figcaption>
+          Pure Gaussian noise sampled as input to the denoiser.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="media/b1_purenoise_epoch1.png" alt="Pure-noise denoising results after 1 epoch">
+        <figcaption>
+          Outputs after 1 epoch of training. The model produces faint blurry blobs
+          that vaguely resemble digit shapes.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="media/b1_purenoise_epoch5.png" alt="Pure-noise denoising results after 5 epochs">
+        <figcaption>
+          Outputs after 5 epochs. The images look like an average over all digits:
+          a thick, amorphous stroke in roughly digit-like locations.
+          This matches the behavior of an MSE model that learns the per-pixel mean
+          of the training distribution.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <p>
+    Because the input noise is independent of the label, the optimal MSE solution
+    is to predict the <em>dataset average</em> digit. The model cannot map specific
+    noise patterns to specific digits, so it converges to a blurry “centroid”
+    shape that minimizes the squared error over all training images.
+    </p>
+    
+    <!-- ===================== B.2.1 Time conditioning ===================== -->
+    
+    <h3 id="part-b-2-1">Part B.2.1: Adding Time Conditioning to UNet</h3>
+    
+    <p>
+    To enable iterative denoising, I modified the UNet to predict a flow field
+    <u>u</u><sub>θ</sub>(x<sub>t</sub>, t) that depends on a continuous time
+    parameter <code>t ∈ [0, 1]</code>. I introduced two fully-connected
+    <code>FCBlock</code>s that embed the scalar time into channel-wise modulation
+    vectors. These embeddings scale and shift intermediate feature maps in the
+    bottleneck and decoder, letting the network respond differently at early
+    (very noisy) versus late (almost clean) timesteps.
+    </p>
+    
+    <p>
+    The training objective is to match the true flow
+    <code>u(x_t, t) = x₁ − x₀</code>, where
+    <code>x₀ ~ N(0, I)</code>, <code>x₁</code> is a real MNIST digit, and
+    <code>x_t = (1 − t) x₀ + t x₁</code> is their linear interpolation.
+    </p>
+    
+    <!-- ===================== B.2.2 Training time-conditioned ===================== -->
+    
+    <h3 id="part-b-2-2">Part B.2.2: Training the Time-Conditioned UNet</h3>
+    
+    <p>
+    I trained the time-conditioned UNet on MNIST with batch size 64 and hidden
+    dimension D = 64. The optimizer is Adam with initial learning rate 1e−2 and an
+    exponential learning rate scheduler that decays the LR by a factor of 0.1 over
+    the full training run. For each batch, I sample a random timestep t, construct
+    x<sub>t</sub> via linear interpolation between noise and data, and minimize the
+    L2 difference between the predicted flow and the ground-truth flow
+    x₁ − x₀.
+    </p>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b2_timecond_train_loss.png" alt="Training loss curve for time-conditioned flow-matching UNet">
+        <figcaption>
+          Training loss for the time-conditioned flow model. The loss steadily
+          decreases and stabilizes, indicating that the UNet learns a consistent
+          flow field from noise to data.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <!-- ===================== B.2.3 Sampling from time-conditioned ===================== -->
+    
+    <h3 id="part-b-2-3">Part B.2.3: Sampling from the Time-Conditioned UNet</h3>
+    
+    <p>
+    To sample from the learned flow, I start from pure Gaussian noise
+    x₀ ~ N(0, I) and integrate forward in time using Euler steps:
+    </p>
+    
+    <p style="text-align:center;">
+    <code>x_{t+Δt} = x_t + Δt · u_θ(x_t, t)</code>.
+    </p>
+    
+    <p>
+    I used T time steps with evenly spaced t values between 0 and 1. The figures
+    below show samples after 1, 5, and 10 training epochs. Early on, the samples
+    look like scrambled strokes, but as training progresses, more legible MNIST
+    digits appear.
+    </p>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b2_timecond_samples_epoch1.png" alt="Time-conditioned sampling after epoch 1">
+        <figcaption>
+          Samples after 1 epoch. The model has learned a rough “white-on-black”
+          prior but most digits are still highly distorted.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="media/b2_timecond_samples_epoch5.png" alt="Time-conditioned sampling after epoch 5">
+        <figcaption>
+          Samples after 5 epochs. Many digits are now recognizable, although strokes
+          are still thick and occasionally merged.
+        </figcaption>
+      </figure>
+      <figure>
+        <img src="media/b2_timecond_samples_epoch10.png" alt="Time-conditioned sampling after epoch 10">
+        <figcaption>
+          Samples after 10 epochs. Most images resemble clear MNIST digits, though
+          they are not as sharp as the ground-truth dataset.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <!-- ===================== B.2.4 Class conditioning ===================== -->
+    
+    <h3 id="part-b-2-4">Part B.2.4: Adding Class-Conditioning to UNet</h3>
+    
+    <p>
+    To gain finer control over which digit is generated, I extended the
+    time-conditioned UNet to also take a <strong>class-conditioning vector</strong>
+    c for digits 0–9. The label is encoded as a 10-dimensional one-hot vector and
+    fed through two additional <code>FCBlock</code>s. Their outputs modulate the
+    same feature maps as the time embeddings:
+    </p>
+    
+    <p style="text-align:center;">
+    <code>unflatten' = c₁ ⊙ unflatten + t₁</code>,&nbsp;
+    <code>up1' = c₂ ⊙ up1 + t₂</code>.
+    </p>
+    
+    <p>
+    During training, I randomly drop the class conditioning with probability
+    p<sub>uncond</sub> = 0.1 by setting c to the zero vector. This “classifier-free
+    guidance” trick lets the model learn both conditional and unconditional flows,
+    which is crucial for guided sampling later.
+    </p>
+    
+    <!-- ===================== B.2.5 Training class-conditioned ===================== -->
+    
+    <h3 id="part-b-2-5">Part B.2.5: Training the Class-Conditioned UNet</h3>
+    
+    <p>
+    The class-conditioned UNet is trained with the same flow-matching objective as
+    the time-only model, but now also receives a digit label. I keep the batch
+    size at 64, use Adam with initial learning rate 1e−2, and again apply an
+    exponential LR scheduler that decays the LR by 0.1 over 10 epochs. The model
+    learns to map from interpolated states x<sub>t</sub> to flows that depend on
+    both time t and class c.
+    </p>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b2_classcond_train_loss.png" alt="Training loss curve for class-conditioned UNet">
+        <figcaption>
+          Training loss for the class-conditioned UNet. The behavior is similar to
+          the time-only model, showing smooth convergence as the network learns the
+          joint time-and-class-conditioned flow.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <!-- ===================== B.2.6 Sampling from class-conditioned ===================== -->
+    
+    <h3 id="part-b-2-6">Part B.2.6: Sampling from the Class-Conditioned UNet</h3>
+    
+    <p>
+    For sampling, I use classifier-free guidance with scale γ = 5. At each
+    timestep, I compute both an unconditional flow
+    <code>u_uncond = u_θ(x_t, t, c=Ø)</code> and a conditional flow
+    <code>u_cond = u_θ(x_t, t, c)</code>, then combine them as
+    </p>
+    
+    <p style="text-align:center;">
+    <code>u = u_uncond + γ · (u_cond − u_uncond)</code>.
+    </p>
+    
+    <p>
+    This pushes samples toward images that are strongly aligned with the requested
+    digit class while still staying on the learned data manifold.
+    </p>
+    
+    <h4>With Learning Rate Scheduler</h4>
+    
+    <p>
+    Here I use the exponential LR scheduler described above. I generate 4 samples
+    for each digit 0–9, arranged as 4 rows by 10 columns, after 1, 5, and 10
+    epochs of training.
+    </p>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b2_classcond_sched_epoch1.png" alt="Class-conditioned samples with scheduler after epoch 1">
+        <figcaption>
+          Class-conditioned samples after 1 epoch (with LR scheduler). The correct
+          digit structure is already visible, but many strokes are noisy or broken.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b2_classcond_sched_epoch5.png" alt="Class-conditioned samples with scheduler after epoch 5">
+        <figcaption>
+          Samples after 5 epochs. The digits are much clearer and more consistently
+          match their target classes, with cleaner backgrounds.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b2_classcond_sched_epoch10.png" alt="Class-conditioned samples with scheduler after epoch 10">
+        <figcaption>
+          Samples after 10 epochs. The model produces sharp, well-separated digits
+          that closely resemble MNIST, demonstrating the benefits of class
+          conditioning and guidance.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <h4>Removing the Learning Rate Scheduler</h4>
+    
+    <p>
+    To simplify training, I also experimented with removing the LR scheduler and
+    using a smaller constant learning rate (5e−3) instead. The rest of the setup
+    remains the same. I again visualize 4 samples per digit after 1, 5, and 10
+    epochs.
+    </p>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b2_classcond_nosched_epoch1.png" alt="Class-conditioned samples without scheduler after epoch 1">
+        <figcaption>
+          Samples after 1 epoch without an LR scheduler. The digits are slightly
+          noisier than in the scheduled case but still mostly recognizable.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b2_classcond_nosched_epoch5.png" alt="Class-conditioned samples without scheduler after epoch 5">
+        <figcaption>
+          Samples after 5 epochs. The model catches up to the scheduled version:
+          digit identities are clear and backgrounds are mostly clean.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <div class="image-row">
+      <figure>
+        <img src="media/b2_classcond_nosched_epoch10.png" alt="Class-conditioned samples without scheduler after epoch 10">
+        <figcaption>
+          Samples after 10 epochs. Using a smaller constant learning rate achieves
+          comparable sample quality to the exponential scheduler while keeping the
+          training loop simpler.
+        </figcaption>
+      </figure>
+    </div>
+    
+    <p>
+    Overall, class conditioning and classifier-free guidance dramatically improve
+    sample quality and controllability. The learning rate scheduler helps with
+    stability early in training, but a carefully chosen fixed learning rate can
+    reach very similar performance.
+    </p>
+
 
   </main>
 
