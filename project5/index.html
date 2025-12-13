@@ -570,58 +570,121 @@
         </div>
 
 
-        <!-- 1.7.1 Hand-drawn and web images -->
+        <!-- 1.7.1 Hand-Drawn and Web Images -->
         <h4 id="part1-7-1">1.7.1 Editing Hand-Drawn and Web Images</h4>
         <p>
-          The same SDEdit procedure is particularly fun on non-photorealistic inputs. I first
-          download a cartoon-style web image, run it through <code>process_pil_im</code>, and
-          then apply SDEdit with several noise levels.
+          SDEdit is especially interesting when the starting point is not a natural photo.
+          Here I apply the same noise-and-denoise procedure to a cartoon-style web image and
+          two hand-drawn sketches created in the Colab canvas. For each image I vary
+          <code>i_start ∈ {1, 3, 5, 7, 10, 20}</code> along the strided schedule.
         </p>
-        <div class="grid-6">
-          <figure>
-            <img src="media/p1_7_web_sde_1.png" alt="Web image sde 1">
-            <figcaption>Web image, <code>i_start = 1</code>.</figcaption>
+
+        <!-- Web image sequence -->
+        <div class="image-row">
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 1)</div>
+            <img src="media/part1_7_1_webimage_1.png" alt="Web image SDEdit i_start=1">
           </figure>
-          <figure>
-            <img src="media/p1_7_web_sde_3.png" alt="Web image sde 3">
-            <figcaption><code>i_start = 3</code>.</figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 3)</div>
+            <img src="media/part1_7_1_webimage_2.png" alt="Web image SDEdit i_start=3">
           </figure>
-          <figure>
-            <img src="media/p1_7_web_sde_5.png" alt="Web image sde 5">
-            <figcaption><code>i_start = 5</code>.</figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 5)</div>
+            <img src="media/part1_7_1_webimage_3.png" alt="Web image SDEdit i_start=5">
           </figure>
-          <figure>
-            <img src="media/p1_7_web_sde_7.png" alt="Web image sde 7">
-            <figcaption><code>i_start = 7</code>.</figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 7)</div>
+            <img src="media/part1_7_1_webimage_4.png" alt="Web image SDEdit i_start=7">
           </figure>
-          <figure>
-            <img src="media/p1_7_web_sde_10.png" alt="Web image sde 10">
-            <figcaption><code>i_start = 10</code>.</figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 10)</div>
+            <img src="media/part1_7_1_webimage_5.png" alt="Web image SDEdit i_start=10">
           </figure>
-          <figure>
-            <img src="media/p1_7_web_sde_20.png" alt="Web image sde 20">
-            <figcaption><code>i_start = 20</code>.</figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 20)</div>
+            <img src="media/part1_7_1_webimage_6.png" alt="Web image SDEdit i_start=20">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">original</div>
+            <img src="media/part1_7_1_webimage_0.png" alt="Great Hall SDEdit i_start=20">
           </figure>
         </div>
-        <p>
-          I repeat the experiment with two quick doodles drawn in the Colab canvas—a simple
-          landscape and a small character sketch. The model consistently “upgrades” flat drawings
-          into textured scenes while roughly preserving the original layout.
-        </p>
-        <div class="grid-3">
-          <figure>
-            <img src="media/p1_7_draw1_sequence.png" alt="Hand drawn sequence 1">
-            <figcaption>Sequence for hand-drawn image 1.</figcaption>
+        <p style="margin-top:6px; font-weight:500;">Web Image Sequence</p>
+
+        <!-- Hand-drawn image 1 sequence -->
+        <div class="image-row" style="margin-top:12px;">
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 1)</div>
+            <img src="media/part1_7_1_drawnimage1_1.png" alt="Hand-drawn 1 SDEdit i_start=1">
           </figure>
-          <figure>
-            <img src="media/p1_7_draw2_sequence.png" alt="Hand drawn sequence 2">
-            <figcaption>Sequence for hand-drawn image 2.</figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 3)</div>
+            <img src="media/part1_7_1_drawnimage1_2.png" alt="Hand-drawn 1 SDEdit i_start=3">
           </figure>
-          <figure>
-            <img src="media/p1_7_draw_originals.png" alt="Original drawings">
-            <figcaption>Original doodles for reference.</figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 5)</div>
+            <img src="media/part1_7_1_drawnimage1_3.png" alt="Hand-drawn 1 SDEdit i_start=5">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 7)</div>
+            <img src="media/part1_7_1_drawnimage1_4.png" alt="Hand-drawn 1 SDEdit i_start=7">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 10)</div>
+            <img src="media/part1_7_1_drawnimage1_5.png" alt="Hand-drawn 1 SDEdit i_start=10">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 20)</div>
+            <img src="media/part1_7_1_drawnimage1_6.png" alt="Hand-drawn 1 SDEdit i_start=20">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">original</div>
+            <img src="media/part1_7_1_drawnimage1_0.png" alt="Great Hall SDEdit i_start=20">
           </figure>
         </div>
+        <p style="margin-top:6px; font-weight:500;">Hand-Drawn Image 1 Sequence</p>
+
+        <!-- Hand-drawn image 2 sequence -->
+        <div class="image-row" style="margin-top:12px;">
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 1)</div>
+            <img src="media/part1_7_1_drawnimage2_1.png" alt="Hand-drawn 2 SDEdit i_start=1">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 3)</div>
+            <img src="media/part1_7_1_drawnimage2_2.png" alt="Hand-drawn 2 SDEdit i_start=3">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 5)</div>
+            <img src="media/part1_7_1_drawnimage2_3.png" alt="Hand-drawn 2 SDEdit i_start=5">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 7)</div>
+            <img src="media/part1_7_1_drawnimage2_4.png" alt="Hand-drawn 2 SDEdit i_start=7">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 10)</div>
+            <img src="media/part1_7_1_drawnimage2_5.png" alt="Hand-drawn 2 SDEdit i_start=10">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 20)</div>
+            <img src="media/part1_7_1_drawnimage2_6.png" alt="Hand-drawn 2 SDEdit i_start=20">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">original</div>
+            <img src="media/part1_7_1_drawnimage2_0.png" alt="Great Hall SDEdit i_start=20">
+          </figure>
+        </div>
+        <p style="margin-top:6px; font-weight:500;">Hand-Drawn Image 2 Sequence</p>
+
+        <div class="note">
+          Compared to photographic inputs, these non-realistic images give the model much more
+          freedom: low <code>i_start</code> values almost completely reinterpret the sketch,
+          while higher values keep the original composition recognizable but add realistic
+          textures and lighting.
+        </div>
+
 
         <!-- 1.7.2 Inpainting -->
         <h4 id="part1-7-2">1.7.2 Inpainting</h4>
