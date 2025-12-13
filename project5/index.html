@@ -77,47 +77,72 @@
       <!-- Part 0: Setup -->
       <section id="part0">
         <h2>Part 0 — Setup</h2>
+
         <p>
-          For this project I use the two–stage <strong>DeepFloyd IF</strong> text-to-image model from HuggingFace:
-          a 64×64 base diffusion model (stage&nbsp;1) followed by a 256×256 super-resolution model (stage&nbsp;2).
-          I run everything in a Colab notebook with GPU acceleration.
+          I use the two–stage <strong>DeepFloyd IF</strong> model from HuggingFace: a 64×64 base
+          text-to-image diffusion model (stage&nbsp;1) followed by a 256×256 super-resolution
+          model (stage&nbsp;2). All experiments in Part&nbsp;A are run in a Colab notebook with
+          a single GPU and a fixed random seed of <strong>100</strong>.
         </p>
+
         <div class="answer">
-          <strong>Implementation notes</strong>
+          <strong>Text prompts used in Part A</strong>
           <ul style="margin:6px 0 0 18px;">
-            <li>Load <code>DeepFloyd/IF-I-L-v1.0</code> and <code>DeepFloyd/IF-II-L-v1.0</code> in half precision on CUDA.</li>
-            <li>Obtain text embeddings using the provided T5 encoder space on HuggingFace; I cache them as a
-                <code>prompt_embeds_dict.pth</code> file.</li>
-            <li>All images are normalized to the range <code>[-1, 1]</code> for the diffusion model and mapped
-                back to <code>[0, 1]</code> for visualization.</li>
-            <li>I fix the random seed to <code>100</code> and reuse it across all experiments to make the
-                qualitative comparisons easier.</li>
+            <li><b>Prompt 1:</b> <em>The black hole and the spacecraft in the film Interstellar, original cinematic visual style</em></li>
+            <li><b>Prompt 2:</b> <em>wide view of a busy city street in daytime, realistic photo</em></li>
+            <li><b>Prompt 3:</b> <em>close-up portrait of an elderly scientist with wild white hair, black-and-white photo</em></li>
           </ul>
+          <p style="margin-top:6px;">
+            Each prompt is encoded once using the provided T5 encoder space and cached in
+            <code>prompt_embeds_dict.pth</code>. I reuse these embeddings throughout Part&nbsp;A.
+          </p>
         </div>
+
         <p>
-          I prepared several prompts that I will reuse later for SDEdit, visual anagrams, and hybrid images
-          (for example, a busy daytime city street, a snowy owl portrait, and a black-and-white scientist
-          portrait). The figure below shows three example generations using stage&nbsp;1 and stage&nbsp;2.
+          To understand the baseline behavior of DeepFloyd IF, I generate images for the three
+          prompts above using two different sampling budgets:
+          <code>num_inference_steps = 20</code> and <code>200</code>. The grid below shows the
+          stage&nbsp;2 outputs; the seed is fixed so that only the number of denoising steps
+          changes.
         </p>
+
+        <!-- 3×2 grid: prompts × inference steps -->
         <div class="grid-3">
           <figure>
-            <img src="media/p0_prompt1_20steps.png" alt="Prompt 1 sample">
-            <figcaption>Example sample for prompt 1 with <code>num_inference_steps = 20</code>.</figcaption>
+            <img src="media/part0_1.png" alt="Prompt 1, 20 steps">
+            <figcaption>Prompt 1, 20 inference steps</figcaption>
           </figure>
           <figure>
-            <img src="media/p0_prompt2_20steps.png" alt="Prompt 2 sample">
-            <figcaption>Example sample for prompt 2 using the same seed across the pipeline.</figcaption>
+            <img src="media/part0_2.png" alt="Prompt 2, 20 steps">
+            <figcaption>Prompt 2, 20 inference steps</figcaption>
           </figure>
           <figure>
-            <img src="media/p0_prompt3_100steps.png" alt="Prompt 3 sample">
-            <figcaption>Increasing <code>num_inference_steps</code> generally sharpens textures but costs more time.</figcaption>
+            <img src="media/part0_3.png" alt="Prompt 3, 20 steps">
+            <figcaption>Prompt 3, 20 inference steps</figcaption>
+          </figure>
+
+          <figure>
+            <img src="media/part0_4.png" alt="Prompt 1, 200 steps">
+            <figcaption>Prompt 1, 200 inference steps</figcaption>
+          </figure>
+          <figure>
+            <img src="media/part0_5.png" alt="Prompt 2, 200 steps">
+            <figcaption>Prompt 2, 200 inference steps</figcaption>
+          </figure>
+          <figure>
+            <img src="media/part0_6.png" alt="Prompt 3, 200 steps">
+            <figcaption>Prompt 3, 200 inference steps</figcaption>
           </figure>
         </div>
+
         <div class="note">
-          Throughout Part&nbsp;A I keep the seed at <strong>100</strong>, so changes in the images mainly come from the
-          sampling schedule or the text conditioning, not from a different random initialization.
+          Increasing <code>num_inference_steps</code> from 20 to 200 generally sharpens edges and
+          reduces artifacts (especially in high-frequency regions like foliage and jewelry), but
+          also makes sampling an order of magnitude slower. For the rest of the project I strike a
+          balance by using a moderate number of steps together with improved guidance techniques.
         </div>
       </section>
+
 
       <!-- ======================= Part 1: Sampling Loops ======================= -->
       <section id="part1">
@@ -140,19 +165,19 @@
         </p>
         <div class="grid-4">
           <figure>
-            <img src="media/p1_1_campanile_clean.png" alt="Clean campanile">
+            <img src="media/part1_1_1.png" alt="Clean campanile">
             <figcaption><code>t = 0</code> (clean image).</figcaption>
           </figure>
           <figure>
-            <img src="media/p1_1_campanile_t250.png" alt="Campanile t=250">
+            <img src="media/part1_1_2.png" alt="Campanile t=250">
             <figcaption><code>t = 250</code> — noticeable grain but structure still clear.</figcaption>
           </figure>
           <figure>
-            <img src="media/p1_1_campanile_t500.png" alt="Campanile t=500">
+            <img src="media/part1_1_3.png" alt="Campanile t=500">
             <figcaption><code>t = 500</code> — tower barely visible under strong noise.</figcaption>
           </figure>
           <figure>
-            <img src="media/p1_1_campanile_t750.png" alt="Campanile t=750">
+            <img src="media/part1_1_4.png" alt="Campanile t=750">
             <figcaption><code>t = 750</code> — almost pure Gaussian noise.</figcaption>
           </figure>
         </div>
