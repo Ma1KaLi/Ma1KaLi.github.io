@@ -311,31 +311,68 @@
         <!-- 1.4 Iterative Denoising -->
         <h3 id="part1-4">1.4 Iterative Denoising</h3>
         <p>
-          Full DDPM sampling starts from pure noise and applies the reverse update for every
-          timestep, which is expensive. Instead, I use a <strong>strided schedule</strong>:
-          starting at <code>t = 990</code> and stepping by 30 down to 0. At each step I estimate
-          <code>x_0</code> with one-step denoising and then compute a less noisy sample
-          <code>x_{t'}</code> using the closed-form DDPM update.
+          To better exploit the diffusion model, I run denoising <em>iteratively</em> along a
+          strided schedule of timesteps. Starting from a noisy image at some <code>t</code>, I
+          repeatedly estimate <code>x_0</code> with the UNet and use the DDPM update to move to a
+          slightly less noisy sample <code>x_{t'}</code>. This gradually brings the sample back to
+          the data manifold.
         </p>
-        <div class="grid-3">
+        <p>
+          The top row below shows the Campanile at every 5th step of the iterative loop
+          (corresponding to timesteps <code>t = 90, 240, 390, 540, 690</code>). The bottom row
+          compares three different ways of “denoising” the same starting point.
+        </p>
+
+        <!-- Top row: noisy images every 5th loop -->
+        <div class="image-row">
           <figure>
-            <img src="media/p1_4_iter_step0.png" alt="Iter step 0">
-            <figcaption>Early iteration, still close to the noisy input.</figcaption>
+            <img src="media/part1_4_t_90.png" alt="Noisy Campanile t=90">
+            <figcaption>Noisy Campanile at <code>t = 90</code></figcaption>
           </figure>
           <figure>
-            <img src="media/p1_4_iter_step10.png" alt="Iter step mid">
-            <figcaption>Mid-way through the strided schedule.</figcaption>
+            <img src="media/part1_4_t_240.png" alt="Noisy Campanile t=240">
+            <figcaption>Noisy Campanile at <code>t = 240</code></figcaption>
           </figure>
           <figure>
-            <img src="media/p1_4_iter_final.png" alt="Iter final">
-            <figcaption>Final iterative estimate of the Campanile.</figcaption>
+            <img src="media/part1_4_t_390.png" alt="Noisy Campanile t=390">
+            <figcaption>Noisy Campanile at <code>t = 390</code></figcaption>
+          </figure>
+          <figure>
+            <img src="media/part1_4_t_540.png" alt="Noisy Campanile t=540">
+            <figcaption>Noisy Campanile at <code>t = 540</code></figcaption>
+          </figure>
+          <figure>
+            <img src="media/part1_4_t_690.png" alt="Noisy Campanile t=690">
+            <figcaption>Noisy Campanile at <code>t = 690</code></figcaption>
           </figure>
         </div>
+
+        <!-- Bottom row: original vs three denoising methods -->
+        <div class="image-row" style="margin-top:18px;">
+          <figure>
+            <img src="media/part1_4_original.png" alt="Original Campanile">
+            <figcaption>Original</figcaption>
+          </figure>
+          <figure>
+            <img src="media/part1_4_iterative_denoising.png" alt="Iteratively denoised Campanile">
+            <figcaption>Iteratively Denoised Campanile</figcaption>
+          </figure>
+          <figure>
+            <img src="media/part1_4_onestep_denoising.png" alt="One-step denoised Campanile">
+            <figcaption>One-Step Denoised Campanile</figcaption>
+          </figure>
+          <figure>
+            <img src="media/part1_4_gaussian_blur.png" alt="Gaussian blurred Campanile">
+            <figcaption>Gaussian Blurred Campanile</figcaption>
+          </figure>
+        </div>
+
         <div class="note">
-          Compared side-by-side, iterative denoising gives a cleaner sky and sharper tower edges
-          than the single-step method, while still recovering the overall color scheme of the
-          original photo.
+          The iterative diffusion sampler recovers a much crisper tower and sky than both the
+          single-step estimate and the Gaussian blur. The one-step result still looks slightly
+          washed out, whereas the Gaussian blur completely destroys fine structure.
         </div>
+
 
         <!-- 1.5 Sampling -->
         <h3 id="part1-5">1.5 Diffusion Model Sampling</h3>
@@ -347,23 +384,23 @@
         </p>
         <div class="grid-5 image-row">
           <figure style="flex:1 1 150px; max-width:180px;">
-            <img src="media/p1_5_sample1.png" alt="Sample 1">
+            <img src="media/part1_5_1.png" alt="Sample 1">
             <figcaption>Sample 1.</figcaption>
           </figure>
           <figure style="flex:1 1 150px; max-width:180px;">
-            <img src="media/p1_5_sample2.png" alt="Sample 2">
+            <img src="media/part1_5_2.png" alt="Sample 2">
             <figcaption>Sample 2.</figcaption>
           </figure>
           <figure style="flex:1 1 150px; max-width:180px;">
-            <img src="media/p1_5_sample3.png" alt="Sample 3">
+            <img src="media/part1_5_3.png" alt="Sample 3">
             <figcaption>Sample 3.</figcaption>
           </figure>
           <figure style="flex:1 1 150px; max-width:180px;">
-            <img src="media/p1_5_sample4.png" alt="Sample 4">
+            <img src="media/part1_5_4.png" alt="Sample 4">
             <figcaption>Sample 4.</figcaption>
           </figure>
           <figure style="flex:1 1 150px; max-width:180px;">
-            <img src="media/p1_5_sample5.png" alt="Sample 5">
+            <img src="media/part1_5_5.png" alt="Sample 5">
             <figcaption>Sample 5.</figcaption>
           </figure>
         </div>
