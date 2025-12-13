@@ -410,44 +410,47 @@
           randomness of the learned prior.
         </div>
 
-        <!-- 1.6 CFG -->
+        <!-- 1.6 Classifier-Free Guidance (CFG) -->
         <h3 id="part1-6">1.6 Classifier-Free Guidance (CFG)</h3>
         <p>
-          Classifier-free guidance sharpens generations by combining conditional and unconditional
-          noise estimates:
+          Classifier-free guidance sharpens samples by mixing a conditional and an unconditional
+          noise estimate. Given <code>eps_c</code> (with the text prompt) and <code>eps_u</code>
+          (with an empty prompt), the guided estimate is
+          <code>eps = eps_u + gamma * (eps_c - eps_u)</code>. I set <code>gamma = 7</code> and
+          sample from pure noise using the same seed as before.
         </p>
-        <p class="answer">
-          <code>eps = eps_u + gamma * (eps_c - eps_u)</code>, with <code>gamma &gt; 1</code>.
-        </p>
-        <p>
-          I implement <code>iterative_denoise_cfg</code> which runs the UNet twice per step
-          (once with the prompt and once with an empty prompt) and then follows the same DDPM
-          update. The figure below compares unguided and CFG-guided samples for
-          <code>gamma = 7</code>.
-        </p>
-        <div class="grid-4">
-          <figure>
-            <img src="media/p1_6_nocfg.png" alt="No CFG">
-            <figcaption>Sampling without CFG.</figcaption>
+
+        <div class="image-row">
+          <figure style="flex:1 1 160px; max-width:200px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">CFG sample 1</div>
+            <img src="media/part1_6_1.png" alt="CFG sample 1">
           </figure>
-          <figure>
-            <img src="media/p1_6_cfg.png" alt="With CFG">
-            <figcaption>Sampling with <code>gamma = 7</code>.</figcaption>
+          <figure style="flex:1 1 160px; max-width:200px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">CFG sample 2</div>
+            <img src="media/part1_6_2.png" alt="CFG sample 2">
           </figure>
-          <figure>
-            <img src="media/p1_6_cfg_detail1.png" alt="CFG sample 1">
-            <figcaption>Guided sample emphasizing coherent objects.</figcaption>
+          <figure style="flex:1 1 160px; max-width:200px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">CFG sample 3</div>
+            <img src="media/part1_6_3.png" alt="CFG sample 3">
           </figure>
-          <figure>
-            <img src="media/p1_6_cfg_detail2.png" alt="CFG sample 2">
-            <figcaption>Guided sample with crisper textures and contrast.</figcaption>
+          <figure style="flex:1 1 160px; max-width:200px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">CFG sample 4</div>
+            <img src="media/part1_6_4.png" alt="CFG sample 4">
+          </figure>
+          <figure style="flex:1 1 160px; max-width:200px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">CFG sample 5</div>
+            <img src="media/part1_6_5.png" alt="CFG sample 5">
           </figure>
         </div>
+
+        <h4 style="margin-top:16px; color:#777; font-weight:500;">Images</h4>
+
         <div class="note">
-          CFG noticeably increases contrast and semantic clarity at the cost of some diversity.
-          Many samples collapse toward “typical” natural photos, which is exactly what we want
-          when building image-to-image tools in later parts.
+          Compared to unguided sampling, CFG tends to produce crisper edges and more coherent
+          objects (faces, silhouettes, and reflections), while still allowing some diversity
+          across different random draws with the same prompt.
         </div>
+
 
         <!-- 1.7 Image-to-image Translation -->
         <h3 id="part1-7">1.7 Image-to-image Translation (SDEdit)</h3>
@@ -617,22 +620,22 @@
         </p>
         <div class="grid-2">
           <figure>
-            <img src="media/p1_8_illusion1_upright.png" alt="Illusion 1 upright">
-            <figcaption>Illusion 1 upright: e.g., “an oil painting of an old man”.</figcaption>
+            <img src="media/part1_8_1.pngg" alt="Illusion 1 upright">
+            <figcaption>Illusion 1 upright: e.g., “a photo of a dress”.</figcaption>
           </figure>
           <figure>
-            <img src="media/p1_8_illusion1_flipped.png" alt="Illusion 1 flipped">
-            <figcaption>Illusion 1 flipped: e.g., “people sitting around a campfire”.</figcaption>
+            <img src="media/part1_8_2.png" alt="Illusion 1 flipped">
+            <figcaption>Illusion 1 flipped: e.g., “a photo of an old woman”.</figcaption>
           </figure>
         </div>
         <div class="grid-2" style="margin-top:12px;">
           <figure>
-            <img src="media/p1_8_illusion2_upright.png" alt="Illusion 2 upright">
-            <figcaption>Illusion 2 upright: a landscape-style prompt.</figcaption>
+            <img src="media/part1_8_3.png" alt="Illusion 2 upright">
+            <figcaption>Illusion 2 upright: "a painting of a truck".</figcaption>
           </figure>
           <figure>
-            <img src="media/p1_8_illusion2_flipped.png" alt="Illusion 2 flipped">
-            <figcaption>Illusion 2 flipped: a different scene revealed when rotated.</figcaption>
+            <img src="media/part1_8_4.png" alt="Illusion 2 flipped">
+            <figcaption>Illusion 2 flipped: "a painting of a deer".</figcaption>
           </figure>
         </div>
         <div class="note">
