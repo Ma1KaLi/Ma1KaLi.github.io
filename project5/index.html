@@ -452,46 +452,123 @@
         </div>
 
 
-        <!-- 1.7 Image-to-image Translation -->
+        <!-- 1.7 Image-to-image Translation (SDEdit) -->
         <h3 id="part1-7">1.7 Image-to-image Translation (SDEdit)</h3>
         <p>
-          SDEdit interprets image editing as “add noise, then project back to the natural image
-          manifold”. For a given image I add noise at a chosen timestep and then run
-          <code>iterative_denoise_cfg</code> from an intermediate index <code>i_start</code>.
-          Small <code>i_start</code> values correspond to heavy edits, and large ones yield
-          subtle retouching.
+          SDEdit views image editing as “add noise, then project the result back to the natural
+          image manifold” using the diffusion model. I first add noise to a real image at a chosen
+          timestep, then run <code>iterative_denoise_cfg</code> starting from index
+          <code>i_start</code> along the strided schedule. Smaller <code>i_start</code> values
+          apply heavier edits, while larger values keep the original closer to intact.
         </p>
-        <div class="grid-6">
-          <figure>
-            <img src="media/p1_7_campanile_sde_1.png" alt="i_start=1">
-            <figcaption><code>i_start = 1</code></figcaption>
+
+        <!-- Campanile sequence -->
+        <div class="image-row">
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 1)</div>
+            <img src="media/part1_7_0_campanile_1.png" alt="Campanile SDEdit i_start=1">
           </figure>
-          <figure>
-            <img src="media/p1_7_campanile_sde_3.png" alt="i_start=3">
-            <figcaption><code>i_start = 3</code></figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 3)</div>
+            <img src="media/part1_7_0_campanile_2.png" alt="Campanile SDEdit i_start=3">
           </figure>
-          <figure>
-            <img src="media/p1_7_campanile_sde_5.png" alt="i_start=5">
-            <figcaption><code>i_start = 5</code></figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 5)</div>
+            <img src="media/part1_7_0_campanile_3.png" alt="Campanile SDEdit i_start=5">
           </figure>
-          <figure>
-            <img src="media/p1_7_campanile_sde_7.png" alt="i_start=7">
-            <figcaption><code>i_start = 7</code></figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 7)</div>
+            <img src="media/part1_7_0_campanile_4.png" alt="Campanile SDEdit i_start=7">
           </figure>
-          <figure>
-            <img src="media/p1_7_campanile_sde_10.png" alt="i_start=10">
-            <figcaption><code>i_start = 10</code></figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 10)</div>
+            <img src="media/part1_7_0_campanile_5.png" alt="Campanile SDEdit i_start=10">
           </figure>
-          <figure>
-            <img src="media/p1_7_campanile_sde_20.png" alt="i_start=20">
-            <figcaption><code>i_start = 20</code> (closest to original).</figcaption>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 20)</div>
+            <img src="media/part1_7_0_campanile_6.png" alt="Campanile SDEdit i_start=20">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">original</div>
+            <img src="media/part1_1_4" alt="Great Hall SDEdit i_start=20">
           </figure>
         </div>
+        <p style="margin-top:6px; font-weight:500;">Campanile Sequence</p>
+
+        <!-- Tiananmen sequence -->
+        <div class="image-row" style="margin-top:12px;">
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 1)</div>
+            <img src="media/part1_7_0_tiananmen_0.png" alt="Tiananmen SDEdit i_start=1">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 3)</div>
+            <img src="media/part1_7_0_tiananmen_1.png" alt="Tiananmen SDEdit i_start=3">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 5)</div>
+            <img src="media/part1_7_0_tiananmen_2.png" alt="Tiananmen SDEdit i_start=5">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 7)</div>
+            <img src="media/part1_7_0_tiananmen_3.png" alt="Tiananmen SDEdit i_start=7">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 10)</div>
+            <img src="media/part1_7_0_tiananmen_4.png" alt="Tiananmen SDEdit i_start=10">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 20)</div>
+            <img src="media/part1_7_0_tiananmen_5.png" alt="Tiananmen SDEdit i_start=20">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">original</div>
+            <img src="media/part1_7_0_tiananmen_6.png" alt="Great Hall SDEdit i_start=20">
+          </figure>
+        </div>
+        <p style="margin-top:6px; font-weight:500;">Tiananmen Image Sequence</p>
+
+        <!-- Great Hall sequence -->
+        <div class="image-row" style="margin-top:12px;">
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 1)</div>
+            <img src="media/part1_7_0_greathall_0.png" alt="Great Hall SDEdit i_start=1">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 3)</div>
+            <img src="media/part1_7_0_greathall_1.png" alt="Great Hall SDEdit i_start=3">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 5)</div>
+            <img src="media/part1_7_0_greathall_2.png" alt="Great Hall SDEdit i_start=5">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 7)</div>
+            <img src="media/part1_7_0_greathall_3.png" alt="Great Hall SDEdit i_start=7">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 10)</div>
+            <img src="media/part1_7_0_greathall_4.png" alt="Great Hall SDEdit i_start=10">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">SDEdit (i_start = 20)</div>
+            <img src="media/part1_7_0_greathall_5.png" alt="Great Hall SDEdit i_start=20">
+          </figure>
+          <figure style="flex:1 1 150px; max-width:180px; text-align:center;">
+            <div style="font-size:0.9rem; margin-bottom:4px;">original</div>
+            <img src="media/part1_7_0_greathall_6.png" alt="Great Hall SDEdit i_start=20">
+          </figure>
+        </div>
+        <p style="margin-top:6px; font-weight:500;">Great Hall Image Sequence</p>
+
         <div class="note">
-          As <code>i_start</code> increases, the edits become more conservative: the composition
-          and lighting of the Campanile remain similar while textures are subtly reimagined by the
-          model.
+          Moving from <code>i_start = 1</code> to <code>i_start = 20</code> within each row, the
+          images gradually align more closely with the original photograph while still inheriting
+          textures from the diffusion prior. For some scenes the transition between intermediate
+          steps (e.g., from 3 to 5) can be surprisingly large, reflecting the model’s non-linear
+          geometry in image space.
         </div>
+
 
         <!-- 1.7.1 Hand-drawn and web images -->
         <h4 id="part1-7-1">1.7.1 Editing Hand-Drawn and Web Images</h4>
@@ -620,7 +697,7 @@
         </p>
         <div class="grid-2">
           <figure>
-            <img src="media/part1_8_1.pngg" alt="Illusion 1 upright">
+            <img src="media/part1_8_1.png" alt="Illusion 1 upright">
             <figcaption>Illusion 1 upright: e.g., “a photo of a dress”.</figcaption>
           </figure>
           <figure>
