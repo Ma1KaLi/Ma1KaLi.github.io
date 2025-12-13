@@ -698,7 +698,7 @@
         <!-- Campanile inpainting -->
         <div class="image-row">
           <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
-            <img src="media/part1_7_2_campanile_0.pngg" alt="Campanile original">
+            <img src="media/part1_7_2_campanile_0.png" alt="Campanile original">
             <figcaption>Campanile (Original)</figcaption>
           </figure>
           <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
@@ -766,31 +766,127 @@
         </div>
 
 
-        <!-- 1.7.3 Text-conditional I2I -->
+        <!-- 1.7.3 Text-Conditional Image-to-Image Translation -->
         <h4 id="part1-7-3">1.7.3 Text-Conditional Image-to-Image Translation</h4>
         <p>
-          Finally, I combine SDEdit with stronger text conditioning. Instead of using the neutral
-          prompt, I choose prompts such as <em>“a rocket ship launching into the sky”</em> or
-          <em>“a pencil drawing on a sketchbook”</em> and run SDEdit starting from real photos.
+          Here I combine SDEdit with stronger text conditioning. Instead of the neutral
+          prompt, I use descriptive prompts (e.g., “a rocket ship launching into the sky”)
+          and add noise at different levels before denoising with CFG. Each row below shows
+          how increasing the noise level gradually pulls the image toward the new prompt
+          while still remembering the structure of the original photograph.
         </p>
-        <div class="grid-3">
-          <figure>
-            <img src="media/p1_7_text_campanile_rocket.png" alt="Rocket ship campanile">
-            <figcaption>Campanile gradually morphed into a rocket-launch scene.</figcaption>
+
+        <!-- Prompt A row -->
+        <p style="margin-top:10px; font-weight:500;">
+          Prompt A: <em>"a rocket ship"</em>
+        </p>
+        <div class="image-row">
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_campanile_0.png" alt="Prompt A SDEdit noise level 1">
+            <figcaption>Prompt A at noise level 1</figcaption>
           </figure>
-          <figure>
-            <img src="media/p1_7_text_bigben_pencil.png" alt="Pencil big ben">
-            <figcaption>A landmark translated into a pencil-style illustration.</figcaption>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_campanile_1.png" alt="Prompt A SDEdit noise level 3">
+            <figcaption>Prompt A at noise level 3</figcaption>
           </figure>
-          <figure>
-            <img src="media/p1_7_text_custom_sequence.png" alt="Custom text sequence">
-            <figcaption>Sequence of edits on a custom building photo.</figcaption>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_campanile_2.png" alt="Prompt A SDEdit noise level 5">
+            <figcaption>Prompt A at noise level 5</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_campanile_3.png" alt="Prompt A SDEdit noise level 7">
+            <figcaption>Prompt A at noise level 7</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_campanile_4.png" alt="Prompt A SDEdit noise level 10">
+            <figcaption>Prompt A at noise level 10</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_campanile_5.png" alt="Prompt A SDEdit noise level 20">
+            <figcaption>Prompt A at noise level 20</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_campanile_6.png" alt="Original image for Prompt A">
+            <figcaption>Original image</figcaption>
           </figure>
         </div>
+
+        <!-- Prompt B row -->
+        <p style="margin-top:18px; font-weight:500;">
+          Prompt B: <em>"an oil painting of a snowy mountain village" (on Big Ben)</em>
+        </p>
+        <div class="image-row">
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_bigben_0.png" alt="Prompt B SDEdit noise level 1">
+            <figcaption>Prompt B at noise level 1</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_bigben_1.png" alt="Prompt B SDEdit noise level 3">
+            <figcaption>Prompt B at noise level 3</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_bigben_2.png" alt="Prompt B SDEdit noise level 5">
+            <figcaption>Prompt B at noise level 5</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_bigben_3.png" alt="Prompt B SDEdit noise level 7">
+            <figcaption>Prompt B at noise level 7</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_bigben_4.png" alt="Prompt B SDEdit noise level 10">
+            <figcaption>Prompt B at noise level 10</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_bigben_5.png" alt="Prompt B SDEdit noise level 20">
+            <figcaption>Prompt B at noise level 20</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_bigben_6.png" alt="Original image for Prompt B">
+            <figcaption>Original image</figcaption>
+          </figure>
+        </div>
+
+        <!-- Prompt C row -->
+        <p style="margin-top:18px; font-weight:500;">
+          Prompt C: <em>"an oil painting of a snowy mountain village" (on Web Image)</em>
+        </p>
+        <div class="image-row">
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_village_0.png" alt="Prompt C SDEdit noise level 1">
+            <figcaption>Prompt C at noise level 1</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_village_1.png" alt="Prompt C SDEdit noise level 3">
+            <figcaption>Prompt C at noise level 3</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_village_2.png" alt="Prompt C SDEdit noise level 5">
+            <figcaption>Prompt C at noise level 5</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_village_3.png" alt="Prompt C SDEdit noise level 7">
+            <figcaption>Prompt C at noise level 7</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_village_4.png" alt="Prompt C SDEdit noise level 10">
+            <figcaption>Prompt C at noise level 10</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_village_5.png" alt="Prompt C SDEdit noise level 20">
+            <figcaption>Prompt C at noise level 20</figcaption>
+          </figure>
+          <figure style="flex:1 1 130px; max-width:160px; text-align:center;">
+            <img src="media/part1_7_3_village_6.png" alt="Original image for Prompt C">
+            <figcaption>Original image</figcaption>
+          </figure>
+        </div>
+
         <div class="note">
-          The images retain the coarse layout of the original photographs (horizon line, building
-          location) while the textures and colors are pulled toward the new textual description.
+          For low noise levels the edits are dramatic and the original structure is mostly lost.
+          At higher noise levels the geometry and viewpoint of the input photo are preserved, but
+          colors and textures drift toward the style implied by each text prompt.
         </div>
+
 
         <!-- 1.8 Visual Anagrams -->
         <h3 id="part1-8">1.8 Visual Anagrams</h3>
@@ -931,7 +1027,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b1_noising_grid.png" alt="MNIST digits with different noise levels sigma">
+        <img src="media/partB1_2_0.png" alt="MNIST digits with different noise levels sigma">
         <figcaption>
           Noising process on one MNIST digit for different values of σ. Larger σ
           produces progressively noisier images.
@@ -956,7 +1052,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b1_denoiser_train_loss.png" alt="Training loss curve for single-step denoising UNet">
+        <img src="media/partB1_2_1_2.png" alt="Training loss curve for single-step denoising UNet">
         <figcaption>
           Training loss of the single-step UNet denoiser for σ = 0.5 over 5 epochs. The
           loss decreases steadily and starts to flatten as the model converges.
