@@ -1064,20 +1064,14 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b1_test_noisy_sigma05.png" alt="Noisy test images with sigma = 0.5">
-        <figcaption>
-          Test digits corrupted with Gaussian noise σ = 0.5.
-        </figcaption>
-      </figure>
-      <figure>
-        <img src="media/b1_test_denoised_epoch1.png" alt="Denoised results after 1 epoch of training">
+        <img src="media/partB1_2_1_0.png" alt="Denoised results after 1 epoch of training">
         <figcaption>
           Denoised outputs after 1 epoch. Digits start to emerge from the noise, but
           the shapes are still blurry and edges are not very sharp.
         </figcaption>
       </figure>
       <figure>
-        <img src="media/b1_test_denoised_epoch5.png" alt="Denoised results after 5 epochs of training">
+        <img src="media/partB1_2_1_1.png" alt="Denoised results after 5 epochs of training">
         <figcaption>
           Denoised outputs after 5 epochs. The digits are much clearer and closely
           match the clean MNIST digits, with most background noise removed.
@@ -1098,7 +1092,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b1_ood_sigma_grid.png" alt="Out-of-distribution denoising results for different sigmas">
+        <img src="media/partB1_2_2.png" alt="Out-of-distribution denoising results for different sigmas">
         <figcaption>
           Out-of-distribution denoising results for a fixed digit at different noise
           levels. The model generalizes reasonably well between σ = 0.2 and 0.6, but
@@ -1131,7 +1125,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b1_purenoise_train_loss.png" alt="Training loss curve for pure-noise denoiser">
+        <img src="media/partB1_2_3_3.png" alt="Training loss curve for pure-noise denoiser">
         <figcaption>
           Training loss when denoising pure noise. The curve still decreases, but
           more slowly than in the σ = 0.5 setting, reflecting the harder task.
@@ -1143,26 +1137,28 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b1_purenoise_input.png" alt="Pure Gaussian noise inputs">
-        <figcaption>
-          Pure Gaussian noise sampled as input to the denoiser.
-        </figcaption>
-      </figure>
-      <figure>
-        <img src="media/b1_purenoise_epoch1.png" alt="Pure-noise denoising results after 1 epoch">
+        <img src="media/partB1_2_3_1.png" alt="Pure-noise denoising results after 1 epoch">
         <figcaption>
           Outputs after 1 epoch of training. The model produces faint blurry blobs
           that vaguely resemble digit shapes.
         </figcaption>
       </figure>
       <figure>
-        <img src="media/b1_purenoise_epoch5.png" alt="Pure-noise denoising results after 5 epochs">
+        <img src="media/partB1_2_3_2.png" alt="Pure-noise denoising results after 5 epochs">
         <figcaption>
           Outputs after 5 epochs. The images look like an average over all digits:
           a thick, amorphous stroke in roughly digit-like locations.
           This matches the behavior of an MSE model that learns the per-pixel mean
           of the training distribution.
         </figcaption>
+        <p>
+          When training the UNet to denoise pure Gaussian noise (input ε ~ N(0, I), target x is a clean MNIST digit), the generated outputs quickly show a few clear patterns. After several epochs, different noise inputs all produce very similar blurry images with a dark background and a thick, fuzzy white stroke near the center. The result looks less like a specific digit and more like an “average MNIST digit.”
+        </p>
+
+        <p>
+          This behavior comes from the MSE objective and the fact that the noise input is independent of the target image. Under squared error, the optimal prediction is the expected value of the training targets. Because ε carries no information about which digit x is, the best the network can do is output the <em>dataset mean image</em> for every input. That mean image is exactly the blurry centroid we observe: a superposition of many digits where frequently occupied pixels become bright and rarely occupied pixels stay dark.
+        </p>
+
       </figure>
     </div>
     
@@ -1210,7 +1206,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b2_timecond_train_loss.png" alt="Training loss curve for time-conditioned flow-matching UNet">
+        <img src="media/partB2_2.png" alt="Training loss curve for time-conditioned flow-matching UNet">
         <figcaption>
           Training loss for the time-conditioned flow model. The loss steadily
           decreases and stabilizes, indicating that the UNet learns a consistent
@@ -1241,21 +1237,21 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b2_timecond_samples_epoch1.png" alt="Time-conditioned sampling after epoch 1">
+        <img src="media/partB2_3_0.png" alt="Time-conditioned sampling after epoch 1">
         <figcaption>
           Samples after 1 epoch. The model has learned a rough “white-on-black”
           prior but most digits are still highly distorted.
         </figcaption>
       </figure>
       <figure>
-        <img src="media/b2_timecond_samples_epoch5.png" alt="Time-conditioned sampling after epoch 5">
+        <img src="media/partB2_3_1.png" alt="Time-conditioned sampling after epoch 5">
         <figcaption>
           Samples after 5 epochs. Many digits are now recognizable, although strokes
           are still thick and occasionally merged.
         </figcaption>
       </figure>
       <figure>
-        <img src="media/b2_timecond_samples_epoch10.png" alt="Time-conditioned sampling after epoch 10">
+        <img src="media/partB2_3_2.png" alt="Time-conditioned sampling after epoch 10">
         <figcaption>
           Samples after 10 epochs. Most images resemble clear MNIST digits, though
           they are not as sharp as the ground-truth dataset.
@@ -1302,7 +1298,7 @@
     
     <div class="image-row">
       <figure>
-        <img src="media/b2_classcond_train_loss.png" alt="Training loss curve for class-conditioned UNet">
+        <img src="media/partB2_5.png" alt="Training loss curve for class-conditioned UNet">
         <figcaption>
           Training loss for the class-conditioned UNet. The behavior is similar to
           the time-only model, showing smooth convergence as the network learns the
