@@ -689,30 +689,82 @@
         <!-- 1.7.2 Inpainting -->
         <h4 id="part1-7-2">1.7.2 Inpainting</h4>
         <p>
-          Inpainting uses the diffusion model to hallucinate content only in a masked region.
-          At each denoising step I overwrite the unmasked pixels with a noised version of the
-          original image, ensuring that those locations stay anchored while the masked area
-          evolves freely.
+          Inpainting uses the diffusion model to hallucinate new content only inside a masked
+          region while keeping the rest of the image close to the original. At each denoising
+          step I overwrite the unmasked pixels with a noised version of the original image and
+          let the model update only the masked area.
         </p>
-        <div class="grid-3">
-          <figure>
-            <img src="media/p1_7_inpaint_mask.png" alt="Inpainting mask">
-            <figcaption>Campanile with a mask over the tower top.</figcaption>
+
+        <!-- Campanile inpainting -->
+        <div class="image-row">
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_campanile_0.pngg" alt="Campanile original">
+            <figcaption>Campanile (Original)</figcaption>
           </figure>
-          <figure>
-            <img src="media/p1_7_inpaint_campanile.png" alt="Inpainted campanile">
-            <figcaption>One inpainted version of the Campanile.</figcaption>
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_campanile_1.png" alt="Campanile mask">
+            <figcaption>Campanile Inpainting Mask</figcaption>
           </figure>
-          <figure>
-            <img src="media/p1_7_inpaint_custom.png" alt="Inpainted custom image">
-            <figcaption>Inpainting on a custom cityscape: replacing the sky region.</figcaption>
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_campanile_2.png" alt="Campanile mask">
+            <figcaption>Campanile To Replace</figcaption>
+          </figure>
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_campanile_3.png" alt="Campanile inpainted">
+            <figcaption>Inpainted Campanile</figcaption>
           </figure>
         </div>
+        <p style="margin-top:6px; font-weight:500;">Campanile Inpainting Sequence</p>
+
+        <!-- Tree inpainting -->
+        <div class="image-row" style="margin-top:12px;">
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_tree_0.png" alt="Tree original">
+            <figcaption>Tree (Original)</figcaption>
+          </figure>
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_tree_1.png" alt="Tree mask">
+            <figcaption>Tree Inpainting Mask</figcaption>
+          </figure>
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_tree_2.png" alt="Campanile mask">
+            <figcaption>Tree To Replace</figcaption>
+          </figure>
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_tree_3.png" alt="Tree inpainted">
+            <figcaption>Inpainted Tree</figcaption>
+          </figure>
+        </div>
+        <p style="margin-top:6px; font-weight:500;">Tree Inpainting Sequence</p>
+
+        <!-- Big Ben inpainting -->
+        <div class="image-row" style="margin-top:12px;">
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_bigben_0.png" alt="Big Ben original">
+            <figcaption>Big Ben (Original)</figcaption>
+          </figure>
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_bigben_1.png" alt="Big Ben mask">
+            <figcaption>Big Ben Inpainting Mask</figcaption>
+          </figure>
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_bigben_2.png" alt="Campanile mask">
+            <figcaption>Big Ben To Replace</figcaption>
+          </figure>
+          <figure style="flex:1 1 200px; max-width:240px; text-align:center;">
+            <img src="media/part1_7_2_bigben_3.png" alt="Big Ben inpainted">
+            <figcaption>Inpainted Big Ben</figcaption>
+          </figure>
+        </div>
+        <p style="margin-top:6px; font-weight:500;">Big Ben Inpainting Sequence</p>
+
         <div class="note">
-          Because the model was never explicitly trained for inpainting, results vary between runs.
-          Re-sampling a few times usually produces at least one plausible completion for the masked
-          area.
+          Across all three scenes the unmasked regions stay quite faithful to the original
+          photographs, while the masked areas are reimagined by the diffusion model. The quality
+          of the completion depends heavily on the mask size and prompt; re-running the sampler
+          a few times often produces several plausible alternatives.
         </div>
+
 
         <!-- 1.7.3 Text-conditional I2I -->
         <h4 id="part1-7-3">1.7.3 Text-Conditional Image-to-Image Translation</h4>
